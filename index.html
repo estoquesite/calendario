@@ -78,10 +78,10 @@
             </h1>
         </div>
 
-        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS (LINHA ÚNICA) -->
+        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS -->
         <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
             
-            <!-- ESTATÍSTICAS DO MÊS (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
+            <!-- ESTATÍSTICAS DO MÊS -->
             <div class="grid grid-cols-2 gap-1.5">
                 <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
                     <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
@@ -93,7 +93,7 @@
                 </div>
             </div>
 
-            <!-- ESTATÍSTICAS DO ANO (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
+            <!-- ESTATÍSTICAS DO ANO -->
             <div class="grid grid-cols-2 gap-1.5">
                 <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
                     <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
@@ -119,14 +119,26 @@
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
-        <!-- BOTÃO DE IMPRESSÃO / PDF DO ANO TODO -->
-        <div class="print-hidden text-center pb-2">
-            <button onclick="gerarAnoCompletoPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5">
+        <!-- BOTÕES DE AÇÕES AVANÇADAS (IMPRESSÃO, SYNC, EMAIL, PLANILHA) -->
+        <div class="print-hidden grid grid-cols-2 gap-1.5 pb-2">
+            <button onclick="gerarAnoCompletoPDF()" class="col-span-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl transition text-[11px] shadow-sm flex items-center justify-center gap-1.5">
                 📄 Imprimir Calendário do Ano Todo Colorido
+            </button>
+            
+            <button onclick="sincronizarCelular()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-xl transition text-[11px] shadow-sm flex items-center justify-center gap-1.5">
+                📱 Sincronizar Celular
+            </button>
+
+            <button onclick="compartilharEmail()" class="bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 rounded-xl transition text-[11px] shadow-sm flex items-center justify-center gap-1.5">
+                📧 Enviar p/ E-mail
+            </button>
+
+            <button onclick="exportarPlanilha()" class="col-span-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-xl transition text-[11px] shadow-sm flex items-center justify-center gap-1.5">
+                📊 Exportar para Planilha (Google Sheets/Excel)
             </button>
         </div>
 
-        <!-- BLOCO DE SELEÇÃO DE PERÍODO (ABAIXO DO IMPRIMIR) -->
+        <!-- BLOCO DE SELEÇÃO DE PERÍODO -->
         <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
             <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
             <div class="grid grid-cols-12 gap-1 items-center">
@@ -146,7 +158,6 @@
                     <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Ok</button>
                 </div>
             </div>
-            <!-- CAIXINHA BOX COM OPÇÕES PRÉ-DEFINIDAS + OUTROS -->
             <div class="grid grid-cols-12 gap-1 items-center pt-1">
                 <div class="col-span-6">
                     <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
@@ -179,7 +190,7 @@
             <button onclick="bloquearNovamente()" class="px-2 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v1.1</span>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v1.2</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-lg transition transform hover:scale-105 active:scale-95" title="Falar Comando">
@@ -305,7 +316,7 @@
             }
         }
 
-        // APLICAR PERÍODO (INÍCIO AO FIM) USANDO O ANO E MÊS ATIVOS
+        // APLICAR PERÍODO (INÍCIO AO FIM)
         function aplicarPeriodo() {
             const inicioStr = document.getElementById('dataInicio').value;
             const fimStr = document.getElementById('dataFim').value;
@@ -345,7 +356,7 @@
             renderizar();
         }
 
-        // MICROFONE INTELIGENTE INTELIGENTE (RECONHECE NÚMEROS E APLICA NO MÊS/ANO ATIVO)
+        // MICROFONE INTELIGENTE
         function ouvirVoz() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
@@ -369,7 +380,6 @@
                     return;
                 }
 
-                // Detectar se é Mãe ou Pai
                 let respDetectada = null;
                 if (texto.includes('mãe') || texto.includes('mae')) {
                     respDetectada = 'mae';
@@ -379,7 +389,6 @@
                     document.getElementById('respPeriodo').value = 'pai';
                 }
 
-                // Extrair números do texto falado (ex: "18 e 19" ou "18 a 19")
                 const numeros = texto.match(/\d+/g);
                 if (numeros && numeros.length >= 2 && respDetectada) {
                     let diaIni = parseInt(numeros[0]);
@@ -408,6 +417,90 @@
             recognition.onerror = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
             recognition.onend = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
             recognition.start();
+        }
+
+        // SINCRONIZAR COM CALENDÁRIO DO CELULAR (.ICS)
+        function sincronizarCelular() {
+            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Guarda Sophia//PT\n";
+            let keys = Object.keys(overrides);
+            if(keys.length === 0) { alert("Nenhuma data especial configurada para sincronizar."); return; }
+
+            for (let chave in overrides) {
+                let [ano, mes, dia] = chave.split('-');
+                let data = new Date(ano, mes, dia);
+                let dIni = data.toISOString().split('T')[0].replace(/-/g, '');
+                
+                let dFimData = new Date(data);
+                dFimData.setDate(dFimData.getDate() + 1); // ICS eventos de dia inteiro precisam de data fim +1
+                let dFim = dFimData.toISOString().split('T')[0].replace(/-/g, '');
+                
+                let info = overrides[chave];
+                let respNome = info.resp === 'mae' ? 'Mãe' : 'Pai';
+                
+                icsContent += "BEGIN:VEVENT\n";
+                icsContent += `DTSTART;VALUE=DATE:${dIni}\n`;
+                icsContent += `DTEND;VALUE=DATE:${dFim}\n`;
+                icsContent += `SUMMARY:Guarda Sophia - ${respNome} (${info.desc})\n`;
+                icsContent += "END:VEVENT\n";
+            }
+            icsContent += "END:VCALENDAR";
+
+            let blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'Guarda_Sophia.ics';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // COMPARTILHAR POR E-MAIL
+        function compartilharEmail() {
+            let email = "marianna_adm@yahoo.com.br";
+            let subject = encodeURIComponent("Calendário Guarda Compartilhada - Sophia");
+            let bodyText = "Resumo dos dias personalizados da Guarda da Sophia:\n\n";
+            
+            let keys = Object.keys(overrides).sort((a,b) => new Date(a.split('-')[0], a.split('-')[1], a.split('-')[2]) - new Date(b.split('-')[0], b.split('-')[1], b.split('-')[2]));
+            
+            if(keys.length === 0) {
+                bodyText += "Nenhum dia especial configurado ainda.";
+            } else {
+                for(let key of keys) {
+                    let [a, m, d] = key.split('-');
+                    let info = overrides[key];
+                    let dataFormatada = `${String(d).padStart(2, '0')}/${String(parseInt(m)+1).padStart(2, '0')}/${a}`;
+                    let respNome = info.resp === 'mae' ? 'Mãe' : 'Pai';
+                    bodyText += `- ${dataFormatada}: ${respNome} (${info.desc})\n`;
+                }
+            }
+            window.location.href = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+        }
+
+        // EXPORTAR PLANILHA SHEETS/EXCEL (.CSV)
+        function exportarPlanilha() {
+            let csvContent = "Data,Responsavel,Motivo\n";
+            let keys = Object.keys(overrides).sort((a,b) => new Date(a.split('-')[0], a.split('-')[1], a.split('-')[2]) - new Date(b.split('-')[0], b.split('-')[1], b.split('-')[2]));
+            
+            if(keys.length === 0) { alert("Nenhuma data especial configurada para exportar."); return; }
+
+            for(let key of keys) {
+                let [a, m, d] = key.split('-');
+                let info = overrides[key];
+                let dataFormatada = `${String(d).padStart(2, '0')}/${String(parseInt(m)+1).padStart(2, '0')}/${a}`;
+                let respNome = info.resp === 'mae' ? 'Mae' : 'Pai';
+                csvContent += `${dataFormatada},${respNome},${info.desc}\n`;
+            }
+
+            // O \uFEFF força o formato UTF-8 com BOM para o Excel ler os acentos perfeitamente
+            let blob = new Blob(["\uFEFF"+csvContent], { type: 'text/csv;charset=utf-8' });
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = 'Guarda_Sophia.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         function editarDia(ano, mes, dia) {
@@ -620,7 +713,7 @@
                     bgClass += ' past-day';
                 }
 
-                cell.className = `day-cell-screen rounded-xl border p-1 flex flex-col justify-between relative transition cursor-pointer select-none ${bgClass}`;
+                cell.className = `min-h-[55px] rounded-xl border p-1 flex flex-col justify-between relative transition cursor-pointer select-none ${bgClass}`;
                 cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
                 
                 let badgesHtml = '';
@@ -657,72 +750,6 @@
             if (mesAtual > 11) { mesAtual = 0; anoAtual++; } 
             else if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
             renderizar();
-        }
-
-        function gerarAnoCompletoPDF() {
-            let htmlAnual = `<!DOCTYPE html>
-            <html lang="pt-BR">
-            <head>
-                <meta charset="UTF-8">
-                <title>Guarda Compartilhada Sophia - Ano ${anoAtual}</title>
-                <style>
-                    body { font-family: sans-serif; padding: 20px; color: #0f172a; margin: 0; }
-                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
-                    h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
-                    table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
-                    th { background: #f8fafc; font-size: 0.7rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; }
-                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1; padding: 4px; box-sizing: border-box; }
-                    .day-num { font-size: 0.8rem; font-weight: bold; }
-                    .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; }
-                    .cell-mae { background-color: #fff1f2 !important; color: #be123c !important; }
-                    .cell-pai { background-color: #eff6ff !important; color: #1d4ed8 !important; }
-                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-size: 0.75rem; margin-top: 5px; }
-                    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                </style>
-            </head>
-            <body>`;
-
-            for (let m = 0; m < 12; m++) {
-                let mesNome = nomesMeses[m];
-                let regra = regrasPorAnoMes[`${anoAtual}-${m}`] || `<b>${mesNome} ${anoAtual}:</b> Guarda Compartilhada.`;
-                
-                let tableHtml = '<table><thead><tr>';
-                ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => { tableHtml += `<th>${d}</th>`; });
-                tableHtml += '</tr></thead><tbody><tr>';
-
-                const primeiroDia = new Date(anoAtual, m, 1).getDay();
-                const totalDias = new Date(anoAtual, m + 1, 0).getDate();
-
-                let colCount = 0;
-                for (let i = 0; i < primeiroDia; i++) {
-                    tableHtml += `<td></td>`;
-                    colCount++;
-                }
-
-                for (let dia = 1; dia <= totalDias; dia++) {
-                    if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
-                    const info = regraPadrao(dia, m, anoAtual);
-                    let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
-                    tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
-                    colCount++;
-                }
-                while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
-                tableHtml += '</tr></tbody></table>';
-
-                htmlAnual += `
-                    <div class="mes-pagina-impressao">
-                        <h2>Guarda Compartilhada Sophia - ${mesNome} ${anoAtual}</h2>
-                        ${tableHtml}
-                        <div class="rule-box">${regra}</div>
-                    </div>
-                `;
-            }
-
-            htmlAnual += `<script>window.onload = function() { window.print(); }<\/script></body></html>`;
-
-            const blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
         }
 
         renderizar();
