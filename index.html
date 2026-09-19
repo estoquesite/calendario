@@ -99,7 +99,7 @@
                     <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
                     <span id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
                 </div>
-                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
                     <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Ano Pai</span>
                     <span id="countPaiAno" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
                 </div>
@@ -172,13 +172,12 @@
 
     <!-- BARRA INFERIOR COM BOTÕES DELICADOS, TEMA, SAÍDA, VERSÃO E MICROFONE -->
     <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
-        <div class="flex items-center gap-1 flex-wrap">
-            <button onclick="alternarDarkMode()" class="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Modo Escuro/Claro">🌙/☀️</button>
-            <button onclick="sincronizarCelular()" class="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 text-[10px] font-bold transition" title="Sincronizar Celular">📱 Sync</button>
-            <button onclick="compartilharNativo()" class="px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-[10px] font-bold transition" title="Partilhar">📤 Partilhar</button>
-            <button onclick="copiarParaPlanilha()" class="px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 text-[10px] font-bold transition" title="Copiar p/ Planilha Google Sheets">📊 Sheets</button>
-            <button onclick="bloquearNovamente()" class="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Sair">🔒</button>
-            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-0.5">v1.7</span>
+        <div class="flex items-center gap-1.5 flex-wrap">
+            <button onclick="alternarDarkMode()" class="px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Modo Escuro/Claro">🌙/☀️</button>
+            <button onclick="sincronizarCelular()" class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 text-[10px] font-bold transition" title="Sincronizar Celular">📱 Sync</button>
+            <button onclick="compartilharNativo()" class="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-[10px] font-bold transition" title="Partilhar">📤 Partilhar</button>
+            <button onclick="bloquearNovamente()" class="px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Sair">🔒</button>
+            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-1">v1.8</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -452,7 +451,6 @@
                 }
             }
 
-            // Fallback para download direto caso o dispositivo não suporte partilha de ficheiro
             let url = URL.createObjectURL(blob);
             let a = document.createElement('a');
             a.href = url;
@@ -475,27 +473,6 @@
             } else {
                 window.location.href = `mailto:marianna_adm@yahoo.com.br?subject=Guarda Sophia&body=${encodeURIComponent(textoResumo)}`;
             }
-        }
-
-        // COPIAR DADOS PARA COLAR DIRETAMENTE NO GOOGLE SHEETS
-        function copiarParaPlanilha() {
-            let textoTabela = "Ano\tMes\tDia\tResponsavel\tMotivo\n";
-            for(let y of [2026, 2027]) {
-                for(let m = 0; m < 12; m++) {
-                    let totalDias = new Date(y, m + 1, 0).getDate();
-                    for(let d = 1; d <= totalDias; d++) {
-                        let info = regraPadrao(d, m, y);
-                        let respNome = info.resp === 'mae' ? 'Mae' : 'Pai';
-                        textoTabela += `${y}\t${nomesMeses[m]}\t${d}\t${respNome}\t${info.desc}\n`;
-                    }
-                }
-            }
-            navigator.clipboard.writeText(textoTabela).then(() => {
-                alert("Dados copiados com sucesso! A abrir o Google Sheets... Basta clicar na primeira célula e colar (Colar / Ctrl+V).");
-                window.open('https://sheets.new', '_blank');
-            }).catch(err => {
-                alert("Erro ao copiar. Certifique-se de permitir o acesso à área de transferência.");
-            });
         }
 
         function editarDia(ano, mes, dia) {
@@ -731,7 +708,7 @@
             for (let m = 0; m < 12; m++) {
                 const diasDoMes = new Date(anoAtual, m + 1, 0).getDate();
                 for (let d = 1; d <= diasDoMes; d++) {
-                    let inf = regraPadrao(d, m, anoAtual);
+                    const inf = regraPadrao(d, m, anoAtual);
                     if (inf.resp === 'mae') totalMaeAno++;
                     else if (inf.resp === 'pai') totalPaiAno++;
                 }
