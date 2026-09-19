@@ -14,12 +14,9 @@
     <style>
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
-            /* Oculta tudo exceto o calendário na hora de imprimir */
-            .print-hidden, #tela-login, .fixed, .bg-white:not(#bloco-calendario-print), button, input, select {
-                display: none !important;
-            }
+            .print-hidden, #tela-login, .fixed, button, input, select { display: none !important; }
             #conteudo-site { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-            #bloco-calendario-print { border: none !important; box-shadow: none !important; padding: 0 !important; }
+            .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
         /* Traço escuro e grosso para dias passados */
@@ -63,40 +60,34 @@
     <!-- CONTEÚDO PRINCIPAL DA SOPHIA -->
     <div id="conteudo-site" class="hidden max-w-lg mx-auto p-2.5 space-y-2.5">
         
-        <!-- PAINEL SUPERIOR ORGANIZADO (OCULTO NA IMPRESSÃO) -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
+        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS (LINHA ÚNICA) -->
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
             
-            <!-- ESTATÍSTICAS DO MÊS (MÃE E PAI LADO A LADO) -->
-            <div>
-                <p class="text-[9px] font-bold text-gray-400 uppercase mb-1">📅 Estatísticas do Mês</p>
-                <div class="grid grid-cols-2 gap-1.5">
-                    <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 p-1.5 rounded-xl text-center">
-                        <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</p>
-                        <p id="countMae" class="text-sm font-bold text-rose-700 dark:text-rose-300">0 dias</p>
-                    </div>
-                    <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 p-1.5 rounded-xl text-center">
-                        <p class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👨 Mês Pai</p>
-                        <p id="countPai" class="text-sm font-bold text-sky-700 dark:text-sky-300">0 dias</p>
-                    </div>
+            <!-- ESTATÍSTICAS DO MÊS (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
+                    <span id="countMae" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
+                </div>
+                <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👨 Mês Pai</span>
+                    <span id="countPai" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
                 </div>
             </div>
 
-            <!-- ESTATÍSTICAS DO ANO (MÃE E PAI LADO A LADO) -->
-            <div>
-                <p class="text-[9px] font-bold text-gray-400 uppercase mb-1">📊 Acumulado do Ano</p>
-                <div class="grid grid-cols-2 gap-1.5">
-                    <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-1.5 rounded-xl text-center">
-                        <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Total Ano Mãe</p>
-                        <p id="countMaeAno" class="text-sm font-bold text-rose-700 dark:text-rose-300">0 dias</p>
-                    </div>
-                    <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 p-1.5 rounded-xl text-center">
-                        <p class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👨 Total Ano Pai</p>
-                        <p id="countPaiAno" class="text-sm font-bold text-sky-700 dark:text-sky-300">0 dias</p>
-                    </div>
+            <!-- ESTATÍSTICAS DO ANO (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
+                    <span id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
+                </div>
+                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👨 Ano Pai</span>
+                    <span id="countPaiAno" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
                 </div>
             </div>
 
-            <!-- SELEÇÃO RÁPIDA DE PERÍODO (COM PAI/MÃE PRIMEIRO) -->
+            <!-- SELEÇÃO RÁPIDA DE PERÍODO (INÍCIO E FIM) -->
             <div class="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-xl border border-gray-100 dark:border-gray-700 space-y-1.5">
                 <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
                 <div class="grid grid-cols-12 gap-1 items-center">
@@ -133,10 +124,10 @@
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
-        <!-- BOTÃO DE IMPRESSÃO / PDF COLORIDO -->
+        <!-- BOTÃO DE IMPRESSÃO / PDF DO ANO TODO -->
         <div class="print-hidden text-center pb-4">
-            <button onclick="gerarAnoAtualPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5">
-                📄 Imprimir Calendário Colorido
+            <button onclick="gerarAnoCompletoPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5">
+                📄 Imprimir Calendário do Ano Todo Colorido
             </button>
         </div>
     </div>
@@ -382,6 +373,34 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
+        const regrasPorAnoMes = {
+            "2026-0": "<b>Janeiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Férias de Dezembro/Janeiro alternadas.",
+            "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-2": "<b>Março 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-3": "<b>Abril 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-4": "<b>Maio 2026:</b> Dia das Mães — semana com a Mãe.",
+            "2026-5": "<b>Junho 2026:</b> Aniversário da Sophia.",
+            "2026-6": "<b>Julho 2026:</b> Férias de Julho Alternadas.",
+            "2026-7": "<b>Agosto 2026:</b> Dia dos Pais — semana com o Pai.",
+            "2026-8": "<b>Setembro 2026:</b> Dias 3 a 7 com o Pai; dias 8 a 17 com a Mãe; dias 18 a 20 com o Pai; dias 21 a 30 com a Mãe.",
+            "2026-9": "<b>Outubro 2026:</b> Dia 1 com a Mãe; dias 2 a 4 com o Pai; dias 5 a 15 com a Mãe; dias 16 a 18 com o Pai.",
+            "2026-10": "<b>Novembro 2026:</b> Dias 1 e 2, dias 12 a 15 e dias 19 a 22 com o Pai.",
+            "2026-11": "<b>Dezembro 2026:</b> Férias de Dezembro Alternadas. Natal e Ano Novo.",
+            
+            "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe; dias 16 a 31 com o Pai (Férias).",
+            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval); dias 12 a 14 com a Mãe.",
+            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada.",
+            "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada.",
+            "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe.",
+            "2027-5": "<b>Junho 2027:</b> Aniversário da Sophia.",
+            "2027-6": "<b>Julho 2027:</b> Férias de Julho Alternadas.",
+            "2027-7": "<b>Agosto 2027:</b> Dia dos Pais — semana com o Pai.",
+            "2027-8": "<b>Setembro 2027:</b> Guarda Compartilhada.",
+            "2027-9": "<b>Outubro 2027:</b> Rotina de outubro.",
+            "2027-10": "<b>Novembro 2027:</b> Rotina de novembro.",
+            "2027-11": "<b>Dezembro 2027:</b> Férias de Dezembro Alternadas."
+        };
+
         const feriados = {
             "0-1": "Confraternização", "3-21": "Tiradentes", "4-1": "Trabalho",
             "8-7": "Independência", "9-12": "Aparecida", "10-2": "Finados",
@@ -392,7 +411,69 @@
             const chave = `${ano}-${mes}-${dia}`;
             if (overrides[chave]) return overrides[chave];
 
-            // Padrão de alternância (2º e 4º FDS com o Pai)
+            if (ano === 2026) {
+                if (mes === 8) {
+                    if ((dia >= 3 && dia <= 7) || (dia >= 18 && dia <= 20)) return { resp: 'pai', desc: 'Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 9) {
+                    if ((dia >= 2 && dia <= 4) || (dia >= 16 && dia <= 18) || (dia >= 30 && dia <= 31)) return { resp: 'pai', desc: 'Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 10) {
+                    if ((dia >= 1 && dia <= 2) || (dia >= 12 && dia <= 15) || (dia >= 19 && dia <= 22)) return { resp: 'pai', desc: 'Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 11) {
+                    if ((dia >= 4 && dia <= 6) || (dia >= 11 && dia <= 23)) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 29 && dia <= 31) return { resp: 'mae', desc: 'Viagem Mãe' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+            }
+
+            if (ano === 2027) {
+                if (mes === 0) {
+                    if (dia >= 1 && dia <= 14) return { resp: 'mae', desc: 'Viagem Mãe' };
+                    if (dia === 15) return { resp: 'mae', desc: 'Mãe' };
+                    if (dia >= 16 && dia <= 31) return { resp: 'pai', desc: 'Férias Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 1) {
+                    if (dia >= 1 && dia <= 9) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 12 && dia <= 14) return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 4 && dia >= 7 && dia <= 9) return { resp: 'mae', desc: 'Dia Mães' };
+                if (mes === 5 && dia >= 4 && dia <= 6) return { resp: 'mae', desc: 'Sophia' };
+                if (mes === 6) {
+                    if (dia >= 9 && dia <= 23) return { resp: 'pai', desc: 'Férias Pai' };
+                    if (dia >= 24 && dia <= 31) return { resp: 'mae', desc: 'Férias Mãe' };
+                }
+                if (mes === 7) {
+                    if (dia >= 6 && dia <= 8) return { resp: 'pai', desc: 'Dia Pais' };
+                    if (dia >= 13 && dia <= 15) return { resp: 'mae', desc: 'Mãe' };
+                    if (dia >= 20 && dia <= 22) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 27 && dia <= 29) return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 8) {
+                    if (dia >= 3 && dia <= 5) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 10 && dia <= 12) return { resp: 'mae', desc: 'Mãe' };
+                    if (dia >= 17 && dia <= 19) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 24 && dia <= 26) return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 9) {
+                    if ((dia >= 1 && dia <= 3) || (dia >= 15 && dia <= 17) || (dia >= 29 && dia <= 31)) return { resp: 'pai', desc: 'Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 10) {
+                    if (dia >= 12 && dia <= 14) return { resp: 'mae', desc: 'Mãe' };
+                    if (dia >= 19 && dia <= 28) return { resp: 'pai', desc: 'Aniversário Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 11) {
+                    return dia <= 15 ? { resp: 'mae', desc: 'Férias Mãe' } : { resp: 'pai', desc: 'Fim de Ano' };
+                }
+            }
+
             const data = new Date(ano, mes, dia);
             const ds = data.getDay();
             let sexta = dia;
@@ -411,6 +492,9 @@
 
             document.getElementById('tituloCalendarioMes').innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
             
+            const chaveRegra = `${anoAtual}-${mesAtual}`;
+            document.getElementById('textoRegraMes').innerHTML = regrasPorAnoMes[chaveRegra] || `<b>${nomesMeses[mesAtual]} ${anoAtual}:</b> Guarda Compartilhada.`;
+
             const grid = document.getElementById('calendarioGrid');
             grid.innerHTML = '';
             ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => {
@@ -447,7 +531,6 @@
 
                 const cell = document.createElement('div');
                 
-                // CORES PASTEL SUAVES
                 let bgClass = info.resp === 'mae' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50' : 'bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-900/50';
                 let textClass = info.resp === 'mae' ? 'text-rose-700 dark:text-rose-300' : 'text-sky-700 dark:text-sky-300';
                 let badgeClass = info.resp === 'mae' ? 'bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-200' : 'bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-200';
@@ -495,8 +578,70 @@
             renderizar();
         }
 
-        function gerarAnoAtualPDF() {
-            window.print();
+        function gerarAnoCompletoPDF() {
+            let htmlAnual = `<!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <title>Guarda Compartilhada Sophia - Ano ${anoAtual}</title>
+                <style>
+                    body { font-family: sans-serif; padding: 20px; color: #0f172a; margin: 0; }
+                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
+                    h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
+                    table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
+                    th { background: #f8fafc; font-size: 0.7rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; }
+                    td { width: 14.28%; height: 55px; vertical-align: top; border: 1px solid #cbd5e1; padding: 4px; box-sizing: border-box; }
+                    .day-num { font-size: 0.8rem; font-weight: bold; }
+                    .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; }
+                    .cell-mae { background-color: #fff1f2 !important; color: #be123c !important; }
+                    .cell-pai { background-color: #eff6ff !important; color: #1d4ed8 !important; }
+                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-size: 0.75rem; margin-top: 5px; }
+                    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                </style>
+            </head>
+            <body>`;
+
+            for (let m = 0; m < 12; m++) {
+                let mesNome = nomesMeses[m];
+                let regra = regrasPorAnoMes[`${anoAtual}-${m}`] || `<b>${mesNome} ${anoAtual}:</b> Guarda Compartilhada.`;
+                
+                let tableHtml = '<table><thead><tr>';
+                ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => { tableHtml += `<th>${d}</th>`; });
+                tableHtml += '</tr></thead><tbody><tr>';
+
+                const primeiroDia = new Date(anoAtual, m, 1).getDay();
+                const totalDias = new Date(anoAtual, m + 1, 0).getDate();
+
+                let colCount = 0;
+                for (let i = 0; i < primeiroDia; i++) {
+                    tableHtml += `<td></td>`;
+                    colCount++;
+                }
+
+                for (let dia = 1; dia <= totalDias; dia++) {
+                    if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
+                    const info = regraPadrao(dia, m, anoAtual);
+                    let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
+                    tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
+                    colCount++;
+                }
+                while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
+                tableHtml += '</tr></tbody></table>';
+
+                htmlAnual += `
+                    <div class="mes-pagina-impressao">
+                        <h2>Guarda Compartilhada Sophia - ${mesNome} ${anoAtual}</h2>
+                        ${tableHtml}
+                        <div class="rule-box">${regra}</div>
+                    </div>
+                `;
+            }
+
+            htmlAnual += `<script>window.onload = function() { window.print(); }<\/script></body></html>`;
+
+            const blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
         }
 
         renderizar();
