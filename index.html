@@ -176,9 +176,9 @@
             <button onclick="alternarDarkMode()" class="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Modo Escuro/Claro">🌙/☀️</button>
             <button onclick="sincronizarCelular()" class="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 text-[10px] font-bold transition" title="Sincronizar Celular">📱 Sync</button>
             <button onclick="compartilharNativo()" class="px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-[10px] font-bold transition" title="Partilhar">📤 Partilhar</button>
-            <button onclick="abrirGoogleSheets()" class="px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 text-[10px] font-bold transition" title="Abrir Google Sheets">📊 Sheets</button>
+            <button onclick="copiarParaPlanilha()" class="px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 text-[10px] font-bold transition" title="Copiar p/ Planilha Google Sheets">📊 Sheets</button>
             <button onclick="bloquearNovamente()" class="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Sair">🔒</button>
-            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-0.5">v1.5</span>
+            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-0.5">v1.7</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -407,8 +407,8 @@
             recognition.start();
         }
 
-        // SINCRONIZAR CALENDÁRIO COM O TELEMÓVEL (.ICS AUTOMÁTICO)
-        function sincronizarCelular() {
+        // SINCRONIZAR CALENDÁRIO COM O TELEMÓVEL (.ICS VIA PARTILHA NATIVA)
+        async function sincronizarCelular() {
             let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Guarda Sophia//PT\n";
             
             let anosParaSync = [2026, 2027];
@@ -437,21 +437,35 @@
             icsContent += "END:VCALENDAR";
 
             let blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            let file = new File([blob], "Guarda_Sophia.ics", { type: 'text/calendar' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({
+                        files: [file],
+                        title: 'Guarda Sophia',
+                        text: 'Calendário completo da Guarda da Sophia (2026-2027)'
+                    });
+                    return;
+                } catch (err) {
+                    console.log("Partilha cancelada", err);
+                }
+            }
+
+            // Fallback para download direto caso o dispositivo não suporte partilha de ficheiro
             let url = URL.createObjectURL(blob);
-            
-            // Tentar abrir diretamente ou descarregar para importação imediata
             let a = document.createElement('a');
             a.href = url;
             a.download = 'Guarda_Sophia.ics';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            alert("Ficheiro de calendário gerado! No telemóvel, basta tocar nele para adicionar automaticamente ao seu calendário (Apple Calendar ou Google Calendar).");
+            alert("Calendário gerado! Toque no ficheiro para o adicionar ao seu calendário.");
         }
 
-        // PARTILHAR NATIVO (WHATSAPP, E-MAIL, ETC.)
+        // PARTILHAR NATIVO
         function compartilharNativo() {
-            let textoResumo = "Calendário da Guarda Compartilhada - Sophia (2026-2027). Aceda ao site oficial para consultar o planeamento completo.";
+            let textoResumo = "Calendário da Guarda Compartilhada - Sophia (2026-2027).";
             if (navigator.share) {
                 navigator.share({
                     title: 'Guarda Sophia',
@@ -463,10 +477,25 @@
             }
         }
 
-        // ABRIR GOOGLE SHEETS DIRETO NA WEB
-        function abrirGoogleSheets() {
-            window.open('https://sheets.new', '_blank');
-            alert("A abrir uma nova planilha limpa no Google Sheets! (Nota: Por segurança do navegador, a importação direta privada de ficheiros requer colar os dados exportados caso deseje guardá-los lá).");
+        // COPIAR DADOS PARA COLAR DIRETAMENTE NO GOOGLE SHEETS
+        function copiarParaPlanilha() {
+            let textoTabela = "Ano\tMes\tDia\tResponsavel\tMotivo\n";
+            for(let y of [2026, 2027]) {
+                for(let m = 0; m < 12; m++) {
+                    let totalDias = new Date(y, m + 1, 0).getDate();
+                    for(let d = 1; d <= totalDias; d++) {
+                        let info = regraPadrao(d, m, y);
+                        let respNome = info.resp === 'mae' ? 'Mae' : 'Pai';
+                        textoTabela += `${y}\t${nomesMeses[m]}\t${d}\t${respNome}\t${info.desc}\n`;
+                    }
+                }
+            }
+            navigator.clipboard.writeText(textoTabela).then(() => {
+                alert("Dados copiados com sucesso! A abrir o Google Sheets... Basta clicar na primeira célula e colar (Colar / Ctrl+V).");
+                window.open('https://sheets.new', '_blank');
+            }).catch(err => {
+                alert("Erro ao copiar. Certifique-se de permitir o acesso à área de transferência.");
+            });
         }
 
         function editarDia(ano, mes, dia) {
@@ -702,7 +731,7 @@
             for (let m = 0; m < 12; m++) {
                 const diasDoMes = new Date(anoAtual, m + 1, 0).getDate();
                 for (let d = 1; d <= diasDoMes; d++) {
-                    const inf = regraPadrao(d, m, anoAtual);
+                    let inf = regraPadrao(d, m, anoAtual);
                     if (inf.resp === 'mae') totalMaeAno++;
                     else if (inf.resp === 'pai') totalPaiAno++;
                 }
