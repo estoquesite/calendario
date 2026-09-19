@@ -44,25 +44,13 @@
     <!-- CONTEÚDO PRINCIPAL DA SOPHIA -->
     <div id="conteudo-site" class="hidden max-w-lg mx-auto p-2.5 space-y-2.5">
         
-        <!-- CAIXA BOX UNIFICADA (ESTILO BARRA DE PESQUISA) -->
-        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
+        <!-- PAINEL DE CONTROLO COMPACTO (ESTILO VIAGEM) -->
+        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
             
-            <!-- CABEÇALHO COM TÍTULO E NAVEGAÇÃO RÁPIDA -->
-            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
-                <div class="flex items-center gap-1.5">
-                    <span class="text-base">📅</span>
-                    <h2 id="rotuloMes" onclick="cliqueSecreto()" class="text-sm font-bold text-gray-900 dark:text-white cursor-pointer select-none">Janeiro 2026</h2>
-                </div>
-                <div class="flex items-center gap-1">
-                    <button onclick="mudarMes(-1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
-                    <button onclick="mudarMes(1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
-                </div>
-            </div>
-
-            <!-- SELETORES DE MÊS E ANO (ESTILO PUXAR/ESCOLHER) -->
+            <!-- SELETOR DE MÊS E ANO (SEM SETINHAS, PUXANDO DIRETO) -->
             <div class="grid grid-cols-2 gap-1.5 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-xl border border-gray-100 dark:border-gray-700">
                 <div>
-                    <label class="block text-[9px] font-semibold text-gray-400 uppercase mb-0.5">Mês</label>
+                    <label class="block text-[9px] font-semibold text-gray-400 uppercase mb-0.5">📅 Mês</label>
                     <select id="filtro-mes" onchange="mudarMesSelect()" class="w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-2 py-1 rounded-lg text-xs font-semibold border border-gray-200 dark:border-gray-700 focus:outline-none">
                         <option value="0">Janeiro</option>
                         <option value="1">Fevereiro</option>
@@ -79,7 +67,7 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[9px] font-semibold text-gray-400 uppercase mb-0.5">Ano</label>
+                    <label class="block text-[9px] font-semibold text-gray-400 uppercase mb-0.5">📅 Ano</label>
                     <select id="filtro-ano" onchange="mudarAnoSelect()" class="w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-2 py-1 rounded-lg text-xs font-semibold border border-gray-200 dark:border-gray-700 focus:outline-none">
                         <option value="2026">2026</option>
                         <option value="2027">2027</option>
@@ -87,39 +75,58 @@
                 </div>
             </div>
 
-            <!-- ESTATÍSTICAS DO MÊS -->
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 p-2 rounded-xl text-center">
-                    <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Mês Mãe</p>
-                    <p id="countMae" class="text-sm font-bold text-rose-700 dark:text-rose-300">0 dias</p>
+            <!-- ESTATÍSTICAS DO MÊS E ANO (CAIXINHAS BEM MENORZINHAS) -->
+            <div class="grid grid-cols-4 gap-1">
+                <div class="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 p-1 rounded-lg text-center">
+                    <p class="text-[8px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Mês Mãe</p>
+                    <p id="countMae" class="text-xs font-bold text-rose-700 dark:text-rose-300">0</p>
                 </div>
-                <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-2 rounded-xl text-center">
-                    <p class="text-[9px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Mês Pai</p>
-                    <p id="countPai" class="text-sm font-bold text-blue-700 dark:text-blue-300">0 dias</p>
+                <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-1 rounded-lg text-center">
+                    <p class="text-[8px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Mês Pai</p>
+                    <p id="countPai" class="text-xs font-bold text-blue-700 dark:text-blue-300">0</p>
+                </div>
+                <div class="bg-rose-50/70 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-1 rounded-lg text-center">
+                    <p class="text-[8px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Ano Mãe</p>
+                    <p id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0</p>
+                </div>
+                <div class="bg-blue-50/70 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-1 rounded-lg text-center">
+                    <p class="text-[8px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Ano Pai</p>
+                    <p id="countPaiAno" class="text-xs font-bold text-blue-700 dark:text-blue-300">0</p>
                 </div>
             </div>
 
-            <!-- ESTATÍSTICAS DO ANO -->
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/70 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-1.5 rounded-xl text-center">
-                    <p class="text-[8px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Total Ano Mãe</p>
-                    <p id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</p>
+            <!-- SELEÇÃO RÁPIDA POR PERÍODO (INÍCIO E FIM - ESTILO VIAGEM) -->
+            <div class="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-xl border border-gray-100 dark:border-gray-700 space-y-1.5">
+                <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✈️ Selecionar Período (Início / Fim)</p>
+                <div class="grid grid-cols-12 gap-1 items-center">
+                    <div class="col-span-4">
+                        <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                    </div>
+                    <div class="col-span-4">
+                        <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                    </div>
+                    <div class="col-span-4">
+                        <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                            <option value="mae">Mãe</option>
+                            <option value="pai">Pai</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="bg-blue-50/70 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-1.5 rounded-xl text-center">
-                    <p class="text-[8px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Total Ano Pai</p>
-                    <p id="countPaiAno" class="text-xs font-bold text-blue-700 dark:text-blue-300">0 dias</p>
+                <div class="flex gap-1">
+                    <input type="text" id="descPeriodo" placeholder="Motivo (ex: Dia da Mãe, Férias)" class="flex-1 bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Aplicar</button>
                 </div>
             </div>
 
             <!-- CAIXAS BOX ESPECIAIS: DIA DO PAI E DA MÃE -->
             <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 p-2 rounded-xl">
+                <div class="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 p-1.5 rounded-xl">
                     <h4 class="text-[9px] font-bold text-rose-700 dark:text-rose-300 uppercase mb-0.5">🌸 Dia da Mãe</h4>
-                    <input type="text" id="inputDiaMae" placeholder="Ex: 10/05 com a Mãe" onchange="salvarEspecial('mae')" class="w-full px-2 py-1 bg-white dark:bg-gray-900 border border-rose-200 dark:border-rose-800 rounded-lg text-[11px] text-rose-800 dark:text-rose-200 focus:outline-none">
+                    <input type="text" id="inputDiaMae" placeholder="Ex: 10/05 com a Mãe" onchange="salvarEspecial('mae')" class="w-full px-2 py-0.5 bg-white dark:bg-gray-900 border border-rose-200 dark:border-rose-800 rounded-lg text-[11px] text-rose-800 dark:text-rose-200 focus:outline-none">
                 </div>
-                <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 p-2 rounded-xl">
+                <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 p-1.5 rounded-xl">
                     <h4 class="text-[9px] font-bold text-blue-700 dark:text-blue-300 uppercase mb-0.5">👔 Dia do Pai</h4>
-                    <input type="text" id="inputDiaPai" placeholder="Ex: 09/08 com o Pai" onchange="salvarEspecial('pai')" class="w-full px-2 py-1 bg-white dark:bg-gray-900 border border-blue-200 dark:border-blue-800 rounded-lg text-[11px] text-blue-800 dark:text-blue-200 focus:outline-none">
+                    <input type="text" id="inputDiaPai" placeholder="Ex: 09/08 com o Pai" onchange="salvarEspecial('pai')" class="w-full px-2 py-0.5 bg-white dark:bg-gray-900 border border-blue-200 dark:border-blue-800 rounded-lg text-[11px] text-blue-800 dark:text-blue-200 focus:outline-none">
                 </div>
             </div>
 
@@ -134,10 +141,10 @@
             <div id="textoRegraMes" class="p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
-        <!-- BOTÃO DE IMPRESSÃO / PDF -->
+        <!-- BOTÃO DE IMPRESSÃO / PDF COLORIDO -->
         <div class="text-center pb-4">
             <button onclick="gerarAnoAtualPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5">
-                📄 Imprimir Período (Set/2026 a Dez/2027)
+                📄 Imprimir Período (Colorido)
             </button>
         </div>
     </div>
@@ -147,7 +154,7 @@
         <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700"></div>
     </div>
 
-    <!-- BARRA INFERIOR COM MUDANÇA DE LUZ DE FUNDO (TEMA) E MICROFONE -->
+    <!-- BARRA INFERIOR COM TEMA E MICROFONE INTELIGENTE -->
     <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-2">
             <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Mudar Luz de Fundo">
@@ -169,10 +176,7 @@
         let anoAtual = 2026;
         let mesAtual = 8;
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        let modoAdmin = false;
-
-        let cliques = 0;
-        let timerCliques;
+        let modoAdmin = true; // Habilitado para facilitar a seleção e edição direta
 
         let overrides = {};
         try {
@@ -282,78 +286,54 @@
         }
 
         const regrasPorAnoMes = {
-            "2026-0": "<b>Janeiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Férias de Dezembro/Janeiro alternadas.",
-            "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-2": "<b>Março 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-3": "<b>Abril 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-4": "<b>Maio 2026:</b> Dia das Mães — semana com a Mãe.",
-            "2026-5": "<b>Junho 2026:</b> Aniversário da Sophia.",
-            "2026-6": "<b>Julho 2026:</b> Férias de Julho Alternadas.",
-            "2026-7": "<b>Agosto 2026:</b> Dia dos Pais — semana com o Pai.",
-            "2026-8": "<b>Setembro 2026:</b> Dias 3 a 7 com o Pai; dias 8 a 17 com a Mãe; dias 18 a 20 com o Pai; dias 21 a 30 com a Mãe.",
-            "2026-9": "<b>Outubro 2026:</b> Dia 1 com a Mãe; dias 2 a 4 com o Pai; dias 5 a 15 com a Mãe; dias 16 a 18 com o Pai.",
-            "2026-10": "<b>Novembro 2026:</b> Dias 1 e 2, dias 12 a 15 e dias 19 a 22 com o Pai.",
-            "2026-11": "<b>Dezembro 2026:</b> Férias de Dezembro Alternadas. Natal e Ano Novo.",
-            
-            "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe; dias 16 a 31 com o Pai (Férias).",
-            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval); dias 12 a 14 com a Mãe.",
-            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada.",
-            "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada.",
-            "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe.",
-            "2027-5": "<b>Junho 2027:</b> Aniversário da Sophia.",
-            "2027-6": "<b>Julho 2027:</b> Férias de Julho Alternadas.",
-            "2027-7": "<b>Agosto 2027:</b> Dia dos Pais — semana com o Pai.",
-            "2027-8": "<b>Setembro 2027:</b> Guarda Compartilhada.",
-            "2027-9": "<b>Outubro 2027:</b> Rotina de outubro.",
-            "2027-10": "<b>Novembro 2027:</b> Rotina de novembro.",
-            "2027-11": "<b>Dezembro 2027:</b> Férias de Dezembro Alternadas."
+            "2026-8": "<b>Setembro 2026:</b> Período personalizado de guarda.",
+            "2026-9": "<b>Outubro 2026:</b> Período personalizado de guarda.",
+            "2026-10": "<b>Novembro 2026:</b> Período personalizado de guarda.",
+            "2026-11": "<b>Dezembro 2026:</b> Período personalizado de guarda."
         };
-
-        function cliqueSecreto() {
-            if (modoAdmin) return;
-            cliques++;
-            clearTimeout(timerCliques);
-            if (cliques >= 5) {
-                cliques = 0;
-                abrirModalSenhaAdmin();
-            } else {
-                timerCliques = setTimeout(() => { cliques = 0; }, 1500);
-            }
-        }
-
-        function abrirModalSenhaAdmin() {
-            const modal = document.getElementById('customModal');
-            const box = document.getElementById('modalBoxContent');
-            box.innerHTML = `
-                <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-2">🔑 Senha de Administrador</h3>
-                <input type="password" id="inputSenhaAdmin" placeholder="Senha..." class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-2 dark:text-white">
-                <div class="flex gap-2">
-                    <button onclick="verificarSenhaAdmin()" class="flex-1 bg-green-600 text-white py-2 rounded-xl text-xs font-bold">Entrar</button>
-                    <button onclick="fecharModal()" class="flex-1 bg-red-600 text-white py-2 rounded-xl text-xs font-bold">Cancelar</button>
-                </div>
-            `;
-            modal.classList.remove('hidden');
-        }
-
-        function verificarSenhaAdmin() {
-            const senha = document.getElementById('inputSenhaAdmin').value;
-            if (senha === "1510") {
-                modoAdmin = true;
-                fecharModal();
-                renderizar();
-            } else {
-                alert("Senha incorreta!");
-            }
-        }
 
         function salvarEspecial(tipo) {
             const val = document.getElementById(tipo === 'mae' ? 'inputDiaMae' : 'inputDiaPai').value;
             especiais[`${anoAtual}_${tipo}`] = val;
-            try {
-                localStorage.setItem('sophia_especiais_pais', JSON.stringify(especiais));
-            } catch(e) {}
+            try { localStorage.setItem('sophia_especiais_pais', JSON.stringify(especiais)); } catch(e) {}
         }
 
+        // APLICAR PERÍODO (INÍCIO ATÉ FIM - ESTILO VIAGEM)
+        function aplicarPeriodo() {
+            const inicioStr = document.getElementById('dataInicio').value;
+            const fimStr = document.getElementById('dataFim').value;
+            const resp = document.getElementById('respPeriodo').value;
+            const desc = document.getElementById('descPeriodo').value || (resp === 'mae' ? 'Mãe' : 'Pai');
+
+            if (!inicioStr || !fimStr) {
+                alert("Por favor, selecione a data de Início e Fim.");
+                return;
+            }
+
+            let dInicio = new Date(inicioStr + 'T00:00:00');
+            let dFim = new Date(fimStr + 'T00:00:00');
+
+            if (dInicio > dFim) {
+                alert("A data de início não pode ser posterior à data de fim.");
+                return;
+            }
+
+            let atual = new Date(dInicio);
+            while (atual <= dFim) {
+                let y = atual.getFullYear();
+                let m = atual.getMonth();
+                let d = atual.getDate();
+                let chave = `${y}-${m}-${d}`;
+                overrides[chave] = { resp: resp, desc: desc };
+                atual.setDate(atual.getDate() + 1);
+            }
+
+            try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+            alert("Período aplicado com sucesso!");
+            renderizar();
+        }
+
+        // MICROFONE INTELIGENTE
         function ouvirVoz() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
@@ -367,12 +347,16 @@
             recognition.onstart = () => { btnFloat.classList.add('animate-pulse', 'bg-amber-500'); };
             recognition.onresult = (event) => {
                 const texto = event.results[0][0].transcript.toLowerCase();
-                if (texto.includes('próximo') || texto.includes('proximo')) {
-                    mudarMes(1);
-                } else if (texto.includes('anterior')) {
-                    mudarMes(-1);
+                if (texto.includes('mãe') || texto.includes('mae')) {
+                    document.getElementById('respPeriodo').value = 'mae';
+                    document.getElementById('descPeriodo').value = 'Dia da Mãe';
+                    alert("Definido para a Mãe via voz! Agora escolha as datas em cima e clique Aplicar.");
+                } else if (texto.includes('pai')) {
+                    document.getElementById('respPeriodo').value = 'pai';
+                    document.getElementById('descPeriodo').value = 'Dia do Pai';
+                    alert("Definido para o Pai via voz! Agora escolha as datas em cima e clique Aplicar.");
                 } else {
-                    alert(`Comando de voz recebido: "${texto}"`);
+                    alert(`Comando de voz: "${texto}"`);
                 }
             };
             recognition.onerror = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
@@ -381,7 +365,6 @@
         }
 
         function editarDia(ano, mes, dia) {
-            if (!modoAdmin) return;
             const modal = document.getElementById('customModal');
             const box = document.getElementById('modalBoxContent');
             
@@ -391,7 +374,7 @@
                     <option value="mae">Mãe</option>
                     <option value="pai">Pai</option>
                 </select>
-                <input type="text" id="inputDesc" placeholder="Descrição (ex: Férias, Viagem)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-3 dark:text-white">
+                <input type="text" id="inputDesc" placeholder="Descrição (ex: Férias, Dia da Mãe)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-3 dark:text-white">
                 <div class="flex gap-2">
                     <button onclick="salvarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-green-600 text-white py-2 rounded-xl text-xs font-bold">Salvar</button>
                     <button onclick="apagarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-red-600 text-white py-2 rounded-xl text-xs font-bold">Apagar</button>
@@ -435,69 +418,7 @@
             const chave = `${ano}-${mes}-${dia}`;
             if (overrides[chave]) return overrides[chave];
 
-            if (ano === 2026) {
-                if (mes === 8) {
-                    if ((dia >= 3 && dia <= 7) || (dia >= 18 && dia <= 20)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 9) {
-                    if ((dia >= 2 && dia <= 4) || (dia >= 16 && dia <= 18) || (dia >= 30 && dia <= 31)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 10) {
-                    if ((dia >= 1 && dia <= 2) || (dia >= 12 && dia <= 15) || (dia >= 19 && dia <= 22)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 11) {
-                    if ((dia >= 4 && dia <= 6) || (dia >= 11 && dia <= 23)) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 29 && dia <= 31) return { resp: 'mae', desc: 'Viagem Mãe' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-            }
-
-            if (ano === 2027) {
-                if (mes === 0) {
-                    if (dia >= 1 && dia <= 14) return { resp: 'mae', desc: 'Viagem Mãe' };
-                    if (dia === 15) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 16 && dia <= 31) return { resp: 'pai', desc: 'Férias Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 1) {
-                    if (dia >= 1 && dia <= 9) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 12 && dia <= 14) return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 4 && dia >= 7 && dia <= 9) return { resp: 'mae', desc: 'Dia Mães' };
-                if (mes === 5 && dia >= 4 && dia <= 6) return { resp: 'mae', desc: 'Sophia' };
-                if (mes === 6) {
-                    if (dia >= 9 && dia <= 23) return { resp: 'pai', desc: 'Férias Pai' };
-                    if (dia >= 24 && dia <= 31) return { resp: 'mae', desc: 'Férias Mãe' };
-                }
-                if (mes === 7) {
-                    if (dia >= 6 && dia <= 8) return { resp: 'pai', desc: 'Dia Pais' };
-                    if (dia >= 13 && dia <= 15) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 20 && dia <= 22) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 27 && dia <= 29) return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 8) {
-                    if (dia >= 3 && dia <= 5) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 10 && dia <= 12) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 17 && dia <= 19) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 24 && dia <= 26) return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 9) {
-                    if ((dia >= 1 && dia <= 3) || (dia >= 15 && dia <= 17) || (dia >= 29 && dia <= 31)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 10) {
-                    if (dia >= 12 && dia <= 14) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 19 && dia <= 28) return { resp: 'pai', desc: 'Aniversário Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 11) {
-                    return dia <= 15 ? { resp: 'mae', desc: 'Férias Mãe' } : { resp: 'pai', desc: 'Fim de Ano' };
-                }
-            }
-
+            // Regra padrão de alternância se não houver override personalizado
             const data = new Date(ano, mes, dia);
             const ds = data.getDay();
             let sexta = dia;
@@ -566,11 +487,8 @@
 
                 if (isPassado) bgClass += ' opacity-60 grayscale-[30%]';
 
-                cell.className = `min-h-[50px] rounded-xl border p-1 flex flex-col justify-between relative transition ${bgClass} ${modoAdmin ? 'cursor-pointer hover:ring-2 ring-blue-500' : ''}`;
-                
-                if (modoAdmin) {
-                    cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
-                }
+                cell.className = `min-h-[50px] rounded-xl border p-1 flex flex-col justify-between relative transition cursor-pointer hover:ring-2 ring-blue-500 ${bgClass}`;
+                cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
                 
                 let badgesHtml = '';
                 if (feriadoNome) badgesHtml += `<span class="text-[8px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-1 rounded truncate text-center font-bold block mb-0.5">${feriadoNome}</span>`;
