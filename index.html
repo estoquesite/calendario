@@ -41,67 +41,102 @@
         </div>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL DO APLICATIVO -->
-    <div id="conteudo-site" class="hidden max-w-lg mx-auto p-3 space-y-3">
+    <!-- CONTEÚDO PRINCIPAL DA SOPHIA -->
+    <div id="conteudo-site" class="hidden max-w-lg mx-auto p-2.5 space-y-2.5">
         
-        <!-- CABEÇALHO E NAVEGAÇÃO DE MESES -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
-            <div class="flex justify-between items-center">
-                <button onclick="mudarMes(-1)" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
-                <h2 id="rotuloMes" onclick="cliqueSecreto()" class="text-base sm:text-lg font-bold text-gray-900 dark:text-white cursor-pointer select-none">Janeiro 2026</h2>
-                <button onclick="mudarMes(1)" class="px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
+        <!-- CAIXA BOX UNIFICADA (ESTILO BARRA DE PESQUISA) -->
+        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
+            
+            <!-- CABEÇALHO COM TÍTULO E NAVEGAÇÃO RÁPIDA -->
+            <div class="flex justify-between items-center border-b border-gray-100 dark:border-gray-700 pb-2">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-base">📅</span>
+                    <h2 id="rotuloMes" onclick="cliqueSecreto()" class="text-sm font-bold text-gray-900 dark:text-white cursor-pointer select-none">Janeiro 2026</h2>
+                </div>
+                <div class="flex items-center gap-1">
+                    <button onclick="mudarMes(-1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
+                    <button onclick="mudarMes(1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
+                </div>
+            </div>
+
+            <!-- SELETORES DE MÊS E ANO (ESTILO PUXAR/ESCOLHER) -->
+            <div class="grid grid-cols-2 gap-1.5 bg-gray-50 dark:bg-gray-900/50 p-2 rounded-xl border border-gray-100 dark:border-gray-700">
+                <div>
+                    <label class="block text-[9px] font-semibold text-gray-400 uppercase mb-0.5">Mês</label>
+                    <select id="filtro-mes" onchange="mudarMesSelect()" class="w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-2 py-1 rounded-lg text-xs font-semibold border border-gray-200 dark:border-gray-700 focus:outline-none">
+                        <option value="0">Janeiro</option>
+                        <option value="1">Fevereiro</option>
+                        <option value="2">Março</option>
+                        <option value="3">Abril</option>
+                        <option value="4">Maio</option>
+                        <option value="5">Junho</option>
+                        <option value="6">Julho</option>
+                        <option value="7">Agosto</option>
+                        <option value="8">Setembro</option>
+                        <option value="9">Outubro</option>
+                        <option value="10">Novembro</option>
+                        <option value="11">Dezembro</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-[9px] font-semibold text-gray-400 uppercase mb-0.5">Ano</label>
+                    <select id="filtro-ano" onchange="mudarAnoSelect()" class="w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-white px-2 py-1 rounded-lg text-xs font-semibold border border-gray-200 dark:border-gray-700 focus:outline-none">
+                        <option value="2026">2026</option>
+                        <option value="2027">2027</option>
+                    </select>
+                </div>
             </div>
 
             <!-- ESTATÍSTICAS DO MÊS -->
-            <div class="grid grid-cols-2 gap-2">
-                <div class="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 p-2.5 rounded-xl text-center">
-                    <p class="text-[10px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Mês Mãe</p>
-                    <p id="countMae" class="text-base font-bold text-rose-700 dark:text-rose-300">0 dias</p>
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/50 p-2 rounded-xl text-center">
+                    <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Mês Mãe</p>
+                    <p id="countMae" class="text-sm font-bold text-rose-700 dark:text-rose-300">0 dias</p>
                 </div>
-                <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-2.5 rounded-xl text-center">
-                    <p class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Mês Pai</p>
-                    <p id="countPai" class="text-base font-bold text-blue-700 dark:text-blue-300">0 dias</p>
+                <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 p-2 rounded-xl text-center">
+                    <p class="text-[9px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Mês Pai</p>
+                    <p id="countPai" class="text-sm font-bold text-blue-700 dark:text-blue-300">0 dias</p>
                 </div>
             </div>
 
             <!-- ESTATÍSTICAS DO ANO -->
-            <div class="grid grid-cols-2 gap-2">
-                <div class="bg-rose-50/70 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-2 rounded-xl text-center">
-                    <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Total Ano Mãe</p>
-                    <p id="countMaeAno" class="text-sm font-bold text-rose-700 dark:text-rose-300">0 dias</p>
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-rose-50/70 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-1.5 rounded-xl text-center">
+                    <p class="text-[8px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Total Ano Mãe</p>
+                    <p id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</p>
                 </div>
-                <div class="bg-blue-50/70 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-2 rounded-xl text-center">
-                    <p class="text-[9px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Total Ano Pai</p>
-                    <p id="countPaiAno" class="text-sm font-bold text-blue-700 dark:text-blue-300">0 dias</p>
+                <div class="bg-blue-50/70 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/30 p-1.5 rounded-xl text-center">
+                    <p class="text-[8px] font-semibold text-blue-600 dark:text-blue-400 uppercase">Total Ano Pai</p>
+                    <p id="countPaiAno" class="text-xs font-bold text-blue-700 dark:text-blue-300">0 dias</p>
                 </div>
             </div>
 
             <!-- CAIXAS BOX ESPECIAIS: DIA DO PAI E DA MÃE -->
-            <div class="grid grid-cols-2 gap-2 pt-1">
-                <div class="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 p-2.5 rounded-xl">
-                    <h4 class="text-[10px] font-bold text-rose-700 dark:text-rose-300 uppercase mb-1">🌸 Dia da Mãe</h4>
-                    <input type="text" id="inputDiaMae" placeholder="Ex: 10/05 com a Mãe" onchange="salvarEspecial('mae')" class="w-full px-2 py-1 bg-white dark:bg-gray-900 border border-rose-200 dark:border-rose-800 rounded-lg text-xs text-rose-800 dark:text-rose-200 focus:outline-none">
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 p-2 rounded-xl">
+                    <h4 class="text-[9px] font-bold text-rose-700 dark:text-rose-300 uppercase mb-0.5">🌸 Dia da Mãe</h4>
+                    <input type="text" id="inputDiaMae" placeholder="Ex: 10/05 com a Mãe" onchange="salvarEspecial('mae')" class="w-full px-2 py-1 bg-white dark:bg-gray-900 border border-rose-200 dark:border-rose-800 rounded-lg text-[11px] text-rose-800 dark:text-rose-200 focus:outline-none">
                 </div>
-                <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 p-2.5 rounded-xl">
-                    <h4 class="text-[10px] font-bold text-blue-700 dark:text-blue-300 uppercase mb-1">👔 Dia do Pai</h4>
-                    <input type="text" id="inputDiaPai" placeholder="Ex: 09/08 com o Pai" onchange="salvarEspecial('pai')" class="w-full px-2 py-1 bg-white dark:bg-gray-900 border border-blue-200 dark:border-blue-800 rounded-lg text-xs text-blue-800 dark:text-blue-200 focus:outline-none">
+                <div class="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/50 p-2 rounded-xl">
+                    <h4 class="text-[9px] font-bold text-blue-700 dark:text-blue-300 uppercase mb-0.5">👔 Dia do Pai</h4>
+                    <input type="text" id="inputDiaPai" placeholder="Ex: 09/08 com o Pai" onchange="salvarEspecial('pai')" class="w-full px-2 py-1 bg-white dark:bg-gray-900 border border-blue-200 dark:border-blue-800 rounded-lg text-[11px] text-blue-800 dark:text-blue-200 focus:outline-none">
                 </div>
             </div>
 
-            <div class="text-center text-[10px] font-medium text-gray-500 dark:text-gray-400 pt-1">
+            <div class="text-center text-[9px] font-medium text-gray-500 dark:text-gray-400 pt-0.5">
                 ⏱️ Trocas: Sexta 18h até Domingo 19h (2º e 4º FDS com o Pai)
             </div>
         </div>
 
         <!-- CALENDÁRIO GRID -->
-        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-3">
-            <div id="calendarioGrid" class="grid grid-cols-7 gap-1.5 w-full"></div>
-            <div id="textoRegraMes" class="p-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-xs text-gray-700 dark:text-gray-300 leading-relaxed"></div>
+        <div class="bg-white dark:bg-gray-800 p-2.5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-2">
+            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
+            <div id="textoRegraMes" class="p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
         <!-- BOTÃO DE IMPRESSÃO / PDF -->
-        <div class="text-center pb-6">
-            <button onclick="gerarAnoAtualPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5">
+        <div class="text-center pb-4">
+            <button onclick="gerarAnoAtualPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5">
                 📄 Imprimir Período (Set/2026 a Dez/2027)
             </button>
         </div>
@@ -113,22 +148,22 @@
     </div>
 
     <!-- BARRA INFERIOR COM MUDANÇA DE LUZ DE FUNDO (TEMA) E MICROFONE -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-2">
-            <button onclick="alternarDarkMode()" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Mudar Luz de Fundo">
+            <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Mudar Luz de Fundo">
                 🌙/☀️ Tema
             </button>
-            <button onclick="bloquearNovamente()" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
+            <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
         </div>
         <!-- MICROFONE FLUTUANTE -->
-        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center text-xl transition transform hover:scale-105 active:scale-95" title="Falar Comando">
+        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-lg transition transform hover:scale-105 active:scale-95" title="Falar Comando">
             🎤
         </button>
     </div>
 
-    <!-- LÓGICA DO APLICATIVO -->
+    <!-- LÓGICA DA SOPHIA -->
     <script>
         const SENHA_MESTRA = "1510";
         let anoAtual = 2026;
@@ -480,6 +515,8 @@
             if (anoAtual > 2027) { anoAtual = 2027; mesAtual = 11; }
 
             document.getElementById('rotuloMes').innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
+            document.getElementById('filtro-mes').value = mesAtual;
+            document.getElementById('filtro-ano').value = anoAtual;
             
             const chaveRegra = `${anoAtual}-${mesAtual}`;
             document.getElementById('textoRegraMes').innerHTML = regrasPorAnoMes[chaveRegra] || `<b>${nomesMeses[mesAtual]} ${anoAtual}:</b> Termo de guarda padrão.`;
@@ -568,6 +605,16 @@
             mesAtual += delta;
             if (mesAtual > 11) { mesAtual = 0; anoAtual++; } 
             else if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
+            renderizar();
+        }
+
+        function mudarMesSelect() {
+            mesAtual = parseInt(document.getElementById('filtro-mes').value);
+            renderizar();
+        }
+
+        function mudarAnoSelect() {
+            anoAtual = parseInt(document.getElementById('filtro-ano').value);
             renderizar();
         }
 
