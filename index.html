@@ -13,11 +13,21 @@
     </script>
     <style>
         @media print {
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            /* Oculta tudo exceto o calendário na hora de imprimir */
+            .print-hidden, #tela-login, .fixed, .bg-white:not(#bloco-calendario-print), button, input, select {
+                display: none !important;
+            }
+            #conteudo-site { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            #bloco-calendario-print { border: none !important; box-shadow: none !important; padding: 0 !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
+        /* Traço escuro e grosso para dias passados */
         .past-day .day-num {
             text-decoration: line-through;
-            opacity: 0.5;
+            text-decoration-thickness: 2.5px;
+            text-decoration-color: #334155;
+            opacity: 0.6;
         }
     </style>
 </head>
@@ -53,78 +63,78 @@
     <!-- CONTEÚDO PRINCIPAL DA SOPHIA -->
     <div id="conteudo-site" class="hidden max-w-lg mx-auto p-2.5 space-y-2.5">
         
-        <!-- PAINEL SUPERIOR ORGANIZADO -->
-        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
+        <!-- PAINEL SUPERIOR ORGANIZADO (OCULTO NA IMPRESSÃO) -->
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
             
-            <!-- CAIXA 1: ESTATÍSTICAS DO MÊS (JUNTAS) -->
+            <!-- ESTATÍSTICAS DO MÊS (MÃE E PAI LADO A LADO) -->
             <div>
                 <p class="text-[9px] font-bold text-gray-400 uppercase mb-1">📅 Estatísticas do Mês</p>
                 <div class="grid grid-cols-2 gap-1.5">
                     <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 p-1.5 rounded-xl text-center">
-                        <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Mês Mãe</p>
+                        <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</p>
                         <p id="countMae" class="text-sm font-bold text-rose-700 dark:text-rose-300">0 dias</p>
                     </div>
                     <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 p-1.5 rounded-xl text-center">
-                        <p class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">Mês Pai</p>
+                        <p class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👨 Mês Pai</p>
                         <p id="countPai" class="text-sm font-bold text-sky-700 dark:text-sky-300">0 dias</p>
                     </div>
                 </div>
             </div>
 
-            <!-- CAIXA 2: ESTATÍSTICAS DO ANO (JUNTAS) -->
+            <!-- ESTATÍSTICAS DO ANO (MÃE E PAI LADO A LADO) -->
             <div>
                 <p class="text-[9px] font-bold text-gray-400 uppercase mb-1">📊 Acumulado do Ano</p>
                 <div class="grid grid-cols-2 gap-1.5">
                     <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-1.5 rounded-xl text-center">
-                        <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">Total Ano Mãe</p>
+                        <p class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Total Ano Mãe</p>
                         <p id="countMaeAno" class="text-sm font-bold text-rose-700 dark:text-rose-300">0 dias</p>
                     </div>
                     <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 p-1.5 rounded-xl text-center">
-                        <p class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">Total Ano Pai</p>
+                        <p class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👨 Total Ano Pai</p>
                         <p id="countPaiAno" class="text-sm font-bold text-sky-700 dark:text-sky-300">0 dias</p>
                     </div>
                 </div>
             </div>
 
-            <!-- CAIXA 3: SELEÇÃO RÁPIDA DE PERÍODO (INÍCIO E FIM) -->
+            <!-- SELEÇÃO RÁPIDA DE PERÍODO (COM PAI/MÃE PRIMEIRO) -->
             <div class="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-xl border border-gray-100 dark:border-gray-700 space-y-1.5">
-                <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✈️ Selecionar Período (Início ao Fim)</p>
+                <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
                 <div class="grid grid-cols-12 gap-1 items-center">
+                    <div class="col-span-3">
+                        <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white font-bold">
+                            <option value="mae">👩 Mãe</option>
+                            <option value="pai">👨 Pai</option>
+                        </select>
+                    </div>
                     <div class="col-span-4">
                         <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
                     </div>
                     <div class="col-span-4">
                         <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
                     </div>
-                    <div class="col-span-4">
-                        <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
-                            <option value="mae">🌸 Mãe</option>
-                            <option value="pai">👔 Pai</option>
-                        </select>
+                    <div class="col-span-1 flex justify-center">
+                        <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Ok</button>
                     </div>
                 </div>
-                <div class="flex gap-1">
-                    <input type="text" id="descPeriodo" placeholder="Motivo (ex: Férias, Dia da Mãe)" class="flex-1 bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
-                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-[10px] font-bold">Aplicar</button>
-                </div>
+                <input type="text" id="descPeriodo" placeholder="Motivo (ex: Férias, Dia da Mãe)" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
             </div>
 
         </div>
 
-        <!-- CALENDÁRIO COM NOME E MÊS BEM GRANDÃO -->
-        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-2.5">
+        <!-- CALENDÁRIO COM TÍTULO BEM GRANDÃO -->
+        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-2.5">
             <div class="flex justify-between items-center px-1">
-                <button onclick="mudarMes(-1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
+                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
                 <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
-                <button onclick="mudarMes(1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
+                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
             </div>
 
             <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
-            <div id="textoRegraMes" class="p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
+            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
         <!-- BOTÃO DE IMPRESSÃO / PDF COLORIDO -->
-        <div class="text-center pb-4">
+        <div class="print-hidden text-center pb-4">
             <button onclick="gerarAnoAtualPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5">
                 📄 Imprimir Calendário Colorido
             </button>
@@ -137,7 +147,7 @@
     </div>
 
     <!-- BARRA INFERIOR COM TEMA E MICROFONE -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
+    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-2">
             <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Mudar Luz de Fundo">
                 🌙/☀️ Tema
@@ -313,6 +323,12 @@
                     mudarMes(1);
                 } else if (texto.includes('anterior')) {
                     mudarMes(-1);
+                } else if (texto.includes('mãe') || texto.includes('mae')) {
+                    document.getElementById('respPeriodo').value = 'mae';
+                    alert("Selecionado: Mãe!");
+                } else if (texto.includes('pai')) {
+                    document.getElementById('respPeriodo').value = 'pai';
+                    alert("Selecionado: Pai!");
                 } else {
                     alert(`Comando de voz: "${texto}"`);
                 }
@@ -329,7 +345,7 @@
             box.innerHTML = `
                 <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-2">✏️ Editar Dia ${dia}/${mes+1}/${ano}</h3>
                 <select id="selectResp" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-2 dark:text-white">
-                    <option value="mae">🌸 Mãe</option>
+                    <option value="mae">👩 Mãe</option>
                     <option value="pai">👔 Pai</option>
                 </select>
                 <input type="text" id="inputDesc" placeholder="Descrição (ex: Férias, Viagem)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-3 dark:text-white">
@@ -431,7 +447,7 @@
 
                 const cell = document.createElement('div');
                 
-                // CORES SUAVES E DELICADAS (PASTEL)
+                // CORES PASTEL SUAVES
                 let bgClass = info.resp === 'mae' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50' : 'bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-900/50';
                 let textClass = info.resp === 'mae' ? 'text-rose-700 dark:text-rose-300' : 'text-sky-700 dark:text-sky-300';
                 let badgeClass = info.resp === 'mae' ? 'bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-200' : 'bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-200';
