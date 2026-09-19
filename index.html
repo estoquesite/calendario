@@ -170,15 +170,16 @@
         <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700"></div>
     </div>
 
-    <!-- BARRA INFERIOR COM TEMA E MICROFONE -->
+    <!-- BARRA INFERIOR COM TEMA, SAÍDA, VERSÃO E MICROFONE -->
     <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
-        <div class="flex items-center gap-2">
-            <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Mudar Luz de Fundo">
+        <div class="flex items-center gap-1.5">
+            <button onclick="alternarDarkMode()" class="px-2 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Mudar Luz de Fundo">
                 🌙/☀️ Tema
             </button>
-            <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
+            <button onclick="bloquearNovamente()" class="px-2 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v1.0</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-lg transition transform hover:scale-105 active:scale-95" title="Falar Comando">
@@ -557,7 +558,7 @@
 
             for (let i = 0; i < primeiroDia; i++) {
                 const vazio = document.createElement('div');
-                vazio.className = 'min-h-[45px] rounded-lg opacity-20 bg-gray-100 dark:bg-gray-800';
+                vazio.className = 'day-cell-screen rounded-lg opacity-20 bg-gray-100 dark:bg-gray-800';
                 grid.appendChild(vazio);
             }
 
@@ -587,7 +588,7 @@
                     bgClass += ' past-day';
                 }
 
-                cell.className = `min-h-[55px] rounded-xl border p-1 flex flex-col justify-between relative transition cursor-pointer select-none ${bgClass}`;
+                cell.className = `day-cell-screen rounded-xl border p-1 flex flex-col justify-between relative transition cursor-pointer select-none ${bgClass}`;
                 cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
                 
                 let badgesHtml = '';
@@ -638,7 +639,7 @@
                     h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
                     table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
                     th { background: #f8fafc; font-size: 0.7rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; }
-                    td { width: 14.28%; height: 55px; vertical-align: top; border: 1px solid #cbd5e1; padding: 4px; box-sizing: border-box; }
+                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1; padding: 4px; box-sizing: border-box; }
                     .day-num { font-size: 0.8rem; font-weight: bold; }
                     .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; }
                     .cell-mae { background-color: #fff1f2 !important; color: #be123c !important; }
