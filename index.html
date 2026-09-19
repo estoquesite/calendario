@@ -119,6 +119,13 @@
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
+        <!-- BOTÃO DE IMPRESSÃO / PDF DO ANO TODO (ELEGANTE, LOGO ABAIXO DO CALENDÁRIO) -->
+        <div class="print-hidden text-center pb-1">
+            <button onclick="gerarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2">
+                <span>📄</span> Imprimir Calendário do Ano Todo Colorido
+            </button>
+        </div>
+
         <!-- BLOCO DE SELEÇÃO DE PERÍODO -->
         <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
             <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
@@ -167,12 +174,11 @@
     <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-1 flex-wrap">
             <button onclick="alternarDarkMode()" class="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Modo Escuro/Claro">🌙/☀️</button>
-            <button onclick="gerarAnoCompletoPDF()" class="px-2 py-1 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 text-[10px] font-bold transition" title="Imprimir Ano Todo">📄 Imprimir</button>
             <button onclick="sincronizarCelular()" class="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 text-[10px] font-bold transition" title="Sincronizar Celular">📱 Sync</button>
             <button onclick="compartilharEmail()" class="px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-[10px] font-bold transition" title="Enviar para E-mail">📧 E-mail</button>
             <button onclick="exportarPlanilha()" class="px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 text-[10px] font-bold transition" title="Exportar Planilha Sheets/Excel">📊 Sheets</button>
             <button onclick="bloquearNovamente()" class="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Sair">🔒</button>
-            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-0.5">v1.3</span>
+            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-0.5">v1.4</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -338,7 +344,7 @@
             renderizar();
         }
 
-        // MICROFONE INTELIGENTE (RECONHECE NÚMEROS E APLICA NO MÊS/ANO ATIVO)
+        // MICROFONE INTELIGENTE
         function ouvirVoz() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
@@ -401,11 +407,10 @@
             recognition.start();
         }
 
-        // SINCRONIZAR CALENDÁRIO COMPLETO DO ANO TODO (.ICS)
+        // SINCRONIZAR CALENDÁRIO COMPLETO DO ANO TODO (.ICS) AUTOMÁTICO
         function sincronizarCelular() {
             let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Guarda Sophia//PT\n";
             
-            // Gerar todos os dias de 2026 e 2027 para o telemóvel
             let anosParaSync = [2026, 2027];
             for(let y of anosParaSync) {
                 for(let m = 0; m < 12; m++) {
@@ -439,7 +444,7 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            alert("Calendário anual completo gerado com sucesso! Podes abri-lo para sincronizar com o telemóvel.");
+            alert("Calendário anual gerado! Ao abrir o arquivo descarregado, o telemóvel irá sincronizar todos os dias automaticamente.");
         }
 
         // COMPARTILHAR POR E-MAIL PARA marianna_adm@yahoo.com.br
@@ -464,7 +469,7 @@
             window.location.href = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
         }
 
-        // EXPORTAR PLANILHA SHEETS/EXCEL (.CSV) COMPLETA
+        // EXPORTAR PLANILHA SHEETS/EXCEL (.CSV)
         function exportarPlanilha() {
             let csvContent = "Ano,Mes,Dia,Responsavel,Motivo\n";
             
@@ -762,40 +767,42 @@
             </head>
             <body>`;
 
-            for (let m = 0; m < 12; m++) {
-                let mesNome = nomesMeses[m];
-                let regra = regrasPorAnoMes[`${anoAtual}-${m}`] || `<b>${mesNome} ${anoAtual}:</b> Guarda Compartilhada.`;
-                
-                let tableHtml = '<table><thead><tr>';
-                ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => { tableHtml += `<th>${d}</th>`; });
-                tableHtml += '</tr></thead><tbody><tr>';
+            for (let y of [2026, 2027]) {
+                for (let m = 0; m < 12; m++) {
+                    let mesNome = nomesMeses[m];
+                    let regra = regrasPorAnoMes[`${y}-${m}`] || `<b>${mesNome} ${y}:</b> Guarda Compartilhada.`;
+                    
+                    let tableHtml = '<table><thead><tr>';
+                    ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => { tableHtml += `<th>${d}</th>`; });
+                    tableHtml += '</tr></thead><tbody><tr>';
 
-                const primeiroDia = new Date(anoAtual, m, 1).getDay();
-                const totalDias = new Date(anoAtual, m + 1, 0).getDate();
+                    const primeiroDia = new Date(y, m, 1).getDay();
+                    const totalDias = new Date(y, m + 1, 0).getDate();
 
-                let colCount = 0;
-                for (let i = 0; i < primeiroDia; i++) {
-                    tableHtml += `<td></td>`;
-                    colCount++;
+                    let colCount = 0;
+                    for (let i = 0; i < primeiroDia; i++) {
+                        tableHtml += `<td></td>`;
+                        colCount++;
+                    }
+
+                    for (let dia = 1; dia <= totalDias; dia++) {
+                        if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
+                        const info = regraPadrao(dia, m, y);
+                        let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
+                        tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
+                        colCount++;
+                    }
+                    while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
+                    tableHtml += '</tr></tbody></table>';
+
+                    htmlAnual += `
+                        <div class="mes-pagina-impressao">
+                            <h2>Guarda Compartilhada Sophia - ${mesNome} ${y}</h2>
+                            ${tableHtml}
+                            <div class="rule-box">${regra}</div>
+                        </div>
+                    `;
                 }
-
-                for (let dia = 1; dia <= totalDias; dia++) {
-                    if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
-                    const info = regraPadrao(dia, m, anoAtual);
-                    let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
-                    tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
-                    colCount++;
-                }
-                while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
-                tableHtml += '</tr></tbody></table>';
-
-                htmlAnual += `
-                    <div class="mes-pagina-impressao">
-                        <h2>Guarda Compartilhada Sophia - ${mesNome} ${anoAtual}</h2>
-                        ${tableHtml}
-                        <div class="rule-box">${regra}</div>
-                    </div>
-                `;
             }
 
             htmlAnual += `<script>window.onload = function() { window.print(); }<\/script></body></html>`;
