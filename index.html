@@ -12,11 +12,11 @@
         tailwind.config = { darkMode: 'class' }
     </script>
     <style>
-        /* Visual compactado ("chatadinho") na tela com bordas mais escuras e nítidas */
+        /* Visual compactado ("chatadinho") na tela com bordas suaves */
         .day-cell-screen {
             min-height: 40px !important;
             max-height: 48px !important;
-            border-color: #94a3b8 !important; /* Borda mais escura */
+            border-color: #cbd5e1 !important;
         }
 
         @media print {
@@ -28,15 +28,17 @@
                 min-height: 65px !important;
                 max-height: none !important;
             }
+            /* Linhas de impressão mais leves e delicadas, com cantos arredondados */
+            th { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; }
+            td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
-        /* Traço preto forte, grosso e bem marcado para dias passados */
+        /* Traço mais fino, longo e suavemente clarinho para dias passados */
         .past-day .day-num {
             text-decoration: line-through;
-            text-decoration-thickness: 4px;
-            text-decoration-color: #000000 !important;
-            opacity: 1;
-            font-weight: 900;
+            text-decoration-thickness: 1.5px;
+            text-decoration-color: #64748b !important;
+            opacity: 0.7;
         }
     </style>
 </head>
@@ -80,47 +82,47 @@
         </div>
 
         <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS (LINHA ÚNICA) -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 space-y-2">
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
             
             <!-- ESTATÍSTICAS DO MÊS (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
             <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/80 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-bold text-rose-700 dark:text-rose-300 uppercase">👩 Mês Mãe</span>
-                    <span id="countMae" class="text-xs font-extrabold text-rose-800 dark:text-rose-200">0 dias</span>
+                <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
+                    <span id="countMae" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
                 </div>
-                <div class="bg-sky-50/80 dark:bg-sky-950/40 border border-sky-300 dark:border-sky-800 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-bold text-sky-700 dark:text-sky-300 uppercase">👔 Mês Pai</span>
-                    <span id="countPai" class="text-xs font-extrabold text-sky-800 dark:text-sky-200">0 dias</span>
+                <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Mês Pai</span>
+                    <span id="countPai" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
                 </div>
             </div>
 
             <!-- ESTATÍSTICAS DO ANO (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
             <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/60 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-bold text-rose-700 dark:text-rose-300 uppercase">👩 Ano Mãe</span>
-                    <span id="countMaeAno" class="text-xs font-extrabold text-rose-800 dark:text-rose-200">0 dias</span>
+                <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
+                    <span id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
                 </div>
-                <div class="bg-sky-50/50 dark:bg-sky-950/20 border border-sky-200 dark:border-sky-900/60 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-bold text-sky-700 dark:text-sky-300 uppercase">👔 Ano Pai</span>
-                    <span id="countPaiAno" class="text-xs font-extrabold text-sky-800 dark:text-sky-200">0 dias</span>
+                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Ano Pai</span>
+                    <span id="countPaiAno" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
                 </div>
             </div>
 
         </div>
 
         <!-- CALENDÁRIO COM TÍTULO BEM GRANDÃO -->
-        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 space-y-2.5">
+        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
             <div class="flex justify-between items-center px-1">
-                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg text-xs font-bold transition hover:bg-gray-300">‹ Ant</button>
+                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
                 <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
-                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg text-xs font-bold transition hover:bg-gray-300">Próx ›</button>
+                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
             </div>
 
             <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
-            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-xl text-[11px] text-gray-800 dark:text-gray-200 leading-relaxed font-medium"></div>
+            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
-        <!-- BOTÃO DE IMPRESSÃO A PARTIR DESTE MÊS (LOGOMARCA ABAIXO DO CALENDÁRIO) -->
+        <!-- BOTÃO DE IMPRESSÃO A PARTIR DESTE MÊS -->
         <div class="print-hidden text-center pb-1">
             <button onclick="gerarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2">
                 <span>📄</span> Imprimir a partir deste mês
@@ -128,29 +130,29 @@
         </div>
 
         <!-- BLOCO DE SELEÇÃO DE PERÍODO -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 space-y-1.5">
-            <p class="text-[9px] font-extrabold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
+            <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
             <div class="grid grid-cols-12 gap-1 items-center">
                 <div class="col-span-3">
-                    <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-bold">
+                    <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white font-bold">
                         <option value="mae">👩 Mãe</option>
                         <option value="pai">👔 Pai</option>
                     </select>
                 </div>
                 <div class="col-span-4">
-                    <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
+                    <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
                 </div>
                 <div class="col-span-4">
-                    <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
+                    <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
                 </div>
                 <div class="col-span-1 flex justify-center">
-                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Ok</button>
+                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Ok</button>
                 </div>
             </div>
             <!-- CAIXINHA BOX COM OPÇÕES PRÉ-DEFINIDAS + OUTROS -->
             <div class="grid grid-cols-12 gap-1 items-center pt-1">
                 <div class="col-span-6">
-                    <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
+                    <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
                         <option value="Férias">Férias</option>
                         <option value="Final de Ano">Final de Ano</option>
                         <option value="Aniversário Pai">Aniversário Pai</option>
@@ -159,7 +161,7 @@
                     </select>
                 </div>
                 <div class="col-span-6" id="divOutros" style="display: none;">
-                    <input type="text" id="descOutros" placeholder="Digite o motivo..." class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
+                    <input type="text" id="descOutros" placeholder="Digite o motivo..." class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
                 </div>
             </div>
         </div>
@@ -171,16 +173,19 @@
         <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700"></div>
     </div>
 
-    <!-- BARRA INFERIOR COM BOTÕES LIMPOS, TEMA, SAÍDA, VERSÃO E MICROFONE -->
-    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-300 dark:border-gray-800 px-3 py-2 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
-        <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="alternarDarkMode()" class="px-2.5 py-1 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs font-semibold transition" title="Modo Escuro/Claro">🌙/☀️</button>
-            <button onclick="copiarParaPlanilha()" class="px-2.5 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 text-xs font-bold transition" title="Copiar p/ Planilha Google Sheets">📊 Sheets</button>
-            <button onclick="bloquearNovamente()" class="px-2.5 py-1 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs font-semibold transition" title="Sair">🔒 Sair</button>
-            <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 ml-1">v2.0</span>
+    <!-- BARRA INFERIOR LIMPA, TEMA, SAÍDA, VERSÃO E MICROFONE -->
+    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
+        <div class="flex items-center gap-1.5">
+            <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Modo Escuro/Claro">
+                🌙/☀️
+            </button>
+            <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
+                🔒 Sair
+            </button>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.1</span>
         </div>
         <!-- MICROFONE -->
-        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full shadow-md flex items-center justify-center text-lg transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
+        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
             🎤
         </button>
     </div>
@@ -404,27 +409,6 @@
             recognition.onerror = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
             recognition.onend = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
             recognition.start();
-        }
-
-        // COPIAR DADOS PARA COLAR DIRETAMENTE NO GOOGLE SHEETS
-        function copiarParaPlanilha() {
-            let textoTabela = "Ano\tMes\tDia\tResponsavel\tMotivo\n";
-            for(let y of [2026, 2027]) {
-                for(let m = 0; m < 12; m++) {
-                    let totalDias = new Date(y, m + 1, 0).getDate();
-                    for(let d = 1; d <= totalDias; d++) {
-                        let info = regraPadrao(d, m, y);
-                        let respNome = info.resp === 'mae' ? 'Mae' : 'Pai';
-                        textoTabela += `${y}\t${nomesMeses[m]}\t${d}\t${respNome}\t${info.desc}\n`;
-                    }
-                }
-            }
-            navigator.clipboard.writeText(textoTabela).then(() => {
-                alert("Dados copiados com sucesso! A abrir o Google Sheets... Basta clicar na primeira célula e colar (Colar / Ctrl+V).");
-                window.open('https://sheets.new', '_blank');
-            }).catch(err => {
-                alert("Erro ao copiar. Certifique-se de permitir o acesso à área de transferência.");
-            });
         }
 
         function editarDia(ano, mes, dia) {
@@ -688,13 +672,13 @@
                     .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
                     h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
                     table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
-                    th { background: #f1f5f9; font-size: 0.75rem; padding: 6px; border: 1px solid #475569; text-align: center; font-weight: bold; }
-                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #475569; padding: 4px; box-sizing: border-box; }
+                    th { background: #f8fafc; font-size: 0.75rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
+                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; box-sizing: border-box; }
                     .day-num { font-size: 0.8rem; font-weight: bold; }
                     .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; font-weight: bold; }
                     .cell-mae { background-color: #ffe4e6 !important; color: #9f1239 !important; }
                     .cell-pai { background-color: #e0f2fe !important; color: #1e40af !important; }
-                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #475569; font-size: 0.75rem; margin-top: 5px; }
+                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin-top: 5px; }
                     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                 </style>
             </head>
