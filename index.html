@@ -9,14 +9,14 @@
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
-    <!-- Manifesto para Instalar como App no Celular -->
+    <!-- Manifesto Dinâmico para Instalação como App no Celular -->
     <link id="pwa-manifest" rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22Rotina da Sofia%22,
         %22short_name%22: %22Sofia%22,
         %22start_url%22: %22.%22,
         %22display%22: %22standalone%22,
-        %22background_color%22: %22%23f9f9f9%22,
-        %22theme_color%22: %22%239333ea%22,
+        %22background_color%22: %22%23fcf8ff%22,
+        %22theme_color%22: %22%237e22ce%22,
         %22icons%22: [{%22src%22: %22https://cdn-icons-png.flaticon.com/512/2922/2922510.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}]
     }">
     <style>
@@ -53,6 +53,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         .week-badge {
             position: absolute;
@@ -67,12 +68,13 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.15);
             text-transform: uppercase;
         }
+        /* Grelha com cartões sempre da mesma altura (alinhados) */
         .week-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
             gap: 12px;
             margin-bottom: 20px;
-            align-items: stretch;
+            align-items: stretch; 
         }
         .day-card {
             background: var(--card-bg);
@@ -85,7 +87,7 @@
             flex-direction: column;
             justify-content: space-between;
             height: 100%;
-            min-height: 280px;
+            min-height: 300px;
         }
         .day-content {
             flex-grow: 1;
@@ -95,16 +97,18 @@
         .tasks-container {
             flex-grow: 1;
         }
+        /* Título do dia com destaque fluorescente suave */
         .day-title {
             font-size: 15px;
             font-weight: 900;
             color: #581c87;
             text-align: center;
-            background: linear-gradient(135deg, #e9d5ff 0%, #f3e8ff 100%);
+            background: linear-gradient(135deg, #f3e8ff 0%, #fae8ff 100%);
             border: 1px solid #d8b4fe;
             border-radius: 6px;
             padding: 6px;
             margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .day-title small {
             font-weight: 700;
@@ -123,11 +127,57 @@
             align-items: center;
             font-size: 11px;
             border-left: 2px solid #7e22ce;
+            cursor: grab;
+        }
+        .task-box:active {
+            cursor: grabbing;
+        }
+        .day-resources {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            border-top: 2px dashed #e9d5ff;
+            padding-top: 10px;
+            margin-top: 16px; 
+            margin-bottom: 0;
+        }
+        .resources-title {
+            font-size: 9px;
+            font-weight: 800;
+            color: #7e22ce;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        .resource-tag {
+            background: #f3e8ff;
+            color: #581c87;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+        }
+        .resource-tag:active {
+            cursor: grabbing;
         }
         .item-controls {
             display: flex;
             gap: 3px;
             align-items: center;
+        }
+        .drag-handle {
+            cursor: grab;
+            font-size: 14px;
+            color: #888;
+            padding: 0 2px;
+            user-select: none;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
         }
         .btn-action-item {
             background: none;
@@ -173,24 +223,55 @@
         .btn-action:hover {
             background-color: #7e22ce;
         }
+        .dragging {
+            opacity: 0.4;
+        }
     </style>
 </head>
-<body class="bg-purple-50/50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 pb-28">
+<body class="bg-purple-50/50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28">
 
-    <div class="container" id="printableArea">
+    <!-- TELA DE LOGIN / CAPA COM PIN 1510 E BIOMETRIA -->
+    <div id="tela-login" class="fixed inset-0 z-50 bg-purple-950/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center space-y-4 border border-purple-100 dark:border-gray-700">
+            <div class="w-16 h-16 bg-purple-50 dark:bg-purple-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👩‍👧</div>
+            <div>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Guarda & Rotina - Sofia</h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Acesso Restrito</p>
+            </div>
+            
+            <form onsubmit="verificarLogin(event)" class="space-y-3 text-left">
+                <div>
+                    <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Senha (PIN)</label>
+                    <input type="password" id="input-senha" required placeholder="••••" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-white">
+                </div>
+                <button type="submit" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-medium py-3 rounded-xl transition text-sm shadow-sm">
+                    Entrar com Senha PIN
+                </button>
+            </form>
+
+            <button type="button" onclick="entrarComBiometria()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-medium py-3 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-2">
+                <span>🔐</span> Entrar com Biometria
+            </button>
+
+            <p id="erro-senha" class="text-xs text-red-500 hidden font-medium">Senha incorreta! A senha correta é 1510.</p>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL (OCULTO ATÉ LOGIN) -->
+    <div id="conteudo-site" class="hidden container" id="printableArea">
         <div class="header">
-            <h2>👩‍👧 Rotina & Guarda - Sofia</h2>
+            <h2>👩‍👧 Guarda & Rotina - Sofia</h2>
             <div class="week-badge" id="badgeSemana">Semana 40</div>
         </div>
 
-        <!-- Seletor de Ano e Semana -->
-        <div class="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-purple-100 dark:border-gray-700 max-w-xl mx-auto mb-4 flex flex-wrap items-center justify-between gap-3">
+        <!-- SELETOR DE ANO E SEMANA NO TOPO -->
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-purple-100 dark:border-gray-700 max-w-xl mx-auto mb-4 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2">
                 <label class="text-xs font-bold text-gray-600 dark:text-gray-300">Ano:</label>
                 <input type="number" id="inputAno" value="2026" onchange="atualizarDatasSemana()" class="w-20 text-xs p-1.5 bg-gray-50 dark:bg-gray-900 border rounded-lg font-bold text-center">
             </div>
             <div class="flex items-center gap-2">
-                <label class="text-xs font-bold text-gray-600 dark:text-gray-300">Semana:</label>
+                <label class="text-xs font-bold text-gray-600 dark:text-gray-300">Nº da Semana:</label>
                 <input type="number" id="inputNumSemana" value="40" min="1" max="53" onchange="atualizarDatasSemana()" class="w-16 text-xs p-1.5 bg-gray-50 dark:bg-gray-900 border rounded-lg font-bold text-center">
             </div>
             <button onclick="definirSemanaAtual()" class="bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 px-3 py-1.5 rounded-lg text-xs font-bold">
@@ -198,97 +279,179 @@
             </button>
         </div>
 
-        <!-- Calendário / Grelha dos Dias -->
+        <!-- CALENDÁRIO / GRELHA DOS DIAS -->
         <div class="week-grid" id="weekGridContainer">
             <!-- Segunda -->
-            <div class="day-card" data-dia-nome="Segunda">
+            <div class="day-card" data-dia-idx="1" data-dia-nome="Segunda">
                 <div class="day-content">
                     <div class="day-title" id="titleSegunda">Segunda<br><small>--/---</small></div>
-                    <div class="tasks-container space-y-1">
-                        <div class="task-box"><span><span class="item-text">ESCOLA / ATIVIDADES</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                    <div class="tasks-container space-y-1" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                        <div class="task-box" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">ESCOLA / ATIVIDADES</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
                     </div>
                 </div>
+                <div class="day-resources" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                    <div class="resources-title">Notas / Logística</div>
+                    <div class="resource-tag" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">MOCHILA E LANCHEIRA</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                </div>
             </div>
+
             <!-- Terça -->
-            <div class="day-card" data-dia-nome="Terça">
+            <div class="day-card" data-dia-idx="2" data-dia-nome="Terça">
                 <div class="day-content">
                     <div class="day-title" id="titleTerca">Terça<br><small>--/---</small></div>
-                    <div class="tasks-container space-y-1">
-                        <div class="task-box"><span><span class="item-text">ESCOLA / BALLET</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                    <div class="tasks-container space-y-1" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                        <div class="task-box" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">ESCOLA / BALLET</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
                     </div>
                 </div>
+                <div class="day-resources" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                    <div class="resources-title">Notas / Logística</div>
+                    <div class="resource-tag" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">ROUPA DE DANÇA</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                </div>
             </div>
+
             <!-- Quarta -->
-            <div class="day-card" data-dia-nome="Quarta">
+            <div class="day-card" data-dia-idx="3" data-dia-nome="Quarta">
                 <div class="day-content">
                     <div class="day-title" id="titleQuarta">Quarta<br><small>--/---</small></div>
-                    <div class="tasks-container space-y-1">
-                        <div class="task-box"><span><span class="item-text">ESCOLA</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                    <div class="tasks-container space-y-1" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                        <div class="task-box" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">ESCOLA</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
                     </div>
                 </div>
+                <div class="day-resources" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                    <div class="resources-title">Notas / Logística</div>
+                    <div class="resource-tag" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">MATERIAL DE ARTE</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                </div>
             </div>
+
             <!-- Quinta -->
-            <div class="day-card" data-dia-nome="Quinta">
+            <div class="day-card" data-dia-idx="4" data-dia-nome="Quinta">
                 <div class="day-content">
                     <div class="day-title" id="titleQuinta">Quinta<br><small>--/---</small></div>
-                    <div class="tasks-container space-y-1">
-                        <div class="task-box"><span><span class="item-text">ESCOLA / INGLÊS</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                    <div class="tasks-container space-y-1" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                        <div class="task-box" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">ESCOLA / INGLÊS</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
                     </div>
                 </div>
+                <div class="day-resources" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                    <div class="resources-title">Notas / Logística</div>
+                    <div class="resource-tag" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">LIVRO DE INGLÊS</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                </div>
             </div>
+
             <!-- Sexta -->
-            <div class="day-card" data-dia-nome="Sexta">
+            <div class="day-card" data-dia-idx="5" data-dia-nome="Sexta">
                 <div class="day-content">
                     <div class="day-title" id="titleSexta">Sexta<br><small>--/---</small></div>
-                    <div class="tasks-container space-y-1">
-                        <div class="task-box"><span><span class="item-text">ESCOLA / FIM DE SEMANA</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
+                    <div class="tasks-container space-y-1" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                        <div class="task-box" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">ESCOLA / FIM DE SEMANA</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
                     </div>
+                </div>
+                <div class="day-resources" ondragover="permitirDrop(event)" ondrop="soltarItem(event)">
+                    <div class="resources-title">Notas / Logística</div>
+                    <div class="resource-tag" draggable="true" ondragstart="iniciarArrasto(event)"><span><span class="drag-handle">⠿</span> <span class="item-text">TROCA DE GUARDA</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span></div>
                 </div>
             </div>
         </div>
 
-        <div class="actions-bar">
-            <button class="btn-action" onclick="window.print()">🖨️ Imprimir Rotina (PDF)</button>
+        <div class="actions-bar print-hidden">
+            <button class="btn-action" onclick="imprimirRotina()">🖨️ Imprimir Rotina (PDF Limpo)</button>
         </div>
 
-        <!-- Caixa de Adicionar por Data -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-purple-100 dark:border-gray-700 max-w-xl mx-auto mt-6 space-y-3">
-            <h3 class="text-xs font-bold uppercase text-purple-800 dark:text-purple-400">✨ Adicionar Compromisso da Sofia</h3>
+        <!-- CAIXA DE ADICIONAR EM BAIXO -->
+        <div class="print-hidden bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-purple-100 dark:border-gray-700 max-w-xl mx-auto mt-8 space-y-3">
+            <h3 class="text-xs font-bold uppercase text-purple-800 dark:text-purple-400">✨ Adicionar Atividade ou Nota da Sofia</h3>
+            
+            <div>
+                <label class="block text-[10px] font-semibold uppercase text-gray-500 mb-1">Itens Frequentes (Atalhos)</label>
+                <div class="flex gap-2">
+                    <select id="selectFrequentes" onchange="preencherPredefinido()" class="flex-1 text-xs p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
+                        <option value="">-- Escolher atalho frequente --</option>
+                    </select>
+                    <button onclick="adicionarNovoFrequente()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold" title="Novo item frequente">➕ Novo</button>
+                    <button onclick="gerenciarFrequentes()" class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold" title="Gerir itens frequentes">⚙️ Gerir</button>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
                     <label class="block text-[10px] font-semibold uppercase text-gray-500 mb-1">Data do Evento</label>
-                    <input type="date" id="inputDataSofia" class="w-full text-xs p-2 bg-gray-50 dark:bg-gray-900 border rounded-lg font-bold">
+                    <input type="date" id="inputDataEvento" class="w-full text-xs p-2 bg-gray-50 dark:bg-gray-900 border rounded-lg font-bold">
                 </div>
                 <div>
-                    <label class="block text-[10px] font-semibold uppercase text-gray-500 mb-1">Descrição</label>
-                    <input type="text" id="inputDescSofia" placeholder="Ex: Médico, Festa, Aula..." class="w-full text-xs p-2 bg-gray-50 dark:bg-gray-900 border rounded-lg">
+                    <label class="block text-[10px] font-semibold uppercase text-gray-500 mb-1">Tipo de Entrada</label>
+                    <select id="inputTipo" class="w-full text-xs p-2 bg-gray-50 dark:bg-gray-900 border rounded-lg font-bold">
+                        <option value="task">Atividade (Caixa Principal)</option>
+                        <option value="resource">Nota / Logística</option>
+                    </select>
                 </div>
             </div>
-            <button onclick="adicionarItemSofia()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 rounded-lg text-xs transition">
-                ✓ Adicionar (OK)
+            <div>
+                <label class="block text-[10px] font-semibold uppercase text-gray-500 mb-1">Descrição (Pressione Enter para Adicionar)</label>
+                <input type="text" id="inputDesc" placeholder="Ex: Pediatra, Aniversário, Aula de Natação..." class="w-full text-xs p-2 bg-gray-50 dark:bg-gray-900 border rounded-lg">
+            </div>
+            <div class="flex gap-2 pt-1">
+                <button onclick="adicionarItemPorData()" class="flex-1 bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 rounded-lg text-xs transition">
+                    ✓ Adicionar Automaticamente (OK)
+                </button>
+                <button onclick="limparTudo()" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 px-3 py-2 rounded-lg text-xs font-bold">
+                    🗑️ Redefinir
+                </button>
+            </div>
+        </div>
+
+        <!-- ANALISADOR DE SCRIPT / TEXTO -->
+        <div class="print-hidden bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-purple-100 dark:border-gray-700 max-w-xl mx-auto mt-4 space-y-3">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xs font-bold uppercase text-purple-800 dark:text-purple-400">🔍 Analisador de Notas / Mensagens</h3>
+                <div class="flex gap-1.5">
+                    <button onclick="adicionarNovaPalavraChave()" class="bg-purple-600 hover:bg-purple-700 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">➕ Palavra</button>
+                    <button onclick="gerenciarPalavrasChave()" class="bg-gray-600 hover:bg-gray-700 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold">⚙️ Gerir</button>
+                </div>
+            </div>
+            <p class="text-[10px] text-gray-500 dark:text-gray-400">Cole notas ou mensagens (ex: menção a Médico, Escola, Guarda) para detetar e enviar rapidamente:</p>
+            <textarea id="inputScriptTexto" rows="3" placeholder="Cole aqui notas ou apontamentos..." class="w-full text-xs p-2.5 bg-gray-50 dark:bg-gray-900 border rounded-lg"></textarea>
+            <button onclick="analisarScript()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg text-xs transition">
+                🔎 Analisar Sugestões
             </button>
+            <div id="resultadoSugestoes" class="space-y-1.5 pt-2"></div>
         </div>
     </div>
 
-    <!-- Barra Inferior Fixa com Instalar App e Microfone -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center max-w-4xl mx-auto rounded-t-2xl shadow-lg">
+    <!-- BARRA INFERIOR FIXA COM TEMA, INSTALAR APP, SAÍDA E MICROFONE -->
+    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center max-w-4xl mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-2">
-            <button onclick="document.documentElement.classList.toggle('dark')" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs font-semibold">🌙/☀️</button>
+            <button onclick="alternarDarkMode()" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs font-semibold">🌙/☀️</button>
             <button onclick="instalarApp()" class="px-3 py-1.5 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 text-xs font-bold">📱 Instalar App</button>
+            <button onclick="bloquearNovamente()" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-red-600">🔒 Sair</button>
+            <span class="px-2.5 py-1 rounded-lg bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 text-[10px] font-extrabold">v3.10</span>
         </div>
-        <button onclick="ouvirVozSofia()" id="btn-voz" class="bg-purple-600 hover:bg-purple-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-lg">🎤</button>
+        <button onclick="ouvirVoz()" id="btn-voz" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-lg">🎤</button>
     </div>
 
     <script>
+        const SENHA_MESTRA = "1510";
         const nomesMeses = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+        let elementoArrastado = null;
         let deferredPrompt = null;
+
+        let itensFrequentesPadrao = [
+            "ESCOLA", "BALLET", "INGLÊS", "PEDIATRA", "MÉDICO", "FIM DE SEMANA", "ANIVERSÁRIO", "NATATAÇÃO"
+        ];
+        let palavrasChavePadrao = [
+            "ESCOLA", "MÉDICO", "PEDIATRA", "BALLET", "INGLÊS", "FESTA", "FIM", "SEMANA", "AULA"
+        ];
+
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
 
         window.addEventListener('DOMContentLoaded', () => {
+            if (sessionStorage.getItem('autenticado_sofia') === 'true') liberarAcesso();
+            if (localStorage.getItem('dark_mode_sofia') === 'true') document.documentElement.classList.add('dark');
+            carregarFrequentes();
             definirSemanaAtual();
-            document.getElementById('inputDataSofia').valueAsDate = new Date();
-            const salvo = localStorage.getItem('rotina_sofia_custom');
-            if(salvo) document.getElementById('weekGridContainer').innerHTML = salvo;
+            document.getElementById('inputDataEvento').valueAsDate = new Date();
+
+            document.getElementById('inputDesc').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') adicionarItemPorData();
+            });
         });
 
         function instalarApp() {
@@ -296,8 +459,135 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
             } else {
-                alert("📱 Para instalar no celular, toque nas opções do navegador e selecione 'Adicionar à tela inicial'.");
+                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos e selecione 'Adicionar à tela inicial'.\n• No iPhone (Safari): Toque em Compartilhar e escolha 'Adicionar à Tela de Início'.");
             }
+        }
+
+        function verificarLogin(e) {
+            e.preventDefault();
+            if (document.getElementById('input-senha').value === SENHA_MESTRA) {
+                sessionStorage.setItem('autenticado_sofia', 'true');
+                liberarAcesso();
+            } else {
+                document.getElementById('erro-senha').classList.remove('hidden');
+            }
+        }
+
+        async function entrarComBiometria() {
+            try {
+                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                if (!available) return alert("Biometria não disponível neste aparelho.");
+                const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
+                const cred = await navigator.credentials.create({
+                    publicKey: { challenge, rp: { name: "Rotina Sofia", id: window.location.hostname }, user: { id: new Uint8Array(16), name: "sofia@local", displayName: "Mariana" }, pubKeyCredParams: [{alg: -7, type: "public-key"}] }
+                });
+                if(cred) { sessionStorage.setItem('autenticado_sofia', 'true'); liberarAcesso(); }
+            } catch(e) { alert("Use a senha PIN (1510)."); }
+        }
+
+        function liberarAcesso() {
+            document.getElementById('tela-login').classList.add('hidden');
+            document.getElementById('conteudo-site').classList.remove('hidden');
+            const salvo = localStorage.getItem('rotina_sofia_custom_v3.10');
+            if(salvo) {
+                document.getElementById('weekGridContainer').innerHTML = salvo;
+                reativarEventosDragDrop();
+            } else {
+                atualizarDatasSemana();
+            }
+        }
+
+        function bloquearNovamente() {
+            sessionStorage.removeItem('autenticado_sofia');
+            document.getElementById('conteudo-site').classList.add('hidden');
+            document.getElementById('tela-login').classList.remove('hidden');
+        }
+
+        function carregarFrequentes() {
+            let salvos = JSON.parse(localStorage.getItem('sofia_frequentes')) || itensFrequentesPadrao;
+            const select = document.getElementById('selectFrequentes');
+            select.innerHTML = '<option value="">-- Escolher atalho frequente --</option>';
+            salvos.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item; opt.innerText = item; select.appendChild(opt);
+            });
+        }
+
+        function adicionarNovoFrequente() {
+            const novo = prompt("Novo item frequente:");
+            if(novo && novo.trim() !== "") {
+                let salvos = JSON.parse(localStorage.getItem('sofia_frequentes')) || itensFrequentesPadrao;
+                salvos.push(novo.trim().toUpperCase());
+                localStorage.setItem('sofia_frequentes', JSON.stringify(salvos));
+                carregarFrequentes();
+            }
+        }
+
+        function gerenciarFrequentes() {
+            let salvos = JSON.parse(localStorage.getItem('sofia_frequentes')) || itensFrequentesPadrao;
+            let escolha = prompt(`Atalhos Atuais:\n${salvos.map((i,idx)=>`${idx+1}.${i}`).join('\n')}\n\nNúmero do item a apagar (ou cancelar):`);
+            if(escolha && !isNaN(escolha)) {
+                salvos.splice(parseInt(escolha)-1, 1);
+                localStorage.setItem('sofia_frequentes', JSON.stringify(salvos));
+                carregarFrequentes();
+            }
+        }
+
+        function adicionarNovaPalavraChave() {
+            const nova = prompt("Nova palavra-chave:");
+            if(nova) {
+                let chaves = JSON.parse(localStorage.getItem('sofia_chaves')) || palavrasChavePadrao;
+                chaves.push(nova.trim().toUpperCase());
+                localStorage.setItem('sofia_chaves', JSON.stringify(chaves));
+                alert("Adicionada com sucesso!");
+            }
+        }
+
+        function gerenciarPalavrasChave() {
+            let chaves = JSON.parse(localStorage.getItem('sofia_chaves')) || palavrasChavePadrao;
+            let escolha = prompt(`Palavras-chave:\n${chaves.map((i,idx)=>`${idx+1}.${i}`).join('\n')}\n\nNúmero a apagar:`);
+            if(escolha && !isNaN(escolha)) {
+                chaves.splice(parseInt(escolha)-1, 1);
+                localStorage.setItem('sofia_chaves', JSON.stringify(chaves));
+            }
+        }
+
+        function analisarScript() {
+            const texto = document.getElementById('inputScriptTexto').value;
+            const container = document.getElementById('resultadoSugestoes');
+            container.innerHTML = '';
+            if(!texto.trim()) return;
+
+            const chaves = JSON.parse(localStorage.getItem('sofia_chaves')) || palavrasChavePadrao;
+            texto.split(/[\n.!?]+/).forEach(linha => {
+                const up = linha.trim().toUpperCase();
+                if(up.length > 2 && chaves.some(k => up.includes(k))) {
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center bg-purple-50 dark:bg-purple-950/40 p-2 rounded-lg border border-purple-200 dark:border-purple-900";
+                    div.innerHTML = `<span class="text-[11px] font-semibold">${up}</span><div class="flex gap-1"><button onclick="usarSugestao(this)" data-texto="${up}" class="bg-purple-600 text-white px-2 py-1 rounded text-[10px] font-bold">Usar ➜</button><button onclick="this.closest('div.flex').remove()" class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold">✕</button></div>`;
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function usarSugestao(btn) {
+            document.getElementById('inputDesc').value = btn.getAttribute('data-texto');
+            document.getElementById('inputDesc').focus();
+        }
+
+        function iniciarArrasto(e) { elementoArrastado = e.currentTarget; e.currentTarget.classList.add('dragging'); }
+        function permitirDrop(e) { e.preventDefault(); if(elementoArrastado) e.currentTarget.appendChild(elementoArrastado); }
+        function soltarItem(e) { e.preventDefault(); if(elementoArrastado) { elementoArrastado.classList.remove('dragging'); elementoArrastado = null; guardarEstadoDOM(); } }
+
+        function reativarEventosDragDrop() {
+            document.querySelectorAll('.task-box, .resource-tag').forEach(item => {
+                item.setAttribute('draggable', 'true');
+                item.setAttribute('ondragstart', 'iniciarArrasto(event)');
+            });
+            document.querySelectorAll('.tasks-container, .day-resources').forEach(cont => {
+                cont.setAttribute('ondragover', 'permitirDrop(event)');
+                cont.setAttribute('ondrop', 'soltarItem(event)');
+            });
         }
 
         function definirSemanaAtual() {
@@ -307,8 +597,7 @@
             const dayNum = d.getUTCDay() || 7;
             d.setUTCDate(d.getUTCDate() + 4 - dayNum);
             const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-            const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-            document.getElementById('inputNumSemana').value = weekNo;
+            document.getElementById('inputNumSemana').value = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
             atualizarDatasSemana();
         }
 
@@ -319,73 +608,82 @@
 
             let d = new Date(ano, 0, 1);
             let dayNum = d.getDay();
-            let requiredDay = (semana - 1) * 7 + (dayNum <= 4 ? 1 - dayNum : 8 - dayNum);
-            d.setDate(1 + requiredDay);
+            d.setDate(1 + ((semana - 1) * 7 + (dayNum <= 4 ? 1 - dayNum : 8 - dayNum)));
             
             const nomesDias = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"];
             nomesDias.forEach((diaNome, index) => {
-                let temp = new Date(d);
-                temp.setDate(d.getDate() + index);
+                let temp = new Date(d); temp.setDate(d.getDate() + index);
                 const card = document.querySelector(`.day-card[data-dia-nome="${diaNome}"]`);
                 if(card) {
                     card.querySelector('.day-title').innerHTML = `${diaNome}<br><small>${String(temp.getDate()).padStart(2,'0')}/${nomesMeses[temp.getMonth()]}</small>`;
                 }
             });
-            guardarEstado();
+            guardarEstadoDOM();
         }
 
-        function adicionarItemSofia() {
-            const dataStr = document.getElementById('inputDataSofia').value;
-            const desc = document.getElementById('inputDescSofia').value.trim().toUpperCase();
-            if(!dataStr || !desc) return alert("Preencha a data e a descrição.");
+        function preencherPredefinido() {
+            const val = document.getElementById('selectFrequentes').value;
+            if(val) document.getElementById('inputDesc').value = val.toUpperCase();
+        }
 
+        function adicionarItemPorData() {
+            const dataStr = document.getElementById('inputDataEvento').value;
+            const tipo = document.getElementById('inputTipo').value;
+            const desc = document.getElementById('inputDesc').value.trim().toUpperCase();
+
+            if(!dataStr || !desc) return alert("Selecione a data e digite a descrição.");
             const dataObj = new Date(dataStr + 'T00:00:00');
             const diaNum = dataObj.getDay();
             if(diaNum === 0 || diaNum === 6) return alert("Selecione um dia útil (Segunda a Sexta).");
 
-            const mapDias = { 1: "Segunda", 2: "Terça", 3: "Quarta", 4: "Quinta", 5: "Sexta" };
-            const card = document.querySelector(`.day-card[data-dia-nome="${mapDias[diaNum]}"]`);
+            const map = { 1: "Segunda", 2: "Terça", 3: "Quarta", 4: "Quinta", 5: "Sexta" };
+            const card = document.querySelector(`.day-card[data-dia-nome="${map[diaNum]}"]`);
             if(!card) return;
 
-            const container = card.querySelector('.tasks-container');
-            const div = document.createElement('div');
-            div.className = "task-box";
-            div.innerHTML = `<span><span class="item-text">${desc}</span></span><span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span>`;
-            container.appendChild(div);
+            const handleHtml = `<span class="drag-handle">⠿</span>`;
+            const controlsHtml = `<span class="item-controls"><button onclick="editarItem(this)" class="btn-action-item btn-edit-item" title="Editar">✏️</button><button onclick="removerElemento(this)" class="btn-action-item btn-delete-item" title="Apagar">✕</button></span>`;
 
-            document.getElementById('inputDescSofia').value = '';
-            guardarEstado();
+            if(tipo === 'task') {
+                const div = document.createElement('div');
+                div.className = 'task-box'; div.setAttribute('draggable', 'true'); div.setAttribute('ondragstart', 'iniciarArrasto(event)');
+                div.innerHTML = `<span>${handleHtml} <span class="item-text">${desc}</span></span>${controlsHtml}`;
+                card.querySelector('.tasks-container').appendChild(div);
+            } else {
+                const div = document.createElement('div');
+                div.className = 'resource-tag'; div.setAttribute('draggable', 'true'); div.setAttribute('ondragstart', 'iniciarArrasto(event)');
+                div.innerHTML = `<span>${handleHtml} <span class="item-text">${desc}</span></span>${controlsHtml}`;
+                card.querySelector('.day-resources').appendChild(div);
+            }
+
+            document.getElementById('inputDesc').value = '';
+            document.getElementById('selectFrequentes').value = '';
+            guardarEstadoDOM();
         }
 
         function editarItem(btn) {
-            const box = btn.closest('.task-box');
+            const box = btn.closest('.task-box') || btn.closest('.resource-tag');
             const span = box.querySelector('.item-text');
-            const novo = prompt("Editar evento:", span.innerText);
-            if(novo && novo.trim() !== "") {
-                span.innerText = novo.trim().toUpperCase();
-                guardarEstado();
-            }
+            const novo = prompt("Editar descrição:", span.innerText);
+            if(novo && novo.trim() !== "") { span.innerText = novo.trim().toUpperCase(); guardarEstadoDOM(); }
         }
 
-        function removerElemento(btn) {
-            btn.closest('.task-box').remove();
-            guardarEstado();
-        }
+        function removerElemento(btn) { (btn.closest('.task-box') || btn.closest('.resource-tag')).remove(); guardarEstadoDOM(); }
+        function guardarEstadoDOM() { localStorage.setItem('rotina_sofia_custom_v3.10', document.getElementById('weekGridContainer').innerHTML); }
+        function limparTudo() { if(confirm("Redefinir rotina?")) { localStorage.removeItem('rotina_sofia_custom_v3.10'); location.reload(); } }
+        function alternarDarkMode() { document.documentElement.classList.toggle('dark'); localStorage.setItem('dark_mode_sofia', document.documentElement.classList.contains('dark')); }
 
-        function guardarEstado() {
-            localStorage.setItem('rotina_sofia_custom', document.getElementById('weekGridContainer').innerHTML);
-        }
-
-        function ouvirVozSofia() {
+        function ouvirVoz() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if(!SpeechRecognition) return alert("Reconhecimento de voz não suportado.");
-            const rec = new SpeechRecognition();
-            rec.lang = 'pt-PT';
-            rec.onresult = (e) => {
-                document.getElementById('inputDescSofia').value = e.results[0][0].transcript.toUpperCase();
-                adicionarItemSofia();
-            };
+            if(!SpeechRecognition) return alert("Sem suporte a voz.");
+            const rec = new SpeechRecognition(); rec.lang = 'pt-PT';
+            rec.onresult = (e) => { document.getElementById('inputDesc').value = e.results[0][0].transcript.toUpperCase(); adicionarItemPorData(); };
             rec.start();
+        }
+
+        function imprimirRotina() {
+            const win = window.open('', '_blank', 'width=900,height=700');
+            win.document.write(`<!DOCTYPE html><html lang="pt-PT"><head><meta charset="UTF-8"><title>Impressão</title><style>body{font-family:'Segoe UI',sans-serif;padding:20px;}.week-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}.day-card{border:1px solid #ccc;border-top:4px solid #7e22ce;border-radius:6px;padding:10px;min-height:220px;}.day-title{font-size:14px;font-weight:bold;color:#581c87;text-align:center;background:#f3e8ff;padding:4px;margin-bottom:8px;}.task-box{background:#faf5ff;padding:4px;margin-bottom:4px;font-size:10px;border-left:2px solid #7e22ce;font-weight:600;}.resource-tag{background:#f3e8ff;padding:3px;font-size:10px;margin-bottom:3px;}.drag-handle,.item-controls{display:none!important;}h2{color:#7e22ce;text-align:center;}</style></head><body><h2>👩‍👧 Guarda & Rotina - Sofia</h2><div class="week-grid">${document.getElementById('weekGridContainer').innerHTML}</div><script>setTimeout(()=>window.print(),500);<\/script></body></html>`);
+            win.document.close();
         }
     </script>
 </body>
