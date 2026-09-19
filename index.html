@@ -33,12 +33,13 @@
             td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
-        /* Traço mais fino, longo e suavemente clarinho para dias passados */
+        /* Traço bem grosso, preto forte e totalmente visível para dias passados */
         .past-day .day-num {
             text-decoration: line-through;
-            text-decoration-thickness: 1.5px;
-            text-decoration-color: #64748b !important;
-            opacity: 0.7;
+            text-decoration-thickness: 3px;
+            text-decoration-color: #000000 !important;
+            opacity: 1;
+            font-weight: 900;
         }
     </style>
 </head>
@@ -182,7 +183,7 @@
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.1</span>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.2</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -581,7 +582,7 @@
             grid.innerHTML = '';
             ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => {
                 const div = document.createElement('div');
-                div.className = 'text-center font-bold text-[10px] text-gray-500 uppercase py-1';
+                div.className = 'text-center font-bold text-[10px] text-gray-400 uppercase py-1';
                 div.innerText = d;
                 grid.appendChild(div);
             });
@@ -591,7 +592,7 @@
 
             for (let i = 0; i < primeiroDia; i++) {
                 const vazio = document.createElement('div');
-                vazio.className = 'day-cell-screen rounded-lg opacity-25 bg-gray-200 dark:bg-gray-800';
+                vazio.className = 'day-cell-screen rounded-lg opacity-20 bg-gray-100 dark:bg-gray-800';
                 grid.appendChild(vazio);
             }
 
@@ -613,9 +614,9 @@
 
                 const cell = document.createElement('div');
                 
-                let bgClass = info.resp === 'mae' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800' : 'bg-sky-50 dark:bg-sky-950/40 border-sky-300 dark:border-sky-800';
+                let bgClass = info.resp === 'mae' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50' : 'bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-900/50';
                 let textClass = info.resp === 'mae' ? 'text-rose-700 dark:text-rose-300' : 'text-sky-700 dark:text-sky-300';
-                let badgeClass = info.resp === 'mae' ? 'bg-rose-200/80 dark:bg-rose-900/70 text-rose-900 dark:text-rose-100' : 'bg-sky-200/80 dark:bg-sky-900/70 text-sky-900 dark:text-sky-100';
+                let badgeClass = info.resp === 'mae' ? 'bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-200' : 'bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-200';
 
                 if (isPassado) {
                     bgClass += ' past-day';
@@ -625,7 +626,7 @@
                 cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
                 
                 let badgesHtml = '';
-                if (feriadoNome) badgesHtml += `<span class="text-[7px] bg-emerald-200 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100 px-1 rounded truncate text-center font-bold block mb-0.5">${feriadoNome}</span>`;
+                if (feriadoNome) badgesHtml += `<span class="text-[7px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-1 rounded truncate text-center font-bold block mb-0.5">${feriadoNome}</span>`;
                 
                 badgesHtml += `<span class="text-[9px] px-1 rounded truncate text-center font-bold block ${badgeClass}">${info.desc}</span>`;
                 
@@ -660,7 +661,7 @@
             renderizar();
         }
 
-        // IMPRESSÃO EXATA A PARTIR DO MÊS E ANO ATUALMENTE MOSTRADOS NA TELA
+        // IMPRESSÃO A PARTIR DO MÊS ATUAL ATÉ O FIM DE 2027
         function gerarAnoCompletoPDF() {
             let htmlAnual = `<!DOCTYPE html>
             <html lang="pt-BR">
