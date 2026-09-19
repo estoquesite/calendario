@@ -33,7 +33,7 @@
             td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
-        /* Traço bem grosso, preto forte e totalmente visível para dias passados */
+        /* Traço bem grosso, preto forte e totalmente visível para dias passados (Tela e PDF) */
         .past-day .day-num {
             text-decoration: line-through;
             text-decoration-thickness: 3px;
@@ -183,7 +183,7 @@
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.2</span>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.3</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -661,8 +661,11 @@
             renderizar();
         }
 
-        // IMPRESSÃO A PARTIR DO MÊS ATUAL ATÉ O FIM DE 2027
+        // IMPRESSÃO EXATA A PARTIR DO MÊS E ANO ATUALMENTE MOSTRADOS NA TELA (COM RISCOS NOS DIAS PASSADOS)
         function gerarAnoCompletoPDF() {
+            let hojeObj = new Date();
+            let dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
+
             let htmlAnual = `<!DOCTYPE html>
             <html lang="pt-BR">
             <head>
@@ -679,6 +682,14 @@
                     .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; font-weight: bold; }
                     .cell-mae { background-color: #ffe4e6 !important; color: #9f1239 !important; }
                     .cell-pai { background-color: #e0f2fe !important; color: #1e40af !important; }
+                    /* Traço preto forte para dias passados na impressão */
+                    .past-day .day-num {
+                        text-decoration: line-through;
+                        text-decoration-thickness: 3px;
+                        text-decoration-color: #000000 !important;
+                        opacity: 1;
+                        font-weight: 900;
+                    }
                     .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin-top: 5px; }
                     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                 </style>
@@ -712,6 +723,12 @@
                         if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
                         const info = regraPadrao(dia, m, y);
                         let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
+
+                        const dataCelula = new Date(y, m, dia);
+                        if (dataCelula < dataHoje) {
+                            cssClass += ' past-day';
+                        }
+
                         tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
                         colCount++;
                     }
