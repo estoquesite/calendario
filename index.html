@@ -179,7 +179,7 @@
             <button onclick="bloquearNovamente()" class="px-2 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v1.0</span>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v1.1</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-lg transition transform hover:scale-105 active:scale-95" title="Falar Comando">
@@ -345,7 +345,7 @@
             renderizar();
         }
 
-        // MICROFONE INTELIGENTE (RECONHECENDO O ANO E MÊS ATUALMENTE ABERTOS)
+        // MICROFONE INTELIGENTE INTELIGENTE (RECONHECE NÚMEROS E APLICA NO MÊS/ANO ATIVO)
         function ouvirVoz() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
@@ -357,22 +357,54 @@
             const btnFloat = document.getElementById('btn-voz-flutuante');
 
             recognition.onstart = () => { btnFloat.classList.add('animate-pulse', 'bg-amber-500'); };
+            
             recognition.onresult = (event) => {
                 const texto = event.results[0][0].transcript.toLowerCase();
+                
                 if (texto.includes('próximo') || texto.includes('proximo')) {
                     mudarMes(1);
+                    return;
                 } else if (texto.includes('anterior')) {
                     mudarMes(-1);
-                } else if (texto.includes('mãe') || texto.includes('mae')) {
+                    return;
+                }
+
+                // Detectar se é Mãe ou Pai
+                let respDetectada = null;
+                if (texto.includes('mãe') || texto.includes('mae')) {
+                    respDetectada = 'mae';
                     document.getElementById('respPeriodo').value = 'mae';
-                    alert(`Selecionado: Mãe (${nomesMeses[mesAtual]} de ${anoAtual})!`);
                 } else if (texto.includes('pai')) {
+                    respDetectada = 'pai';
                     document.getElementById('respPeriodo').value = 'pai';
-                    alert(`Selecionado: Pai (${nomesMeses[mesAtual]} de ${anoAtual})!`);
+                }
+
+                // Extrair números do texto falado (ex: "18 e 19" ou "18 a 19")
+                const numeros = texto.match(/\d+/g);
+                if (numeros && numeros.length >= 2 && respDetectada) {
+                    let diaIni = parseInt(numeros[0]);
+                    let diaFim = parseInt(numeros[1]);
+
+                    if (diaIni > diaFim) { let temp = diaIni; diaIni = diaFim; diaFim = temp; }
+
+                    let desc = document.getElementById('selectMotivo').value;
+                    if (desc === 'Outros') {
+                        desc = document.getElementById('descOutros').value || (respDetectada === 'mae' ? 'Mãe' : 'Pai');
+                    }
+
+                    for (let d = diaIni; d <= diaFim; d++) {
+                        let chave = `${anoAtual}-${mesAtual}-${d}`;
+                        overrides[chave] = { resp: respDetectada, desc: desc };
+                    }
+
+                    try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+                    renderizar();
+                    alert(`Voz aplicada com sucesso: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
                 } else {
-                    alert(`Comando de voz: "${texto}" (Contexto: ${nomesMeses[mesAtual]} de ${anoAtual})`);
+                    alert(`Comando ouvido: "${texto}". Dica: Diga algo como "18 a 19 mãe".`);
                 }
             };
+
             recognition.onerror = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
             recognition.onend = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
             recognition.start();
