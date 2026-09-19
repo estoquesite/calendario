@@ -175,10 +175,10 @@
         <div class="flex items-center gap-1 flex-wrap">
             <button onclick="alternarDarkMode()" class="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Modo Escuro/Claro">🌙/☀️</button>
             <button onclick="sincronizarCelular()" class="px-2 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 text-[10px] font-bold transition" title="Sincronizar Celular">📱 Sync</button>
-            <button onclick="compartilharEmail()" class="px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-[10px] font-bold transition" title="Enviar para E-mail">📧 E-mail</button>
-            <button onclick="exportarPlanilha()" class="px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 text-[10px] font-bold transition" title="Exportar Planilha Sheets/Excel">📊 Sheets</button>
+            <button onclick="compartilharNativo()" class="px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-[10px] font-bold transition" title="Partilhar">📤 Partilhar</button>
+            <button onclick="abrirGoogleSheets()" class="px-2 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 text-[10px] font-bold transition" title="Abrir Google Sheets">📊 Sheets</button>
             <button onclick="bloquearNovamente()" class="px-2 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Sair">🔒</button>
-            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-0.5">v1.4</span>
+            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-0.5">v1.5</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -407,7 +407,7 @@
             recognition.start();
         }
 
-        // SINCRONIZAR CALENDÁRIO COMPLETO DO ANO TODO (.ICS) AUTOMÁTICO
+        // SINCRONIZAR CALENDÁRIO COM O TELEMÓVEL (.ICS AUTOMÁTICO)
         function sincronizarCelular() {
             let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Guarda Sophia//PT\n";
             
@@ -438,61 +438,35 @@
 
             let blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
             let url = URL.createObjectURL(blob);
+            
+            // Tentar abrir diretamente ou descarregar para importação imediata
             let a = document.createElement('a');
             a.href = url;
-            a.download = 'Guarda_Sophia_Anual.ics';
+            a.download = 'Guarda_Sophia.ics';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            alert("Calendário anual gerado! Ao abrir o arquivo descarregado, o telemóvel irá sincronizar todos os dias automaticamente.");
+            alert("Ficheiro de calendário gerado! No telemóvel, basta tocar nele para adicionar automaticamente ao seu calendário (Apple Calendar ou Google Calendar).");
         }
 
-        // COMPARTILHAR POR E-MAIL PARA marianna_adm@yahoo.com.br
-        function compartilharEmail() {
-            let email = "marianna_adm@yahoo.com.br";
-            let subject = encodeURIComponent("Calendário Guarda Compartilhada - Sophia");
-            let bodyText = "Resumo dos dias da Guarda da Sophia (2026-2027):\n\n";
-            
-            let totalM = 0, totalP = 0;
-            for(let y of [2026, 2027]) {
-                for(let m = 0; m < 12; m++) {
-                    let td = new Date(y, m + 1, 0).getDate();
-                    for(let d = 1; d <= td; d++) {
-                        let inf = regraPadrao(d, m, y);
-                        if(inf.resp === 'mae') totalM++; else totalP++;
-                    }
-                }
+        // PARTILHAR NATIVO (WHATSAPP, E-MAIL, ETC.)
+        function compartilharNativo() {
+            let textoResumo = "Calendário da Guarda Compartilhada - Sophia (2026-2027). Aceda ao site oficial para consultar o planeamento completo.";
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Guarda Sophia',
+                    text: textoResumo,
+                    url: window.location.href
+                }).catch(() => {});
+            } else {
+                window.location.href = `mailto:marianna_adm@yahoo.com.br?subject=Guarda Sophia&body=${encodeURIComponent(textoResumo)}`;
             }
-            bodyText += `Total Acumulado Anual - Mãe: ${totalM} dias | Pai: ${totalP} dias\n\n`;
-            bodyText += "Aceda ao site oficial no GitHub Pages para visualizar o calendário interativo completo.";
-
-            window.location.href = `mailto:${email}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
         }
 
-        // EXPORTAR PLANILHA SHEETS/EXCEL (.CSV)
-        function exportarPlanilha() {
-            let csvContent = "Ano,Mes,Dia,Responsavel,Motivo\n";
-            
-            for(let y of [2026, 2027]) {
-                for(let m = 0; m < 12; m++) {
-                    let totalDias = new Date(y, m + 1, 0).getDate();
-                    for(let d = 1; d <= totalDias; d++) {
-                        let info = regraPadrao(d, m, y);
-                        let respNome = info.resp === 'mae' ? 'Mae' : 'Pai';
-                        csvContent += `${y},${nomesMeses[m]},${d},${respNome},${info.desc}\n`;
-                    }
-                }
-            }
-
-            let blob = new Blob(["\uFEFF"+csvContent], { type: 'text/csv;charset=utf-8' });
-            let url = URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = 'Guarda_Sophia_Planilha.csv';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            alert("Planilha exportada com sucesso! Podes abri-la no Google Sheets ou Excel.");
+        // ABRIR GOOGLE SHEETS DIRETO NA WEB
+        function abrirGoogleSheets() {
+            window.open('https://sheets.new', '_blank');
+            alert("A abrir uma nova planilha limpa no Google Sheets! (Nota: Por segurança do navegador, a importação direta privada de ficheiros requer colar os dados exportados caso deseje guardá-los lá).");
         }
 
         function editarDia(ano, mes, dia) {
@@ -807,7 +781,7 @@
 
             htmlAnual += `<script>window.onload = function() { window.print(); }<\/script></body></html>`;
 
-            const blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
+            let blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
             let url = URL.createObjectURL(blob);
             window.open(url, '_blank');
         }
