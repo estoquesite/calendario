@@ -12,10 +12,11 @@
         tailwind.config = { darkMode: 'class' }
     </script>
     <style>
-        /* Visual compactado ("chatadinho") na tela */
+        /* Visual compactado ("chatadinho") na tela com bordas mais escuras e nítidas */
         .day-cell-screen {
             min-height: 40px !important;
             max-height: 48px !important;
+            border-color: #94a3b8 !important; /* Borda mais escura */
         }
 
         @media print {
@@ -23,19 +24,19 @@
             .print-hidden, #tela-login, .fixed, button, input, select { display: none !important; }
             #conteudo-site { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
             .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
-            /* Na impressão o calendário volta ao tamanho normal e nítido */
             .day-cell-screen {
                 min-height: 65px !important;
                 max-height: none !important;
             }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
-        /* Traço escuro e grosso para dias passados */
+        /* Traço preto forte, grosso e bem marcado para dias passados */
         .past-day .day-num {
             text-decoration: line-through;
-            text-decoration-thickness: 2.5px;
-            text-decoration-color: #334155;
-            opacity: 0.6;
+            text-decoration-thickness: 4px;
+            text-decoration-color: #000000 !important;
+            opacity: 1;
+            font-weight: 900;
         }
     </style>
 </head>
@@ -79,77 +80,77 @@
         </div>
 
         <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS (LINHA ÚNICA) -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 space-y-2">
             
             <!-- ESTATÍSTICAS DO MÊS (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
             <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
-                    <span id="countMae" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
+                <div class="bg-rose-50/80 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-bold text-rose-700 dark:text-rose-300 uppercase">👩 Mês Mãe</span>
+                    <span id="countMae" class="text-xs font-extrabold text-rose-800 dark:text-rose-200">0 dias</span>
                 </div>
-                <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Mês Pai</span>
-                    <span id="countPai" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
+                <div class="bg-sky-50/80 dark:bg-sky-950/40 border border-sky-300 dark:border-sky-800 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-bold text-sky-700 dark:text-sky-300 uppercase">👔 Mês Pai</span>
+                    <span id="countPai" class="text-xs font-extrabold text-sky-800 dark:text-sky-200">0 dias</span>
                 </div>
             </div>
 
             <!-- ESTATÍSTICAS DO ANO (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
             <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
-                    <span id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
+                <div class="bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/60 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-bold text-rose-700 dark:text-rose-300 uppercase">👩 Ano Mãe</span>
+                    <span id="countMaeAno" class="text-xs font-extrabold text-rose-800 dark:text-rose-200">0 dias</span>
                 </div>
-                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Ano Pai</span>
-                    <span id="countPaiAno" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
+                <div class="bg-sky-50/50 dark:bg-sky-950/20 border border-sky-200 dark:border-sky-900/60 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-bold text-sky-700 dark:text-sky-300 uppercase">👔 Ano Pai</span>
+                    <span id="countPaiAno" class="text-xs font-extrabold text-sky-800 dark:text-sky-200">0 dias</span>
                 </div>
             </div>
 
         </div>
 
         <!-- CALENDÁRIO COM TÍTULO BEM GRANDÃO -->
-        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-2.5">
+        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 space-y-2.5">
             <div class="flex justify-between items-center px-1">
-                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
+                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg text-xs font-bold transition hover:bg-gray-300">‹ Ant</button>
                 <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
-                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
+                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 rounded-lg text-xs font-bold transition hover:bg-gray-300">Próx ›</button>
             </div>
 
             <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
-            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
+            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-300 dark:border-gray-700 rounded-xl text-[11px] text-gray-800 dark:text-gray-200 leading-relaxed font-medium"></div>
         </div>
 
-        <!-- BOTÃO DE IMPRESSÃO / PDF DO ANO TODO (ELEGANTE, LOGO ABAIXO DO CALENDÁRIO) -->
+        <!-- BOTÃO DE IMPRESSÃO A PARTIR DESTE MÊS (LOGOMARCA ABAIXO DO CALENDÁRIO) -->
         <div class="print-hidden text-center pb-1">
             <button onclick="gerarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2">
-                <span>📄</span> Imprimir Calendário do Ano Todo Colorido
+                <span>📄</span> Imprimir a partir deste mês
             </button>
         </div>
 
         <!-- BLOCO DE SELEÇÃO DE PERÍODO -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
-            <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-300 dark:border-gray-700 space-y-1.5">
+            <p class="text-[9px] font-extrabold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
             <div class="grid grid-cols-12 gap-1 items-center">
                 <div class="col-span-3">
-                    <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white font-bold">
+                    <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-bold">
                         <option value="mae">👩 Mãe</option>
                         <option value="pai">👔 Pai</option>
                     </select>
                 </div>
                 <div class="col-span-4">
-                    <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                    <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
                 </div>
                 <div class="col-span-4">
-                    <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                    <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
                 </div>
                 <div class="col-span-1 flex justify-center">
-                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Ok</button>
+                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold">Ok</button>
                 </div>
             </div>
             <!-- CAIXINHA BOX COM OPÇÕES PRÉ-DEFINIDAS + OUTROS -->
             <div class="grid grid-cols-12 gap-1 items-center pt-1">
                 <div class="col-span-6">
-                    <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                    <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
                         <option value="Férias">Férias</option>
                         <option value="Final de Ano">Final de Ano</option>
                         <option value="Aniversário Pai">Aniversário Pai</option>
@@ -158,7 +159,7 @@
                     </select>
                 </div>
                 <div class="col-span-6" id="divOutros" style="display: none;">
-                    <input type="text" id="descOutros" placeholder="Digite o motivo..." class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                    <input type="text" id="descOutros" placeholder="Digite o motivo..." class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border border-gray-300 dark:border-gray-600 rounded-lg dark:text-white font-medium">
                 </div>
             </div>
         </div>
@@ -170,17 +171,16 @@
         <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700"></div>
     </div>
 
-    <!-- BARRA INFERIOR COM BOTÕES DELICADOS, TEMA, SAÍDA, VERSÃO E MICROFONE -->
-    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
-        <div class="flex items-center gap-1.5 flex-wrap">
-            <button onclick="alternarDarkMode()" class="px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Modo Escuro/Claro">🌙/☀️</button>
-            <button onclick="sincronizarCelular()" class="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300 text-[10px] font-bold transition" title="Sincronizar Celular">📱 Sync</button>
-            <button onclick="compartilharNativo()" class="px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-300 text-[10px] font-bold transition" title="Partilhar">📤 Partilhar</button>
-            <button onclick="bloquearNovamente()" class="px-2.5 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-[10px] font-medium transition" title="Sair">🔒</button>
-            <span class="text-[9px] font-bold text-gray-400 dark:text-gray-500 ml-1">v1.8</span>
+    <!-- BARRA INFERIOR COM BOTÕES LIMPOS, TEMA, SAÍDA, VERSÃO E MICROFONE -->
+    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-300 dark:border-gray-800 px-3 py-2 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
+        <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="alternarDarkMode()" class="px-2.5 py-1 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs font-semibold transition" title="Modo Escuro/Claro">🌙/☀️</button>
+            <button onclick="copiarParaPlanilha()" class="px-2.5 py-1 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 text-xs font-bold transition" title="Copiar p/ Planilha Google Sheets">📊 Sheets</button>
+            <button onclick="bloquearNovamente()" class="px-2.5 py-1 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-xs font-semibold transition" title="Sair">🔒 Sair</button>
+            <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 ml-1">v2.0</span>
         </div>
         <!-- MICROFONE -->
-        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
+        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full shadow-md flex items-center justify-center text-lg transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
             🎤
         </button>
     </div>
@@ -406,73 +406,25 @@
             recognition.start();
         }
 
-        // SINCRONIZAR CALENDÁRIO COM O TELEMÓVEL (.ICS VIA PARTILHA NATIVA)
-        async function sincronizarCelular() {
-            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Guarda Sophia//PT\n";
-            
-            let anosParaSync = [2026, 2027];
-            for(let y of anosParaSync) {
+        // COPIAR DADOS PARA COLAR DIRETAMENTE NO GOOGLE SHEETS
+        function copiarParaPlanilha() {
+            let textoTabela = "Ano\tMes\tDia\tResponsavel\tMotivo\n";
+            for(let y of [2026, 2027]) {
                 for(let m = 0; m < 12; m++) {
                     let totalDias = new Date(y, m + 1, 0).getDate();
                     for(let d = 1; d <= totalDias; d++) {
                         let info = regraPadrao(d, m, y);
-                        let data = new Date(y, m, d);
-                        let dIni = data.toISOString().split('T')[0].replace(/-/g, '');
-                        
-                        let dFimData = new Date(data);
-                        dFimData.setDate(dFimData.getDate() + 1);
-                        let dFim = dFimData.toISOString().split('T')[0].replace(/-/g, '');
-                        
-                        let respNome = info.resp === 'mae' ? 'Mãe' : 'Pai';
-                        
-                        icsContent += "BEGIN:VEVENT\n";
-                        icsContent += `DTSTART;VALUE=DATE:${dIni}\n`;
-                        icsContent += `DTEND;VALUE=DATE:${dFim}\n`;
-                        icsContent += `SUMMARY:Guarda Sophia - ${respNome} (${info.desc})\n`;
-                        icsContent += "END:VEVENT\n";
+                        let respNome = info.resp === 'mae' ? 'Mae' : 'Pai';
+                        textoTabela += `${y}\t${nomesMeses[m]}\t${d}\t${respNome}\t${info.desc}\n`;
                     }
                 }
             }
-            icsContent += "END:VCALENDAR";
-
-            let blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            let file = new File([blob], "Guarda_Sophia.ics", { type: 'text/calendar' });
-
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        files: [file],
-                        title: 'Guarda Sophia',
-                        text: 'Calendário completo da Guarda da Sophia (2026-2027)'
-                    });
-                    return;
-                } catch (err) {
-                    console.log("Partilha cancelada", err);
-                }
-            }
-
-            let url = URL.createObjectURL(blob);
-            let a = document.createElement('a');
-            a.href = url;
-            a.download = 'Guarda_Sophia.ics';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            alert("Calendário gerado! Toque no ficheiro para o adicionar ao seu calendário.");
-        }
-
-        // PARTILHAR NATIVO
-        function compartilharNativo() {
-            let textoResumo = "Calendário da Guarda Compartilhada - Sophia (2026-2027).";
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Guarda Sophia',
-                    text: textoResumo,
-                    url: window.location.href
-                }).catch(() => {});
-            } else {
-                window.location.href = `mailto:marianna_adm@yahoo.com.br?subject=Guarda Sophia&body=${encodeURIComponent(textoResumo)}`;
-            }
+            navigator.clipboard.writeText(textoTabela).then(() => {
+                alert("Dados copiados com sucesso! A abrir o Google Sheets... Basta clicar na primeira célula e colar (Colar / Ctrl+V).");
+                window.open('https://sheets.new', '_blank');
+            }).catch(err => {
+                alert("Erro ao copiar. Certifique-se de permitir o acesso à área de transferência.");
+            });
         }
 
         function editarDia(ano, mes, dia) {
@@ -645,7 +597,7 @@
             grid.innerHTML = '';
             ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => {
                 const div = document.createElement('div');
-                div.className = 'text-center font-bold text-[10px] text-gray-400 uppercase py-1';
+                div.className = 'text-center font-bold text-[10px] text-gray-500 uppercase py-1';
                 div.innerText = d;
                 grid.appendChild(div);
             });
@@ -655,7 +607,7 @@
 
             for (let i = 0; i < primeiroDia; i++) {
                 const vazio = document.createElement('div');
-                vazio.className = 'day-cell-screen rounded-lg opacity-20 bg-gray-100 dark:bg-gray-800';
+                vazio.className = 'day-cell-screen rounded-lg opacity-25 bg-gray-200 dark:bg-gray-800';
                 grid.appendChild(vazio);
             }
 
@@ -677,9 +629,9 @@
 
                 const cell = document.createElement('div');
                 
-                let bgClass = info.resp === 'mae' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50' : 'bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-900/50';
+                let bgClass = info.resp === 'mae' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800' : 'bg-sky-50 dark:bg-sky-950/40 border-sky-300 dark:border-sky-800';
                 let textClass = info.resp === 'mae' ? 'text-rose-700 dark:text-rose-300' : 'text-sky-700 dark:text-sky-300';
-                let badgeClass = info.resp === 'mae' ? 'bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-200' : 'bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-200';
+                let badgeClass = info.resp === 'mae' ? 'bg-rose-200/80 dark:bg-rose-900/70 text-rose-900 dark:text-rose-100' : 'bg-sky-200/80 dark:bg-sky-900/70 text-sky-900 dark:text-sky-100';
 
                 if (isPassado) {
                     bgClass += ' past-day';
@@ -689,7 +641,7 @@
                 cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
                 
                 let badgesHtml = '';
-                if (feriadoNome) badgesHtml += `<span class="text-[7px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-1 rounded truncate text-center font-bold block mb-0.5">${feriadoNome}</span>`;
+                if (feriadoNome) badgesHtml += `<span class="text-[7px] bg-emerald-200 text-emerald-900 dark:bg-emerald-900 dark:text-emerald-100 px-1 rounded truncate text-center font-bold block mb-0.5">${feriadoNome}</span>`;
                 
                 badgesHtml += `<span class="text-[9px] px-1 rounded truncate text-center font-bold block ${badgeClass}">${info.desc}</span>`;
                 
@@ -703,18 +655,18 @@
             document.getElementById('countMae').innerText = `${totalMaeMes} dias`;
             document.getElementById('countPai').innerText = `${totalPaiMes} dias`;
 
-            let totalMaeAno = 0;
-            let totalPaiAno = 0;
+            let totalMaeAnoLoop = 0;
+            let totalPaiAnoLoop = 0;
             for (let m = 0; m < 12; m++) {
                 const diasDoMes = new Date(anoAtual, m + 1, 0).getDate();
                 for (let d = 1; d <= diasDoMes; d++) {
                     const inf = regraPadrao(d, m, anoAtual);
-                    if (inf.resp === 'mae') totalMaeAno++;
-                    else if (inf.resp === 'pai') totalPaiAno++;
+                    if (inf.resp === 'mae') totalMaeAnoLoop++;
+                    else if (inf.resp === 'pai') totalPaiAnoLoop++;
                 }
             }
-            document.getElementById('countMaeAno').innerText = `${totalMaeAno} dias`;
-            document.getElementById('countPaiAno').innerText = `${totalPaiAno} dias`;
+            document.getElementById('countMaeAno').innerText = `${totalMaeAnoLoop} dias`;
+            document.getElementById('countPaiAno').innerText = `${totalPaiAnoLoop} dias`;
         }
 
         function mudarMes(delta) {
@@ -724,31 +676,37 @@
             renderizar();
         }
 
+        // IMPRESSÃO EXATA A PARTIR DO MÊS E ANO ATUALMENTE MOSTRADOS NA TELA
         function gerarAnoCompletoPDF() {
             let htmlAnual = `<!DOCTYPE html>
             <html lang="pt-BR">
             <head>
                 <meta charset="UTF-8">
-                <title>Guarda Compartilhada Sophia - Ano ${anoAtual}</title>
+                <title>Guarda Compartilhada Sophia - A partir de ${nomesMeses[mesAtual]} ${anoAtual}</title>
                 <style>
                     body { font-family: sans-serif; padding: 20px; color: #0f172a; margin: 0; }
                     .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
                     h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
                     table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
-                    th { background: #f8fafc; font-size: 0.7rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; }
-                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1; padding: 4px; box-sizing: border-box; }
+                    th { background: #f1f5f9; font-size: 0.75rem; padding: 6px; border: 1px solid #475569; text-align: center; font-weight: bold; }
+                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #475569; padding: 4px; box-sizing: border-box; }
                     .day-num { font-size: 0.8rem; font-weight: bold; }
-                    .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; }
-                    .cell-mae { background-color: #fff1f2 !important; color: #be123c !important; }
-                    .cell-pai { background-color: #eff6ff !important; color: #1d4ed8 !important; }
-                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; font-size: 0.75rem; margin-top: 5px; }
+                    .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; font-weight: bold; }
+                    .cell-mae { background-color: #ffe4e6 !important; color: #9f1239 !important; }
+                    .cell-pai { background-color: #e0f2fe !important; color: #1e40af !important; }
+                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #475569; font-size: 0.75rem; margin-top: 5px; }
                     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                 </style>
             </head>
             <body>`;
 
-            for (let y of [2026, 2027]) {
-                for (let m = 0; m < 12; m++) {
+            let startY = anoAtual;
+            let startM = mesAtual;
+
+            for (let y = startY; y <= 2027; y++) {
+                let mInicio = (y === startY) ? startM : 0;
+                let mFim = 11;
+                for (let m = mInicio; m <= mFim; m++) {
                     let mesNome = nomesMeses[m];
                     let regra = regrasPorAnoMes[`${y}-${m}`] || `<b>${mesNome} ${y}:</b> Guarda Compartilhada.`;
                     
