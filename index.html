@@ -15,8 +15,8 @@
         %22short_name%22: %22Sofia%22,
         %22start_url%22: %22.%22,
         %22display%22: %22standalone%22,
-        %22background_color%22: %22%23f9f9f9%22,
-        %22theme_color%22: %22%239333ea%22,
+        %22background_color%22: %22%23fcf8ff%22,
+        %22theme_color%22: %22%237e22ce%22,
         %22icons%22: [{%22src%22: %22https://cdn-icons-png.flaticon.com/512/2922/2922510.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}]
     }">
     <style>
@@ -42,12 +42,12 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             padding-top: 5px;
         }
         .header h2 {
             color: var(--primary-color);
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -57,7 +57,6 @@
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 6px;
-            margin-bottom: 20px;
         }
         .calendar-day-header {
             text-align: center;
@@ -71,38 +70,51 @@
             background: #ffffff;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            min-height: 85px;
+            min-height: 90px;
             padding: 6px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            cursor: pointer;
             transition: all 0.2s;
         }
+        .calendar-cell:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(126, 34, 206, 0.1);
+        }
         .calendar-cell.other-month {
-            opacity: 0.35;
+            opacity: 0.3;
             background: #f3f4f6;
+            cursor: default;
         }
         .calendar-cell.today {
             border: 2px solid #7e22ce;
-            background-color: #faf5ff;
         }
         .day-number {
             font-weight: bold;
             font-size: 12px;
             color: #581c87;
         }
+        /* Cores dos Dias Pintados */
+        .status-mae {
+            background-color: #f3e8ff !important;
+            border-color: #c084fc !important;
+        }
+        .status-pai {
+            background-color: #dbeafe !important;
+            border-color: #60a5fa !important;
+        }
+        .status-escola {
+            background-color: #dcfce7 !important;
+            border-color: #4ade80 !important;
+        }
         .event-tag {
-            background-color: #f3e8ff;
-            color: #6b21a8;
             font-size: 9px;
             font-weight: 700;
             padding: 2px 4px;
             border-radius: 4px;
             margin-top: 2px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 2px solid #7e22ce;
+            text-align: center;
         }
     </style>
 </head>
@@ -136,19 +148,26 @@
     </div>
 
     <!-- CONTEÚDO PRINCIPAL (OCULTO ATÉ LOGIN) -->
-    <div id="conteudo-site" class="hidden container" id="printableArea">
+    <div id="conteudo-site" class="hidden container">
         <div class="header">
             <h2>👩‍👧 Guarda & Rotina - Sofia</h2>
         </div>
 
         <!-- CONTROLO DE MÊS E ANO -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-purple-100 dark:border-gray-700 mb-6 flex flex-wrap items-center justify-between gap-3">
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-purple-100 dark:border-gray-700 mb-4 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2">
                 <button onclick="mudarMes(-1)" class="px-3 py-1.5 bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 rounded-lg text-xs font-bold">◀ Mês Anterior</button>
                 <h3 id="mesAnoTitulo" class="text-sm font-black uppercase text-purple-900 dark:text-purple-300 min-width-[140px] text-center">Setembro 2026</h3>
                 <button onclick="mudarMes(1)" class="px-3 py-1.5 bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 rounded-lg text-xs font-bold">Próximo Mês ▶</button>
             </div>
             <button onclick="irParaHoje()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold">📅 Hoje</button>
+        </div>
+
+        <!-- LEGENDA DOS DIAS PINTADOS -->
+        <div class="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-purple-100 dark:border-gray-700 mb-4 flex flex-wrap justify-center gap-4 text-xs font-bold">
+            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-purple-400 inline-block"></span> Com a Mãe</div>
+            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-blue-400 inline-block"></span> Com o Pai</div>
+            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-green-400 inline-block"></span> Escola / Atividade</div>
         </div>
 
         <!-- CALENDÁRIO MENSAL -->
@@ -162,25 +181,7 @@
                 <div class="calendar-day-header">Sex</div>
                 <div class="calendar-day-header">Sáb</div>
             </div>
-            <div id="calendarDaysGrid" class="calendar-grid"></div>
-        </div>
-
-        <!-- PAINEL DE ADICIONAR EVENTO / COMPROMISSO -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-purple-100 dark:border-gray-700 max-w-xl mx-auto space-y-3">
-            <h3 class="text-xs font-bold uppercase text-purple-800 dark:text-purple-400">✨ Adicionar Compromisso ou Nota da Sofia</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[10px] font-semibold uppercase text-gray-500 mb-1">Data</label>
-                    <input type="date" id="inputDataSofia" class="w-full text-xs p-2 bg-gray-50 dark:bg-gray-900 border rounded-lg font-bold">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-semibold uppercase text-gray-500 mb-1">Descrição / Guarda</label>
-                    <input type="text" id="inputDescSofia" placeholder="Ex: Escola, Médico, Com a Mãe..." class="w-full text-xs p-2 bg-gray-50 dark:bg-gray-900 border rounded-lg">
-                </div>
-            </div>
-            <button onclick="adicionarEventoSofia()" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-bold py-2.5 rounded-lg text-xs transition">
-                ✓ Adicionar Evento (OK)
-            </button>
+            <div id="calendarDaysGrid" class="calendar-grid mt-2"></div>
         </div>
     </div>
 
@@ -191,7 +192,7 @@
             <button onclick="instalarApp()" class="px-3 py-1.5 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 text-xs font-bold">📱 Instalar App</button>
             <button onclick="bloquearNovamente()" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-red-600">🔒 Sair</button>
         </div>
-        <button onclick="ouvirVozSofia()" class="bg-red-600 hover:bg-red-700 text-white w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-lg">🎤</button>
+        <button onclick="limparMesAtual()" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 px-3 py-1.5 rounded-lg text-xs font-bold">🗑️ Limpar Mês</button>
     </div>
 
     <script>
@@ -205,7 +206,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (sessionStorage.getItem('autenticado_sofia') === 'true') liberarAcesso();
             if (localStorage.getItem('dark_mode_sofia') === 'true') document.documentElement.classList.add('dark');
-            document.getElementById('inputDataSofia').valueAsDate = new Date();
         });
 
         function instalarApp() {
@@ -284,47 +284,60 @@
                 grid.appendChild(cell);
             }
 
-            // Dias do mês atual
+            // Dias do mês atual (interativos para pintar os dias)
             const hoje = new Date();
             for (let dia = 1; dia <= ultimoDiaDoMes; dia++) {
                 let cell = document.createElement('div');
                 let dataIso = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
                 let isToday = (dia === hoje.getDate() && mes === hoje.getMonth() && ano === hoje.getFullYear());
 
-                cell.className = `calendar-cell ${isToday ? 'today' : ''}`;
-                
-                let eventosHtml = '';
-                if (eventosSalvos[dataIso]) {
-                    eventosSalvos[dataIso].forEach((ev, idx) => {
-                        eventosHtml += `<div class="event-tag"><span>${ev}</span><button onclick="apagarEventoSofia('${dataIso}', ${idx})" class="text-red-600 font-bold ml-1">✕</button></div>`;
-                    });
-                }
+                let dadoDia = eventosSalvos[dataIso] || { status: '', texto: '' };
+                let classeStatus = '';
+                if (dadoDia.status === 'MAE') classeStatus = 'status-mae';
+                if (dadoDia.status === 'PAI') classeStatus = 'status-pai';
+                if (dadoDia.status === 'ESCOLA') classeStatus = 'status-escola';
 
-                cell.innerHTML = `<span class="day-number">${dia}</span><div class="space-y-1 overflow-y-auto max-h-16">${eventosHtml}</div>`;
+                cell.className = `calendar-cell ${isToday ? 'today' : ''} ${classeStatus}`;
+                cell.setAttribute('onclick', `clicarDia('${dataIso}')`);
+
+                let tagHtml = dadoDia.texto ? `<div class="event-tag bg-white/80 dark:bg-gray-800 text-purple-900 dark:text-purple-200">${dadoDia.texto}</div>` : '';
+
+                cell.innerHTML = `<span class="day-number">${dia}</span>${tagHtml}`;
                 grid.appendChild(cell);
             }
         }
 
-        function adicionarEventoSofia() {
-            const dataStr = document.getElementById('inputDataSofia').value;
-            const desc = document.getElementById('inputDescSofia').value.trim().toUpperCase();
-            if(!dataStr || !desc) return alert("Preencha a data e a descrição.");
-
+        function clicarDia(dataIso) {
             let eventosSalvos = JSON.parse(localStorage.getItem('eventos_sofia_map')) || {};
-            if(!eventosSalvos[dataStr]) eventosSalvos[dataStr] = [];
-            eventosSalvos[dataStr].push(desc);
+            let atual = eventosSalvos[dataIso] || { status: '', texto: '' };
 
+            let escolha = prompt(`Data: ${dataIso}\n\nEscolha quem fica com a Sofia ou nota:\n1 - Com a Mãe (Roxo)\n2 - Com o Pai (Azul)\n3 - Escola / Atividade (Verde)\n4 - Limpar dia`, "1");
+
+            if (escolha === "1") {
+                atual.status = 'MAE';
+                atual.texto = prompt("Nota opcional (ex: Guarda com Mãe):", atual.texto || "COM A MÃE") || "COM A MÃE";
+            } else if (escolha === "2") {
+                atual.status = 'PAI';
+                atual.texto = prompt("Nota opcional (ex: Guarda com Pai):", atual.texto || "COM O PAI") || "COM O PAI";
+            } else if (escolha === "3") {
+                atual.status = 'ESCOLA';
+                atual.texto = prompt("Nota opcional (ex: Escola/Ballet):", atual.texto || "ESCOLA") || "ESCOLA";
+            } else if (escolha === "4") {
+                delete eventosSalvos[dataIso];
+                localStorage.setItem('eventos_sofia_map', JSON.stringify(eventosSalvos));
+                renderizarCalendario();
+                return;
+            } else {
+                return;
+            }
+
+            eventosSalvos[dataIso] = atual;
             localStorage.setItem('eventos_sofia_map', JSON.stringify(eventosSalvos));
-            document.getElementById('inputDescSofia').value = '';
             renderizarCalendario();
         }
 
-        function apagarEventoSofia(data, index) {
-            let eventosSalvos = JSON.parse(localStorage.getItem('eventos_sofia_map')) || {};
-            if(eventosSalvos[data]) {
-                eventosSalvos[data].splice(index, 1);
-                if(eventosSalvos[data].length === 0) delete eventosSalvos[data];
-                localStorage.setItem('eventos_sofia_map', JSON.stringify(eventosSalvos));
+        function limparMesAtual() {
+            if(confirm("Deseja limpar as marcações deste mês?")) {
                 renderizarCalendario();
             }
         }
@@ -332,18 +345,6 @@
         function alternarDarkMode() {
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('dark_mode_sofia', document.documentElement.classList.contains('dark'));
-        }
-
-        function ouvirVozSofia() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if(!SpeechRecognition) return alert("Reconhecimento de voz não suportado.");
-            const rec = new SpeechRecognition();
-            rec.lang = 'pt-PT';
-            rec.onresult = (e) => {
-                document.getElementById('inputDescSofia').value = e.results[0][0].transcript.toUpperCase();
-                adicionarEventoSofia();
-            };
-            rec.start();
         }
     </script>
 </body>
