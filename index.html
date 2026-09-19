@@ -1,145 +1,92 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guarda & Rotina - Sofia</title>
+    <title>Guarda Compartilhada Sophia</title>
+    <!-- Ícone personalizado -->
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" type="image/png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
-    <!-- Manifesto PWA para Instalar como App no Celular -->
-    <link id="pwa-manifest" rel="manifest" href="data:application/manifest+json;charset=utf-8,{
-        %22name%22: %22Guarda e Rotina da Sofia%22,
-        %22short_name%22: %22Sofia%22,
-        %22start_url%22: %22.%22,
-        %22display%22: %22standalone%22,
-        %22background_color%22: %22%23fcf8ff%22,
-        %22theme_color%22: %22%237e22ce%22,
-        %22icons%22: [{%22src%22: %22https://cdn-icons-png.flaticon.com/512/2922/2922510.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}]
-    }">
     <style>
-        :root {
-            --primary-color: #7e22ce;
-            --secondary-color: #f3e8ff;
-            --bg-color: #fcf8ff;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #e9d5ff;
+        /* Visual compactado ("chatadinho") na tela com bordas suaves */
+        .day-cell-screen {
+            min-height: 40px !important;
+            max-height: 48px !important;
+            border-color: #cbd5e1 !important;
         }
-        * { box-sizing: border-box; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 10px;
+
+        @media print {
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            .print-hidden, #tela-login, .fixed, button, input, select { display: none !important; }
+            #conteudo-site { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+            .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
+            .day-cell-screen {
+                min-height: 65px !important;
+                max-height: none !important;
+            }
+            /* Linhas de impressão mais leves e delicadas, com cantos arredondados */
+            th { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; }
+            td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
+            
+            /* Traço fino, longo e elegante para dias passados no PDF */
+            .past-day .day-num {
+                position: relative;
+            }
+            .past-day .day-num::after {
+                content: "";
+                position: absolute;
+                left: -4px;
+                right: -4px;
+                top: 50%;
+                height: 1.5px;
+                background-color: #000000;
+                transform: translateY(-50%);
+            }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
+
+        /* Traço fino, longo e elegante para dias passados na tela */
+        .past-day .day-num {
+            position: relative;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 15px;
-            padding-top: 5px;
-        }
-        .header h2 {
-            color: var(--primary-color);
-            font-size: 24px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0;
-        }
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-        }
-        .calendar-day-header {
-            text-align: center;
-            font-weight: bold;
-            font-size: 11px;
-            color: #6b21a8;
-            padding: 4px;
-            text-transform: uppercase;
-        }
-        .calendar-cell {
-            background: #ffffff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            min-height: 90px;
-            padding: 6px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .calendar-cell:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(126, 34, 206, 0.1);
-        }
-        .calendar-cell.other-month {
-            opacity: 0.3;
-            background: #f3f4f6;
-            cursor: default;
-        }
-        .calendar-cell.today {
-            border: 2px solid #7e22ce;
-        }
-        .day-number {
-            font-weight: bold;
-            font-size: 12px;
-            color: #581c87;
-        }
-        /* Cores dos Dias Pintados */
-        .status-mae {
-            background-color: #f3e8ff !important;
-            border-color: #c084fc !important;
-        }
-        .status-pai {
-            background-color: #dbeafe !important;
-            border-color: #60a5fa !important;
-        }
-        .status-escola {
-            background-color: #dcfce7 !important;
-            border-color: #4ade80 !important;
-        }
-        .event-tag {
-            font-size: 9px;
-            font-weight: 700;
-            padding: 2px 4px;
-            border-radius: 4px;
-            margin-top: 2px;
-            text-align: center;
+        .past-day .day-num::after {
+            content: "";
+            position: absolute;
+            left: -4px;
+            right: -4px;
+            top: 50%;
+            height: 1.5px;
+            background-color: #000000;
+            transform: translateY(-50%);
         }
     </style>
 </head>
-<body class="bg-purple-50/40 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28">
+<body class="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28 select-none">
 
-    <!-- TELA DE LOGIN / SEGURANÇA COM PIN 1510 E BIOMETRIA -->
-    <div id="tela-login" class="fixed inset-0 z-50 bg-purple-950/90 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center space-y-4 border border-purple-100 dark:border-gray-700">
-            <div class="w-16 h-16 bg-purple-50 dark:bg-purple-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👩‍👧</div>
+    <!-- TELA DE LOGIN / CAPA COM PIN 1510 E BIOMETRIA -->
+    <div id="tela-login" class="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center space-y-4 border border-gray-100 dark:border-gray-700">
+            <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
             <div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Guarda & Rotina - Sofia</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Acesso Restrito</p>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Acesso Restrito</h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Guarda Compartilhada - Sophia</p>
             </div>
             
             <form onsubmit="verificarLogin(event)" class="space-y-3 text-left">
                 <div>
                     <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Senha (PIN)</label>
-                    <input type="password" id="input-senha" required placeholder="••••" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-purple-500 dark:text-white">
+                    <input type="password" id="input-senha" required placeholder="••••" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white">
                 </div>
-                <button type="submit" class="w-full bg-purple-700 hover:bg-purple-800 text-white font-medium py-3 rounded-xl transition text-sm shadow-sm">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition text-sm shadow-sm">
                     Entrar com Senha PIN
                 </button>
             </form>
 
-            <button type="button" onclick="entrarComBiometria()" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-medium py-3 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-2">
+            <button type="button" onclick="entrarComBiometria()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-2">
                 <span>🔐</span> Entrar com Biometria
             </button>
 
@@ -147,205 +94,692 @@
         </div>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL (OCULTO ATÉ LOGIN) -->
-    <div id="conteudo-site" class="hidden container">
-        <div class="header">
-            <h2>👩‍👧 Guarda & Rotina - Sofia</h2>
+    <!-- CONTEÚDO PRINCIPAL DA SOPHIA -->
+    <div id="conteudo-site" class="hidden max-w-lg mx-auto p-2.5 space-y-2.5">
+        
+        <!-- TÍTULO PRINCIPAL NO TOPO -->
+        <div class="text-center py-1">
+            <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center justify-center gap-1.5">
+                👧 Guarda Compartilhada Sophia
+            </h1>
         </div>
 
-        <!-- CONTROLO DE MÊS E ANO -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-purple-100 dark:border-gray-700 mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-2">
-                <button onclick="mudarMes(-1)" class="px-3 py-1.5 bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 rounded-lg text-xs font-bold">◀ Mês Anterior</button>
-                <h3 id="mesAnoTitulo" class="text-sm font-black uppercase text-purple-900 dark:text-purple-300 min-width-[140px] text-center">Setembro 2026</h3>
-                <button onclick="mudarMes(1)" class="px-3 py-1.5 bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 rounded-lg text-xs font-bold">Próximo Mês ▶</button>
+        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS (LINHA ÚNICA) -->
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
+            
+            <!-- ESTATÍSTICAS DO MÊS (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
+                    <span id="countMae" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
+                </div>
+                <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Mês Pai</span>
+                    <span id="countPai" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
+                </div>
             </div>
-            <button onclick="irParaHoje()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold">📅 Hoje</button>
-        </div>
 
-        <!-- LEGENDA DOS DIAS PINTADOS -->
-        <div class="bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-purple-100 dark:border-gray-700 mb-4 flex flex-wrap justify-center gap-4 text-xs font-bold">
-            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-purple-400 inline-block"></span> Com a Mãe</div>
-            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-blue-400 inline-block"></span> Com o Pai</div>
-            <div class="flex items-center gap-1.5"><span class="w-3.5 h-3.5 rounded-full bg-green-400 inline-block"></span> Escola / Atividade</div>
-        </div>
-
-        <!-- CALENDÁRIO MENSAL -->
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-purple-100 dark:border-gray-700 mb-6">
-            <div class="calendar-grid">
-                <div class="calendar-day-header">Dom</div>
-                <div class="calendar-day-header">Seg</div>
-                <div class="calendar-day-header">Ter</div>
-                <div class="calendar-day-header">Qua</div>
-                <div class="calendar-day-header">Qui</div>
-                <div class="calendar-day-header">Sex</div>
-                <div class="calendar-day-header">Sáb</div>
+            <!-- ESTATÍSTICAS DO ANO (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
+            <div class="grid grid-cols-2 gap-1.5">
+                <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
+                    <span id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
+                </div>
+                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
+                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Ano Pai</span>
+                    <span id="countPaiAno" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
+                </div>
             </div>
-            <div id="calendarDaysGrid" class="calendar-grid mt-2"></div>
+
         </div>
+
+        <!-- CALENDÁRIO COM TÍTULO BEM GRANDÃO -->
+        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
+            <div class="flex justify-between items-center px-1">
+                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
+                <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
+            </div>
+
+            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
+            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
+        </div>
+
+        <!-- BOTÃO DE IMPRESSÃO A PARTIR DESTE MÊS -->
+        <div class="print-hidden text-center pb-1">
+            <button onclick="gerarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2">
+                <span>📄</span> Imprimir a partir deste mês
+            </button>
+        </div>
+
+        <!-- BLOCO DE SELEÇÃO DE PERÍODO -->
+        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
+            <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
+            <div class="grid grid-cols-12 gap-1 items-center">
+                <div class="col-span-3">
+                    <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white font-bold">
+                        <option value="mae">👩 Mãe</option>
+                        <option value="pai">👔 Pai</option>
+                    </select>
+                </div>
+                <div class="col-span-4">
+                    <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                </div>
+                <div class="col-span-4">
+                    <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                </div>
+                <div class="col-span-1 flex justify-center">
+                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Ok</button>
+                </div>
+            </div>
+            <!-- CAIXINHA BOX COM OPÇÕES PRÉ-DEFINIDAS + OUTROS -->
+            <div class="grid grid-cols-12 gap-1 items-center pt-1">
+                <div class="col-span-6">
+                    <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                        <option value="Férias">Férias</option>
+                        <option value="Final de Ano">Final de Ano</option>
+                        <option value="Aniversário Pai">Aniversário Pai</option>
+                        <option value="Aniversário Mãe">Aniversário Mãe</option>
+                        <option value="Outros">Outros...</option>
+                    </select>
+                </div>
+                <div class="col-span-6" id="divOutros" style="display: none;">
+                    <input type="text" id="descOutros" placeholder="Digite o motivo..." class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- BARRA INFERIOR FIXA -->
-    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-4 py-2 flex justify-between items-center max-w-2xl mx-auto rounded-t-2xl shadow-lg">
-        <div class="flex items-center gap-2">
-            <button onclick="alternarDarkMode()" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs font-semibold">🌙/☀️</button>
-            <button onclick="instalarApp()" class="px-3 py-1.5 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-300 text-xs font-bold">📱 Instalar App</button>
-            <button onclick="bloquearNovamente()" class="px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-red-600">🔒 Sair</button>
-        </div>
-        <button onclick="limparMesAtual()" class="bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300 px-3 py-1.5 rounded-lg text-xs font-bold">🗑️ Limpar Mês</button>
+    <!-- MODAL DE EDIÇÃO -->
+    <div id="customModal" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700"></div>
     </div>
 
+    <!-- BARRA INFERIOR LIMPA, TEMA, SAÍDA, VERSÃO E MICROFONE -->
+    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
+        <div class="flex items-center gap-1.5">
+            <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Modo Escuro/Claro">
+                🌙/☀️
+            </button>
+            <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
+                🔒 Sair
+            </button>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.4</span>
+        </div>
+        <!-- MICROFONE -->
+        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
+            🎤
+        </button>
+    </div>
+
+    <!-- LÓGICA DA SOPHIA -->
     <script>
         const SENHA_MESTRA = "1510";
+        let anoAtual = 2026;
+        let mesAtual = 8;
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        let dataAtual = new Date();
-        let deferredPrompt = null;
 
-        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+        let overrides = {};
+        try {
+            const salvo = localStorage.getItem('sophia_overrides_all');
+            if (salvo) overrides = JSON.parse(salvo);
+        } catch(e) {}
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (sessionStorage.getItem('autenticado_sofia') === 'true') liberarAcesso();
-            if (localStorage.getItem('dark_mode_sofia') === 'true') document.documentElement.classList.add('dark');
-        });
-
-        function instalarApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
-            } else {
-                alert("📱 Para instalar no celular, toque nas opções do navegador e selecione 'Adicionar à tela inicial'.");
+            if (sessionStorage.getItem('autenticado_calendario') === 'true') {
+                liberarAcesso();
             }
-        }
+            if (localStorage.getItem('dark_mode') === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+        });
 
         function verificarLogin(e) {
             e.preventDefault();
-            if (document.getElementById('input-senha').value === SENHA_MESTRA) {
-                sessionStorage.setItem('autenticado_sofia', 'true');
+            const senhaDigitada = document.getElementById('input-senha').value;
+            const erroEl = document.getElementById('erro-senha');
+
+            if (senhaDigitada === SENHA_MESTRA) {
+                sessionStorage.setItem('autenticado_calendario', 'true');
                 liberarAcesso();
             } else {
-                document.getElementById('erro-senha').classList.remove('hidden');
+                erroEl.classList.remove('hidden');
+                document.getElementById('input-senha').value = '';
+                document.getElementById('input-senha').focus();
             }
         }
 
         async function entrarComBiometria() {
+            if (!window.PublicKeyCredential) {
+                alert("O seu navegador não suporta autenticação biométrica.");
+                return;
+            }
             try {
                 const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                if (!available) return alert("Biometria não disponível neste aparelho.");
-                const challenge = new Uint8Array(32); window.crypto.getRandomValues(challenge);
-                const cred = await navigator.credentials.create({
-                    publicKey: { challenge, rp: { name: "Rotina Sofia", id: window.location.hostname }, user: { id: new Uint8Array(16), name: "sofia@local", displayName: "Mariana" }, pubKeyCredParams: [{alg: -7, type: "public-key"}] }
-                });
-                if(cred) { sessionStorage.setItem('autenticado_sofia', 'true'); liberarAcesso(); }
-            } catch(e) { alert("Use a senha PIN (1510)."); }
+                if (!available) {
+                    alert("Nenhum leitor biométrico encontrado neste aparelho.");
+                    return;
+                }
+
+                const challenge = new Uint8Array(32);
+                window.crypto.getRandomValues(challenge);
+                const userId = new Uint8Array(16);
+                window.crypto.getRandomValues(userId);
+
+                const createCredentialOptions = {
+                    challenge: challenge,
+                    rp: { name: "Guarda Sophia", id: window.location.hostname },
+                    user: { id: userId, name: "sophia@guarda.local", displayName: "Mariana" },
+                    pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
+                    timeout: 60000
+                };
+
+                let cred;
+                const credentialIdStr = localStorage.getItem('biometria_cred_id_cal');
+
+                if (credentialIdStr) {
+                    try {
+                        const rawId = Uint8Array.from(atob(credentialIdStr), c => c.charCodeAt(0));
+                        cred = await navigator.credentials.get({ challenge, allowCredentials: [{ id: rawId, type: "public-key" }], userVerification: "required", timeout: 60000 });
+                    } catch (err) {
+                        cred = await navigator.credentials.create({ publicKey: createCredentialOptions });
+                        localStorage.setItem('biometria_cred_id_cal', btoa(String.fromCharCode.apply(null, new Uint8Array(cred.rawId))));
+                    }
+                } else {
+                    cred = await navigator.credentials.create({ publicKey: createCredentialOptions });
+                    localStorage.setItem('biometria_cred_id_cal', btoa(String.fromCharCode.apply(null, new Uint8Array(cred.rawId))));
+                }
+
+                if (cred) {
+                    sessionStorage.setItem('autenticado_calendario', 'true');
+                    liberarAcesso();
+                }
+            } catch (error) {
+                alert("Biometria cancelada ou não configurada. Podes usar a senha PIN (1510).");
+            }
         }
 
         function liberarAcesso() {
             document.getElementById('tela-login').classList.add('hidden');
             document.getElementById('conteudo-site').classList.remove('hidden');
-            renderizarCalendario();
+            renderizar();
         }
 
         function bloquearNovamente() {
-            sessionStorage.removeItem('autenticado_sofia');
+            sessionStorage.removeItem('autenticado_calendario');
             document.getElementById('conteudo-site').classList.add('hidden');
             document.getElementById('tela-login').classList.remove('hidden');
-        }
-
-        function mudarMes(direcao) {
-            dataAtual.setMonth(dataAtual.getMonth() + direcao);
-            renderizarCalendario();
-        }
-
-        function irParaHoje() {
-            dataAtual = new Date();
-            renderizarCalendario();
-        }
-
-        function renderizarCalendario() {
-            const ano = dataAtual.getFullYear();
-            const mes = dataAtual.getMonth();
-            document.getElementById('mesAnoTitulo').innerText = `${nomesMeses[mes]} ${ano}`;
-
-            const primeiroDiaDoMes = new Date(ano, mes, 1).getDay();
-            const ultimoDiaDoMes = new Date(ano, mes + 1, 0).getDate();
-            const ultimoDiaMesAnterior = new Date(ano, mes, 0).getDate();
-
-            const grid = document.getElementById('calendarDaysGrid');
-            grid.innerHTML = '';
-
-            let eventosSalvos = JSON.parse(localStorage.getItem('eventos_sofia_map')) || {};
-
-            // Dias do mês anterior
-            for (let i = primeiroDiaDoMes; i > 0; i--) {
-                let diaNum = ultimoDiaMesAnterior - i + 1;
-                let cell = document.createElement('div');
-                cell.className = "calendar-cell other-month";
-                cell.innerHTML = `<span class="day-number">${diaNum}</span>`;
-                grid.appendChild(cell);
-            }
-
-            // Dias do mês atual (interativos para pintar os dias)
-            const hoje = new Date();
-            for (let dia = 1; dia <= ultimoDiaDoMes; dia++) {
-                let cell = document.createElement('div');
-                let dataIso = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
-                let isToday = (dia === hoje.getDate() && mes === hoje.getMonth() && ano === hoje.getFullYear());
-
-                let dadoDia = eventosSalvos[dataIso] || { status: '', texto: '' };
-                let classeStatus = '';
-                if (dadoDia.status === 'MAE') classeStatus = 'status-mae';
-                if (dadoDia.status === 'PAI') classeStatus = 'status-pai';
-                if (dadoDia.status === 'ESCOLA') classeStatus = 'status-escola';
-
-                cell.className = `calendar-cell ${isToday ? 'today' : ''} ${classeStatus}`;
-                cell.setAttribute('onclick', `clicarDia('${dataIso}')`);
-
-                let tagHtml = dadoDia.texto ? `<div class="event-tag bg-white/80 dark:bg-gray-800 text-purple-900 dark:text-purple-200">${dadoDia.texto}</div>` : '';
-
-                cell.innerHTML = `<span class="day-number">${dia}</span>${tagHtml}`;
-                grid.appendChild(cell);
-            }
-        }
-
-        function clicarDia(dataIso) {
-            let eventosSalvos = JSON.parse(localStorage.getItem('eventos_sofia_map')) || {};
-            let atual = eventosSalvos[dataIso] || { status: '', texto: '' };
-
-            let escolha = prompt(`Data: ${dataIso}\n\nEscolha quem fica com a Sofia ou nota:\n1 - Com a Mãe (Roxo)\n2 - Com o Pai (Azul)\n3 - Escola / Atividade (Verde)\n4 - Limpar dia`, "1");
-
-            if (escolha === "1") {
-                atual.status = 'MAE';
-                atual.texto = prompt("Nota opcional (ex: Guarda com Mãe):", atual.texto || "COM A MÃE") || "COM A MÃE";
-            } else if (escolha === "2") {
-                atual.status = 'PAI';
-                atual.texto = prompt("Nota opcional (ex: Guarda com Pai):", atual.texto || "COM O PAI") || "COM O PAI";
-            } else if (escolha === "3") {
-                atual.status = 'ESCOLA';
-                atual.texto = prompt("Nota opcional (ex: Escola/Ballet):", atual.texto || "ESCOLA") || "ESCOLA";
-            } else if (escolha === "4") {
-                delete eventosSalvos[dataIso];
-                localStorage.setItem('eventos_sofia_map', JSON.stringify(eventosSalvos));
-                renderizarCalendario();
-                return;
-            } else {
-                return;
-            }
-
-            eventosSalvos[dataIso] = atual;
-            localStorage.setItem('eventos_sofia_map', JSON.stringify(eventosSalvos));
-            renderizarCalendario();
-        }
-
-        function limparMesAtual() {
-            if(confirm("Deseja limpar as marcações deste mês?")) {
-                renderizarCalendario();
-            }
+            document.getElementById('input-senha').value = '';
+            document.getElementById('erro-senha').classList.add('hidden');
         }
 
         function alternarDarkMode() {
             document.documentElement.classList.toggle('dark');
-            localStorage.setItem('dark_mode_sofia', document.documentElement.classList.contains('dark'));
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('dark_mode', isDark);
         }
+
+        function verificarMotivoOutros() {
+            const val = document.getElementById('selectMotivo').value;
+            const divOutros = document.getElementById('divOutros');
+            if (val === 'Outros') {
+                divOutros.style.display = 'block';
+            } else {
+                divOutros.style.display = 'none';
+            }
+        }
+
+        // APLICAR PERÍODO (INÍCIO AO FIM)
+        function aplicarPeriodo() {
+            const inicioStr = document.getElementById('dataInicio').value;
+            const fimStr = document.getElementById('dataFim').value;
+            const resp = document.getElementById('respPeriodo').value;
+            
+            const selectMotivo = document.getElementById('selectMotivo').value;
+            let desc = selectMotivo;
+            if (selectMotivo === 'Outros') {
+                desc = document.getElementById('descOutros').value || (resp === 'mae' ? 'Mãe' : 'Pai');
+            }
+
+            if (!inicioStr || !fimStr) {
+                alert("Por favor, selecione a data de Início e de Fim.");
+                return;
+            }
+
+            let dInicio = new Date(inicioStr + 'T00:00:00');
+            let dFim = new Date(fimStr + 'T00:00:00');
+
+            if (dInicio > dFim) {
+                alert("A data de início não pode ser posterior à data de fim.");
+                return;
+            }
+
+            let atual = new Date(dInicio);
+            while (atual <= dFim) {
+                let y = atual.getFullYear();
+                let m = atual.getMonth();
+                let d = atual.getDate();
+                let chave = `${y}-${m}-${d}`;
+                overrides[chave] = { resp: resp, desc: desc };
+                atual.setDate(atual.getDate() + 1);
+            }
+
+            try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+            alert("Período aplicado com sucesso!");
+            renderizar();
+        }
+
+        // MICROFONE INTELIGENTE
+        function ouvirVoz() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("O seu navegador não suporta reconhecimento de voz.");
+                return;
+            }
+            const recognition = new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+            const btnFloat = document.getElementById('btn-voz-flutuante');
+
+            recognition.onstart = () => { btnFloat.classList.add('animate-pulse', 'bg-amber-500'); };
+            
+            recognition.onresult = (event) => {
+                const texto = event.results[0][0].transcript.toLowerCase();
+                
+                if (texto.includes('próximo') || texto.includes('proximo')) {
+                    mudarMes(1);
+                    return;
+                } else if (texto.includes('anterior')) {
+                    mudarMes(-1);
+                    return;
+                }
+
+                let respDetectada = null;
+                if (texto.includes('mãe') || texto.includes('mae')) {
+                    respDetectada = 'mae';
+                    document.getElementById('respPeriodo').value = 'mae';
+                } else if (texto.includes('pai')) {
+                    respDetectada = 'pai';
+                    document.getElementById('respPeriodo').value = 'pai';
+                }
+
+                const numeros = texto.match(/\d+/g);
+                if (numeros && numeros.length >= 2 && respDetectada) {
+                    let diaIni = parseInt(numeros[0]);
+                    let diaFim = parseInt(numeros[1]);
+
+                    if (diaIni > diaFim) { let temp = diaIni; diaIni = diaFim; diaFim = temp; }
+
+                    let desc = document.getElementById('selectMotivo').value;
+                    if (desc === 'Outros') {
+                        desc = document.getElementById('descOutros').value || (respDetectada === 'mae' ? 'Mãe' : 'Pai');
+                    }
+
+                    for (let d = diaIni; d <= diaFim; d++) {
+                        let chave = `${anoAtual}-${mesAtual}-${d}`;
+                        overrides[chave] = { resp: respDetectada, desc: desc };
+                    }
+
+                    try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+                    renderizar();
+                    alert(`Voz aplicada com sucesso: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
+                } else {
+                    alert(`Comando ouvido: "${texto}". Dica: Diga algo como "18 a 19 mãe".`);
+                }
+            };
+
+            recognition.onerror = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
+            recognition.onend = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
+            recognition.start();
+        }
+
+        function editarDia(ano, mes, dia) {
+            const modal = document.getElementById('customModal');
+            const box = document.getElementById('modalBoxContent');
+            
+            box.innerHTML = `
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-2">✏️ Editar Dia ${dia}/${mes+1}/${ano}</h3>
+                <select id="selectResp" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-2 dark:text-white">
+                    <option value="mae">👩 Mãe</option>
+                    <option value="pai">👔 Pai</option>
+                </select>
+                <input type="text" id="inputDesc" placeholder="Descrição (ex: Férias, Viagem)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-3 dark:text-white">
+                <div class="flex gap-2">
+                    <button onclick="salvarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-green-600 text-white py-2 rounded-xl text-xs font-bold">Salvar</button>
+                    <button onclick="apagarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-red-600 text-white py-2 rounded-xl text-xs font-bold">Apagar</button>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+
+        function salvarEdicao(ano, mes, dia) {
+            const chave = `${ano}-${mes}-${dia}`;
+            const resp = document.getElementById('selectResp').value;
+            const desc = document.getElementById('inputDesc').value || (resp === 'mae' ? 'Mãe' : 'Pai');
+            
+            overrides[chave] = { resp: resp, desc: desc };
+            try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+            
+            fecharModal();
+            renderizar();
+        }
+
+        function apagarEdicao(ano, mes, dia) {
+            const chave = `${ano}-${mes}-${dia}`;
+            delete overrides[chave];
+            try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+            
+            fecharModal();
+            renderizar();
+        }
+
+        function fecharModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        const regrasPorAnoMes = {
+            "2026-0": "<b>Janeiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Férias de Dezembro/Janeiro alternadas.",
+            "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-2": "<b>Março 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-3": "<b>Abril 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-4": "<b>Maio 2026:</b> Dia das Mães — semana com a Mãe.",
+            "2026-5": "<b>Junho 2026:</b> Aniversário da Sophia.",
+            "2026-6": "<b>Julho 2026:</b> Férias de Julho Alternadas.",
+            "2026-7": "<b>Agosto 2026:</b> Dia dos Pais — semana com o Pai.",
+            "2026-8": "<b>Setembro 2026:</b> Dias 3 a 7 com o Pai; dias 8 a 17 com a Mãe; dias 18 a 20 com o Pai; dias 21 a 30 com a Mãe.",
+            "2026-9": "<b>Outubro 2026:</b> Dia 1 com a Mãe; dias 2 a 4 com o Pai; dias 5 a 15 com a Mãe; dias 16 a 18 com o Pai.",
+            "2026-10": "<b>Novembro 2026:</b> Dias 1 e 2, dias 12 a 15 e dias 19 a 22 com o Pai.",
+            "2026-11": "<b>Dezembro 2026:</b> Férias de Dezembro Alternadas. Natal e Ano Novo.",
+            
+            "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe; dias 16 a 31 com o Pai (Férias).",
+            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval); dias 12 a 14 com a Mãe.",
+            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada.",
+            "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada.",
+            "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe.",
+            "2027-5": "<b>Junho 2027:</b> Aniversário da Sophia.",
+            "2027-6": "<b>Julho 2027:</b> Férias de Julho Alternadas.",
+            "2027-7": "<b>Agosto 2027:</b> Dia dos Pais — semana com o Pai.",
+            "2027-8": "<b>Setembro 2027:</b> Guarda Compartilhada.",
+            "2027-9": "<b>Outubro 2027:</b> Rotina de outubro.",
+            "2027-10": "<b>Novembro 2027:</b> Rotina de novembro.",
+            "2027-11": "<b>Dezembro 2027:</b> Férias de Dezembro Alternadas."
+        };
+
+        const feriados = {
+            "0-1": "Confraternização", "3-21": "Tiradentes", "4-1": "Trabalho",
+            "8-7": "Independência", "9-12": "Aparecida", "10-2": "Finados",
+            "10-15": "Proclamação", "11-25": "Natal"
+        };
+
+        function regraPadrao(dia, mes, ano) {
+            const chave = `${ano}-${mes}-${dia}`;
+            if (overrides[chave]) return overrides[chave];
+
+            if (ano === 2026) {
+                if (mes === 8) {
+                    if ((dia >= 3 && dia <= 7) || (dia >= 18 && dia <= 20)) return { resp: 'pai', desc: 'Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 9) {
+                    if ((dia >= 2 && dia <= 4) || (dia >= 16 && dia <= 18) || (dia >= 30 && dia <= 31)) return { resp: 'pai', desc: 'Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 10) {
+                    if ((dia >= 1 && dia <= 2) || (dia >= 12 && dia <= 15) || (dia >= 19 && dia <= 22)) return { resp: 'pai', desc: 'Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 11) {
+                    if ((dia >= 4 && dia <= 6) || (dia >= 11 && dia <= 23)) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 29 && dia <= 31) return { resp: 'mae', desc: 'Viagem Mãe' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+            }
+
+            if (ano === 2027) {
+                if (mes === 0) {
+                    if (dia >= 1 && dia <= 14) return { resp: 'mae', desc: 'Viagem Mãe' };
+                    if (dia === 15) return { resp: 'mae', desc: 'Mãe' };
+                    if (dia >= 16 && dia <= 31) return { resp: 'pai', desc: 'Férias Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 1) {
+                    if (dia >= 1 && dia <= 9) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 12 && dia <= 14) return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 4 && dia >= 7 && dia <= 9) return { resp: 'mae', desc: 'Dia Mães' };
+                if (mes === 5 && dia >= 4 && dia <= 6) return { resp: 'mae', desc: 'Sophia' };
+                if (mes === 6) {
+                    if (dia >= 9 && dia <= 23) return { resp: 'pai', desc: 'Férias Pai' };
+                    if (dia >= 24 && dia <= 31) return { resp: 'mae', desc: 'Férias Mãe' };
+                }
+                if (mes === 7) {
+                    if (dia >= 6 && dia <= 8) return { resp: 'pai', desc: 'Dia Pais' };
+                    if (dia >= 13 && dia <= 15) return { resp: 'mae', desc: 'Mãe' };
+                    if (dia >= 20 && dia <= 22) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 27 && dia <= 29) return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 8) {
+                    if (dia >= 3 && dia <= 5) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 10 && dia <= 12) return { resp: 'mae', desc: 'Mãe' };
+                    if (dia >= 17 && dia <= 19) return { resp: 'pai', desc: 'Pai' };
+                    if (dia >= 24 && dia <= 26) return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 9) {
+                    if ((dia >= 1 && dia <= 3) || (dia >= 15 && dia <= 17) || (dia >= 29 && dia <= 31)) return { resp: 'pai', desc: 'Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 10) {
+                    if (dia >= 12 && dia <= 14) return { resp: 'mae', desc: 'Mãe' };
+                    if (dia >= 19 && dia <= 28) return { resp: 'pai', desc: 'Aniversário Pai' };
+                    return { resp: 'mae', desc: 'Mãe' };
+                }
+                if (mes === 11) {
+                    return dia <= 15 ? { resp: 'mae', desc: 'Férias Mãe' } : { resp: 'pai', desc: 'Fim de Ano' };
+                }
+            }
+
+            const data = new Date(ano, mes, dia);
+            const ds = data.getDay();
+            let sexta = dia;
+            if (ds === 6) sexta = dia - 1;
+            if (ds === 0) sexta = dia - 2;
+            if ((ds === 5 || ds === 6 || ds === 0) && sexta > 0) {
+                const numSexta = Math.ceil(sexta / 7);
+                if (numSexta === 2 || numSexta === 4) return { resp: 'pai', desc: 'Pai' };
+            }
+            return { resp: 'mae', desc: 'Mãe' };
+        }
+
+        function renderizar() {
+            if (anoAtual < 2026) { anoAtual = 2026; mesAtual = 0; }
+            if (anoAtual > 2027) { anoAtual = 2027; mesAtual = 11; }
+
+            document.getElementById('tituloCalendarioMes').innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
+            
+            const chaveRegra = `${anoAtual}-${mesAtual}`;
+            document.getElementById('textoRegraMes').innerHTML = regrasPorAnoMes[chaveRegra] || `<b>${nomesMeses[mesAtual]} ${anoAtual}:</b> Guarda Compartilhada.`;
+
+            const grid = document.getElementById('calendarioGrid');
+            grid.innerHTML = '';
+            ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => {
+                const div = document.createElement('div');
+                div.className = 'text-center font-bold text-[10px] text-gray-400 uppercase py-1';
+                div.innerText = d;
+                grid.appendChild(div);
+            });
+
+            const primeiroDia = new Date(anoAtual, mesAtual, 1).getDay();
+            const totalDias = new Date(anoAtual, mesAtual + 1, 0).getDate();
+
+            for (let i = 0; i < primeiroDia; i++) {
+                const vazio = document.createElement('div');
+                vazio.className = 'day-cell-screen rounded-lg opacity-20 bg-gray-100 dark:bg-gray-800';
+                grid.appendChild(vazio);
+            }
+
+            const hojeObj = new Date();
+            const dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
+
+            let totalMaeMes = 0;
+            let totalPaiMes = 0;
+
+            for (let dia = 1; dia <= totalDias; dia++) {
+                const info = regraPadrao(dia, mesAtual, anoAtual);
+                const feriadoNome = feriados[`${mesAtual}-${dia}`];
+                
+                if (info.resp === 'mae') totalMaeMes++;
+                else if (info.resp === 'pai') totalPaiMes++;
+
+                const dataCelula = new Date(anoAtual, mesAtual, dia);
+                const isPassado = dataCelula < dataHoje;
+
+                const cell = document.createElement('div');
+                
+                let bgClass = info.resp === 'mae' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50' : 'bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-900/50';
+                let textClass = info.resp === 'mae' ? 'text-rose-700 dark:text-rose-300' : 'text-sky-700 dark:text-sky-300';
+                let badgeClass = info.resp === 'mae' ? 'bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-200' : 'bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-200';
+
+                if (isPassado) {
+                    bgClass += ' past-day';
+                }
+
+                cell.className = `day-cell-screen rounded-xl border p-1 flex flex-col justify-between relative transition cursor-pointer select-none ${bgClass}`;
+                cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
+                
+                let badgesHtml = '';
+                if (feriadoNome) badgesHtml += `<span class="text-[7px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-1 rounded truncate text-center font-bold block mb-0.5">${feriadoNome}</span>`;
+                
+                badgesHtml += `<span class="text-[9px] px-1 rounded truncate text-center font-bold block ${badgeClass}">${info.desc}</span>`;
+                
+                cell.innerHTML = `
+                    <div class="day-num text-[11px] font-extrabold ${textClass}">${dia}</div>
+                    <div class="flex flex-col gap-0.5">${badgesHtml}</div>
+                `;
+                grid.appendChild(cell);
+            }
+
+            document.getElementById('countMae').innerText = `${totalMaeMes} dias`;
+            document.getElementById('countPai').innerText = `${totalPaiMes} dias`;
+
+            let totalMaeAnoLoop = 0;
+            let totalPaiAnoLoop = 0;
+            for (let m = 0; m < 12; m++) {
+                const diasDoMes = new Date(anoAtual, m + 1, 0).getDate();
+                for (let d = 1; d <= diasDoMes; d++) {
+                    const inf = regraPadrao(d, m, anoAtual);
+                    if (inf.resp === 'mae') totalMaeAnoLoop++;
+                    else if (inf.resp === 'pai') totalPaiAnoLoop++;
+                }
+            }
+            document.getElementById('countMaeAno').innerText = `${totalMaeAnoLoop} dias`;
+            document.getElementById('countPaiAno').innerText = `${totalPaiAnoLoop} dias`;
+        }
+
+        function mudarMes(delta) {
+            mesAtual += delta;
+            if (mesAtual > 11) { mesAtual = 0; anoAtual++; } 
+            else if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
+            renderizar();
+        }
+
+        // IMPRESSÃO EXATA A PARTIR DO MÊS E ANO ATUALMENTE MOSTRADOS NA TELA (COM RISCOS NOS DIAS PASSADOS)
+        function gerarAnoCompletoPDF() {
+            let hojeObj = new Date();
+            let dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
+
+            let htmlAnual = `<!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <title>Guarda Compartilhada Sophia - A partir de ${nomesMeses[mesAtual]} ${anoAtual}</title>
+                <style>
+                    body { font-family: sans-serif; padding: 20px; color: #0f172a; margin: 0; }
+                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
+                    h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
+                    table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
+                    th { background: #f8fafc; font-size: 0.75rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
+                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; box-sizing: border-box; }
+                    .day-num { font-size: 0.8rem; font-weight: bold; position: relative; }
+                    .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; font-weight: bold; }
+                    .cell-mae { background-color: #ffe4e6 !important; color: #9f1239 !important; }
+                    .cell-pai { background-color: #e0f2fe !important; color: #1e40af !important; }
+                    
+                    /* Traço fino, longo e elegante para dias passados no PDF */
+                    .past-day .day-num::after {
+                        content: "";
+                        position: absolute;
+                        left: -4px;
+                        right: -4px;
+                        top: 50%;
+                        height: 1.5px;
+                        background-color: #000000;
+                        transform: translateY(-50%);
+                    }
+
+                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin-top: 5px; }
+                    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                </style>
+            </head>
+            <body>`;
+
+            let startY = anoAtual;
+            let startM = mesAtual;
+
+            for (let y = startY; y <= 2027; y++) {
+                let mInicio = (y === startY) ? startM : 0;
+                let mFim = 11;
+                for (let m = mInicio; m <= mFim; m++) {
+                    let mesNome = nomesMeses[m];
+                    let regra = regrasPorAnoMes[`${y}-${m}`] || `<b>${mesNome} ${y}:</b> Guarda Compartilhada.`;
+                    
+                    let tableHtml = '<table><thead><tr>';
+                    ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => { tableHtml += `<th>${d}</th>`; });
+                    tableHtml += '</tr></thead><tbody><tr>';
+
+                    const primeiroDia = new Date(y, m, 1).getDay();
+                    const totalDias = new Date(y, m + 1, 0).getDate();
+
+                    let colCount = 0;
+                    for (let i = 0; i < primeiroDia; i++) {
+                        tableHtml += `<td></td>`;
+                        colCount++;
+                    }
+
+                    for (let dia = 1; dia <= totalDias; dia++) {
+                        if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
+                        const info = regraPadrao(dia, m, y);
+                        let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
+
+                        const dataCelula = new Date(y, m, dia);
+                        if (dataCelula < dataHoje) {
+                            cssClass += ' past-day';
+                        }
+
+                        tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
+                        colCount++;
+                    }
+                    while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
+                    tableHtml += '</tr></tbody></table>';
+
+                    htmlAnual += `
+                        <div class="mes-pagina-impressao">
+                            <h2>Guarda Compartilhada Sophia - ${mesNome} ${y}</h2>
+                            ${tableHtml}
+                            <div class="rule-box">${regra}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            htmlAnual += `<script>window.onload = function() { window.print(); }<\/script></body></html>`;
+
+            let blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
+            let url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        }
+
+        renderizar();
     </script>
 </body>
 </html>
