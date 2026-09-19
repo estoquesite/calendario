@@ -11,6 +11,16 @@
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
+    <!-- Manifesto Dinâmico para Instalação como App no Celular -->
+    <link id="pwa-manifest" rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+        %22name%22: %22Guarda Compartilhada Sophia%22,
+        %22short_name%22: %22Sophia%22,
+        %22start_url%22: %22.%22,
+        %22display%22: %22standalone%22,
+        %22background_color%22: %22%23f9f9f9%22,
+        %22theme_color%22: %22%232563eb%22,
+        %22icons%22: [{%22src%22: %22https://cdn-icons-png.flaticon.com/512/3209/3209265.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}]
+    }">
     <style>
         /* Visual compactado ("chatadinho") na tela com bordas suaves */
         .day-cell-screen {
@@ -147,7 +157,7 @@
 
         <!-- BOTÃO DE IMPRESSÃO A PARTIR DESTE MÊS -->
         <div class="print-hidden text-center pb-1">
-            <button onclick="gerarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2">
+            <button onclick="gerenarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2">
                 <span>📄</span> Imprimir a partir deste mês
             </button>
         </div>
@@ -196,11 +206,14 @@
         <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700"></div>
     </div>
 
-    <!-- BARRA INFERIOR LIMPA, TEMA, SAÍDA, VERSÃO E MICROFONE -->
+    <!-- BARRA INFERIOR LIMPA, TEMA, SAÍDA, INSTALAR APP, VERSÃO E MICROFONE -->
     <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-1.5">
             <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Modo Escuro/Claro">
                 🌙/☀️
+            </button>
+            <button onclick="instalarApp()" class="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs font-bold transition flex items-center gap-1" title="Instalar App no Celular">
+                📱 Instalar
             </button>
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
@@ -219,6 +232,26 @@
         let anoAtual = 2026;
         let mesAtual = 8;
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        let deferredPrompt = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('App instalado com sucesso!');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.\n• No iPhone (Safari): Toque no botão de Compartilhar (quadrado com seta para cima) e escolha 'Adicionar à Tela de Início'.");
+            }
+        }
 
         let overrides = {};
         try {
@@ -681,102 +714,6 @@
             if (mesAtual > 11) { mesAtual = 0; anoAtual++; } 
             else if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
             renderizar();
-        }
-
-        // IMPRESSÃO EXATA A PARTIR DO MÊS E ANO ATUALMENTE MOSTRADOS NA TELA (COM RISCOS NOS DIAS PASSADOS)
-        function gerarAnoCompletoPDF() {
-            let hojeObj = new Date();
-            let dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
-
-            let htmlAnual = `<!DOCTYPE html>
-            <html lang="pt-BR">
-            <head>
-                <meta charset="UTF-8">
-                <title>Guarda Compartilhada Sophia - A partir de ${nomesMeses[mesAtual]} ${anoAtual}</title>
-                <style>
-                    body { font-family: sans-serif; padding: 20px; color: #0f172a; margin: 0; }
-                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
-                    h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
-                    table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
-                    th { background: #f8fafc; font-size: 0.75rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
-                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; box-sizing: border-box; }
-                    .day-num { font-size: 0.8rem; font-weight: bold; position: relative; }
-                    .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; font-weight: bold; }
-                    .cell-mae { background-color: #ffe4e6 !important; color: #9f1239 !important; }
-                    .cell-pai { background-color: #e0f2fe !important; color: #1e40af !important; }
-                    
-                    /* Traço fino, longo e elegante para dias passados no PDF */
-                    .past-day .day-num::after {
-                        content: "";
-                        position: absolute;
-                        left: -4px;
-                        right: -4px;
-                        top: 50%;
-                        height: 1.5px;
-                        background-color: #000000;
-                        transform: translateY(-50%);
-                    }
-
-                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin-top: 5px; }
-                    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                </style>
-            </head>
-            <body>`;
-
-            let startY = anoAtual;
-            let startM = mesAtual;
-
-            for (let y = startY; y <= 2027; y++) {
-                let mInicio = (y === startY) ? startM : 0;
-                let mFim = 11;
-                for (let m = mInicio; m <= mFim; m++) {
-                    let mesNome = nomesMeses[m];
-                    let regra = regrasPorAnoMes[`${y}-${m}`] || `<b>${mesNome} ${y}:</b> Guarda Compartilhada.`;
-                    
-                    let tableHtml = '<table><thead><tr>';
-                    ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => { tableHtml += `<th>${d}</th>`; });
-                    tableHtml += '</tr></thead><tbody><tr>';
-
-                    const primeiroDia = new Date(y, m, 1).getDay();
-                    const totalDias = new Date(y, m + 1, 0).getDate();
-
-                    let colCount = 0;
-                    for (let i = 0; i < primeiroDia; i++) {
-                        tableHtml += `<td></td>`;
-                        colCount++;
-                    }
-
-                    for (let dia = 1; dia <= totalDias; dia++) {
-                        if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
-                        const info = regraPadrao(dia, m, y);
-                        let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
-
-                        const dataCelula = new Date(y, m, dia);
-                        if (dataCelula < dataHoje) {
-                            cssClass += ' past-day';
-                        }
-
-                        tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
-                        colCount++;
-                    }
-                    while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
-                    tableHtml += '</tr></tbody></table>';
-
-                    htmlAnual += `
-                        <div class="mes-pagina-impressao">
-                            <h2>Guarda Compartilhada Sophia - ${mesNome} ${y}</h2>
-                            ${tableHtml}
-                            <div class="rule-box">${regra}</div>
-                        </div>
-                    `;
-                }
-            }
-
-            htmlAnual += `<script>window.onload = function() { window.print(); }<\/script></body></html>`;
-
-            let blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
-            let url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
         }
 
         renderizar();
