@@ -24,7 +24,6 @@
         %22icons%22: [{%22src%22: %22https://cdn-icons-png.flaticon.com/512/3209/3209265.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}]
     }">
     <style>
-        /* Visual compactado ("chatadinho") na tela com bordas suaves */
         .day-cell-screen {
             min-height: 40px !important;
             max-height: 48px !important;
@@ -40,11 +39,9 @@
                 min-height: 65px !important;
                 max-height: none !important;
             }
-            /* Linhas de impressão mais leves e delicadas, com cantos arredondados */
             th { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; }
             td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
             
-            /* Traço fino, longo e elegante para dias passados no PDF */
             .past-day .day-num {
                 position: relative;
             }
@@ -61,7 +58,6 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
-        /* Traço fino, longo e elegante para dias passados na tela */
         .past-day .day-num {
             position: relative;
         }
@@ -117,10 +113,9 @@
             <button onclick="window.location.reload()" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-lg text-[10px] font-bold transition" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
         </div>
 
-        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS (LINHA ÚNICA) -->
+        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS -->
         <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
             
-            <!-- ESTATÍSTICAS DO MÊS -->
             <div class="grid grid-cols-2 gap-1.5">
                 <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
                     <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
@@ -132,7 +127,6 @@
                 </div>
             </div>
 
-            <!-- ESTATÍSTICAS DO ANO -->
             <div class="grid grid-cols-2 gap-1.5">
                 <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
                     <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
@@ -146,7 +140,7 @@
 
         </div>
 
-        <!-- CALENDÁRIO COM TÍTULO BEM GRANDÃO -->
+        <!-- CALENDÁRIO -->
         <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
             <div class="flex justify-between items-center px-1">
                 <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
@@ -158,16 +152,22 @@
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
-        <!-- BOTÃO DE IMPRESSÃO A PARTIR DESTE MÊS -->
+        <!-- BOTÃO DE IMPRESSÃO -->
         <div class="print-hidden text-center pb-1">
             <button onclick="gerenarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2">
                 <span>📄</span> Imprimir a partir deste mês
             </button>
         </div>
 
-        <!-- BLOCO DE SELEÇÃO DE PERÍODO -->
+        <!-- BLOCO DE SELEÇÃO DE PERÍODO COM GERENCIADOR DE MOTIVOS -->
         <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
-            <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
+            <div class="flex justify-between items-center">
+                <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
+                <button onclick="abrirGerenciadorMotivos()" class="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1">
+                    ⚙️ Gerenciar Motivos
+                </button>
+            </div>
+            
             <div class="grid grid-cols-12 gap-1 items-center">
                 <div class="col-span-3">
                     <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white font-bold">
@@ -185,15 +185,11 @@
                     <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold">Ok</button>
                 </div>
             </div>
-            <!-- CAIXINHA BOX COM OPÇÕES PRÉ-DEFINIDAS + OUTROS -->
+
+            <!-- SELEÇÃO DE MOTIVO + CAMPO DIGITÁVEL -->
             <div class="grid grid-cols-12 gap-1 items-center pt-1">
                 <div class="col-span-6">
                     <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
-                        <option value="Férias">Férias</option>
-                        <option value="Final de Ano">Final de Ano</option>
-                        <option value="Aniversário Pai">Aniversário Pai</option>
-                        <option value="Aniversário Mãe">Aniversário Mãe</option>
-                        <option value="Outros">Outros...</option>
                     </select>
                 </div>
                 <div class="col-span-6" id="divOutros" style="display: none;">
@@ -204,12 +200,31 @@
 
     </div>
 
-    <!-- MODAL DE EDIÇÃO COM BOTÃO ✕ PARA FECHAR -->
+    <!-- MODAL DE EDIÇÃO DO DIA -->
     <div id="customModal" onclick="if(event.target === this) fecharModal()" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700 relative"></div>
     </div>
 
-    <!-- BARRA INFERIOR LIMPA, TEMA, SAÍDA, INSTALAR APP, VERSÃO E MICROFONE -->
+    <!-- MODAL DE GERENCIAR MOTIVOS -->
+    <div id="modalMotivos" onclick="if(event.target === this) fecharModalMotivos()" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 border border-gray-100 dark:border-gray-700 relative">
+            <div class="flex justify-between items-center pb-1 border-b border-gray-100 dark:border-gray-700">
+                <h3 class="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                    ⚙️ Cadastrar e Modificar Motivos
+                </h3>
+                <button onclick="fecharModalMotivos()" class="w-6 h-6 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-bold text-xs">✕</button>
+            </div>
+            
+            <div class="flex gap-1.5">
+                <input type="text" id="novoMotivoInput" placeholder="Novo motivo (ex: Viagem, Consulta)" class="flex-1 px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-xs dark:text-white">
+                <button onclick="adicionarMotivoPersonalizado()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold">Adicionar</button>
+            </div>
+
+            <div class="space-y-1 max-h-48 overflow-y-auto pr-1" id="listaMotivosGerenciar"></div>
+        </div>
+    </div>
+
+    <!-- BARRA INFERIOR -->
     <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-1.5">
             <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Modo Escuro/Claro">
@@ -221,17 +236,14 @@
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.6 (Nuvem)</span>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.7 (Nuvem)</span>
         </div>
-        <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
             🎤
         </button>
     </div>
 
-    <!-- LÓGICA DA SOPHIA COM SUPABASE -->
     <script>
-        // CONFIGURAÇÃO SUPABASE
         const SUPABASE_URL = 'https://jmeepzdvmmjngxwvayqb.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_54ORrLbP7naW7n-KlKCdUA_hZnpjguH';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -243,6 +255,10 @@
         let deferredPrompt = null;
         let overrides = {};
 
+        // LISTA DE MOTIVOS CONFIGURÁVEIS
+        const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe"];
+        let listaMotivos = [...motivosPadrao];
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -251,44 +267,130 @@
         function instalarApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
-                });
+                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
             } else {
-                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.\n• No iPhone (Safari): Toque no botão de Compartilhar (quadrado com seta para cima) e escolha 'Adicionar à Tela de Início'.");
+                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.\n• No iPhone (Safari): Toque no botão de Compartilhar e escolha 'Adicionar à Tela de Início'.");
             }
         }
 
         async function sincronizarComNuvem() {
             try {
-                let { data, error } = await supabaseClient
+                let { data } = await supabaseClient
                     .from('app_dados_guarda')
                     .select('conteudo')
                     .eq('id', '1')
                     .single();
 
                 if (data && data.conteudo) {
-                    overrides = data.conteudo;
+                    if (data.conteudo.overrides) {
+                        overrides = data.conteudo.overrides;
+                        listaMotivos = data.conteudo.motivos || [...motivosPadrao];
+                    } else {
+                        overrides = data.conteudo;
+                    }
                     localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
+                    localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
                 } else {
                     let salvo = localStorage.getItem('sophia_overrides_all');
                     if (salvo) overrides = JSON.parse(salvo);
+                    let motivosSalvos = localStorage.getItem('sophia_motivos_list');
+                    if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
                 }
             } catch(e) {
                 let salvo = localStorage.getItem('sophia_overrides_all');
                 if (salvo) overrides = JSON.parse(salvo);
+                let motivosSalvos = localStorage.getItem('sophia_motivos_list');
+                if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
             }
+            atualizarSelectMotivos();
         }
 
         async function salvarNaNuvem() {
             localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
+            localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
             try {
                 await supabaseClient
                     .from('app_dados_guarda')
-                    .upsert({ id: '1', conteudo: overrides });
+                    .upsert({ 
+                        id: '1', 
+                        conteudo: { 
+                            overrides: overrides, 
+                            motivos: listaMotivos 
+                        } 
+                    });
             } catch (err) {
                 console.error("Erro ao sincronizar com nuvem:", err);
             }
+        }
+
+        function atualizarSelectMotivos() {
+            const select = document.getElementById('selectMotivo');
+            if (!select) return;
+            const valorAtual = select.value;
+            select.innerHTML = '';
+            
+            listaMotivos.forEach(motivo => {
+                const opt = document.createElement('option');
+                opt.value = motivo;
+                opt.innerText = motivo;
+                select.appendChild(opt);
+            });
+
+            const optOutros = document.createElement('option');
+            optOutros.value = 'Outros';
+            optOutros.innerText = 'Outros...';
+            select.appendChild(optOutros);
+
+            if (listaMotivos.includes(valorAtual) || valorAtual === 'Outros') {
+                select.value = valorAtual;
+            } else {
+                select.value = listaMotivos[0] || 'Outros';
+            }
+            verificarMotivoOutros();
+        }
+
+        function abrirGerenciadorMotivos() {
+            const modal = document.getElementById('modalMotivos');
+            const listaContainer = document.getElementById('listaMotivosGerenciar');
+            listaContainer.innerHTML = '';
+
+            listaMotivos.forEach((motivo, index) => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center bg-gray-50 dark:bg-gray-900/60 px-3 py-1.5 rounded-xl text-xs border border-gray-100 dark:border-gray-700';
+                item.innerHTML = `
+                    <span class="font-medium text-gray-800 dark:text-gray-200">${motivo}</span>
+                    <button onclick="removerMotivo(${index})" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded">✕</button>
+                `;
+                listaContainer.appendChild(item);
+            });
+
+            modal.classList.remove('hidden');
+        }
+
+        function fecharModalMotivos() {
+            document.getElementById('modalMotivos').classList.add('hidden');
+        }
+
+        function adicionarMotivoPersonalizado() {
+            const input = document.getElementById('novoMotivoInput');
+            const novo = input.value.trim();
+            if (!novo) return;
+            if (listaMotivos.includes(novo) || novo.toLowerCase() === 'outros') {
+                alert('Esse motivo já existe ou é reservado!');
+                return;
+            }
+            listaMotivos.push(novo);
+            input.value = '';
+            salvarNaNuvem();
+            atualizarSelectMotivos();
+            abrirGerenciadorMotivos();
+        }
+
+        function removerMotivo(index) {
+            listaMotivos.splice(index, 1);
+            salvarNaNuvem();
+            atualizarSelectMotivos();
+            abrirGerenciadorMotivos();
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -407,7 +509,7 @@
             const selectMotivo = document.getElementById('selectMotivo').value;
             let desc = selectMotivo;
             if (selectMotivo === 'Outros') {
-                desc = document.getElementById('descOutros').value || (resp === 'mae' ? 'Mãe' : 'Pai');
+                desc = document.getElementById('descOutros').value.trim() || (resp === 'mae' ? 'Mãe' : 'Pai');
             }
 
             if (!inicioStr || !fimStr) {
@@ -503,6 +605,8 @@
         function editarDia(ano, mes, dia) {
             const modal = document.getElementById('customModal');
             const box = document.getElementById('modalBoxContent');
+            const chave = `${ano}-${mes}-${dia}`;
+            const info = regraPadrao(dia, mes, ano);
             
             box.innerHTML = `
                 <div class="flex justify-between items-center mb-2">
@@ -510,10 +614,10 @@
                     <button onclick="fecharModal()" class="w-7 h-7 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-full flex items-center justify-center font-bold text-gray-700 dark:text-gray-200 text-xs transition">✕</button>
                 </div>
                 <select id="selectResp" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-2 dark:text-white">
-                    <option value="mae">👩 Mãe</option>
-                    <option value="pai">👔 Pai</option>
+                    <option value="mae" ${info.resp === 'mae' ? 'selected' : ''}>👩 Mãe</option>
+                    <option value="pai" ${info.resp === 'pai' ? 'selected' : ''}>👔 Pai</option>
                 </select>
-                <input type="text" id="inputDesc" placeholder="Descrição (ex: Férias, Viagem)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-3 dark:text-white">
+                <input type="text" id="inputDesc" value="${info.desc || ''}" placeholder="Descrição (ex: Férias, Viagem)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-3 dark:text-white">
                 <div class="flex gap-2">
                     <button onclick="salvarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-green-600 text-white py-2 rounded-xl text-xs font-bold">Salvar</button>
                     <button onclick="apagarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-red-600 text-white py-2 rounded-xl text-xs font-bold">Apagar</button>
@@ -525,7 +629,7 @@
         function salvarEdicao(ano, mes, dia) {
             const chave = `${ano}-${mes}-${dia}`;
             const resp = document.getElementById('selectResp').value;
-            const desc = document.getElementById('inputDesc').value || (resp === 'mae' ? 'Mãe' : 'Pai');
+            const desc = document.getElementById('inputDesc').value.trim() || (resp === 'mae' ? 'Mãe' : 'Pai');
             
             overrides[chave] = { resp: resp, desc: desc };
             salvarNaNuvem();
