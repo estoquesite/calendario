@@ -204,9 +204,9 @@
 
     </div>
 
-    <!-- MODAL DE EDIÇÃO -->
-    <div id="customModal" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700"></div>
+    <!-- MODAL DE EDIÇÃO COM BOTÃO ✕ PARA FECHAR -->
+    <div id="customModal" onclick="if(event.target === this) fecharModal()" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700 relative"></div>
     </div>
 
     <!-- BARRA INFERIOR LIMPA, TEMA, SAÍDA, INSTALAR APP, VERSÃO E MICROFONE -->
@@ -221,7 +221,7 @@
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.5 (Nuvem)</span>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.6 (Nuvem)</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -255,7 +255,7 @@
                     deferredPrompt = null;
                 });
             } else {
-                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.\n• No iPhone (Safari): Toque no botão de Compartilhar e escolha 'Adicionar à Tela de Início'.");
+                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.\n• No iPhone (Safari): Toque no botão de Compartilhar (quadrado com seta para cima) e escolha 'Adicionar à Tela de Início'.");
             }
         }
 
@@ -505,7 +505,10 @@
             const box = document.getElementById('modalBoxContent');
             
             box.innerHTML = `
-                <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-2">✏️ Editar Dia ${dia}/${mes+1}/${ano}</h3>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-sm font-bold text-gray-900 dark:text-white">✏️ Editar Dia ${dia}/${mes+1}/${ano}</h3>
+                    <button onclick="fecharModal()" class="w-7 h-7 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-full flex items-center justify-center font-bold text-gray-700 dark:text-gray-200 text-xs transition">✕</button>
+                </div>
                 <select id="selectResp" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-2 dark:text-white">
                     <option value="mae">👩 Mãe</option>
                     <option value="pai">👔 Pai</option>
