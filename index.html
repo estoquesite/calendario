@@ -11,6 +11,8 @@
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Manifesto Dinâmico para Instalação como App no Celular -->
     <link id="pwa-manifest" rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22Guarda Compartilhada Sophia%22,
@@ -83,7 +85,7 @@
             <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
             <div>
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">Acesso Restrito</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Guarda Compartilhada - Sophia</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Guarda Compartilhada - Sophia (Nuvem)</p>
             </div>
             
             <form onsubmit="verificarLogin(event)" class="space-y-3 text-left">
@@ -108,16 +110,17 @@
     <div id="conteudo-site" class="hidden max-w-lg mx-auto p-2.5 space-y-2.5">
         
         <!-- TÍTULO PRINCIPAL NO TOPO -->
-        <div class="text-center py-1">
-            <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center justify-center gap-1.5">
-                👧 Guarda Compartilhada Sophia
+        <div class="text-center py-1 flex justify-between items-center px-1">
+            <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
+                👧 Guarda Sophia
             </h1>
+            <button onclick="window.location.reload()" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-lg text-[10px] font-bold transition" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
         </div>
 
         <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS (LINHA ÚNICA) -->
         <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
             
-            <!-- ESTATÍSTICAS DO MÊS (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
+            <!-- ESTATÍSTICAS DO MÊS -->
             <div class="grid grid-cols-2 gap-1.5">
                 <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
                     <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
@@ -129,7 +132,7 @@
                 </div>
             </div>
 
-            <!-- ESTATÍSTICAS DO ANO (LADO A LADO, TEXTO E NÚMERO NA MESMA LINHA) -->
+            <!-- ESTATÍSTICAS DO ANO -->
             <div class="grid grid-cols-2 gap-1.5">
                 <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
                     <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
@@ -218,7 +221,7 @@
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
                 🔒 Sair
             </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.4</span>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.5 (Nuvem)</span>
         </div>
         <!-- MICROFONE -->
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -226,13 +229,19 @@
         </button>
     </div>
 
-    <!-- LÓGICA DA SOPHIA -->
+    <!-- LÓGICA DA SOPHIA COM SUPABASE -->
     <script>
+        // CONFIGURAÇÃO SUPABASE
+        const SUPABASE_URL = 'https://jmeepzdvmmjngxwvayqb.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_54ORrLbP7naW7n-KlKCdUA_hZnpjguH';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         const SENHA_MESTRA = "1510";
         let anoAtual = 2026;
         let mesAtual = 8;
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         let deferredPrompt = null;
+        let overrides = {};
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -243,23 +252,48 @@
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('App instalado com sucesso!');
-                    }
                     deferredPrompt = null;
                 });
             } else {
-                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.\n• No iPhone (Safari): Toque no botão de Compartilhar (quadrado com seta para cima) e escolha 'Adicionar à Tela de Início'.");
+                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.\n• No iPhone (Safari): Toque no botão de Compartilhar e escolha 'Adicionar à Tela de Início'.");
             }
         }
 
-        let overrides = {};
-        try {
-            const salvo = localStorage.getItem('sophia_overrides_all');
-            if (salvo) overrides = JSON.parse(salvo);
-        } catch(e) {}
+        async function sincronizarComNuvem() {
+            try {
+                let { data, error } = await supabaseClient
+                    .from('app_dados_guarda')
+                    .select('conteudo')
+                    .eq('id', '1')
+                    .single();
 
-        window.addEventListener('DOMContentLoaded', () => {
+                if (data && data.conteudo) {
+                    overrides = data.conteudo;
+                    localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
+                } else {
+                    let salvo = localStorage.getItem('sophia_overrides_all');
+                    if (salvo) overrides = JSON.parse(salvo);
+                }
+            } catch(e) {
+                let salvo = localStorage.getItem('sophia_overrides_all');
+                if (salvo) overrides = JSON.parse(salvo);
+            }
+        }
+
+        async function salvarNaNuvem() {
+            localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
+            try {
+                await supabaseClient
+                    .from('app_dados_guarda')
+                    .upsert({ id: '1', conteudo: overrides });
+            } catch (err) {
+                console.error("Erro ao sincronizar com nuvem:", err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await sincronizarComNuvem();
+
             if (sessionStorage.getItem('autenticado_calendario') === 'true') {
                 liberarAcesso();
             }
@@ -334,7 +368,8 @@
             }
         }
 
-        function liberarAcesso() {
+        async function liberarAcesso() {
+            await sincronizarComNuvem();
             document.getElementById('tela-login').classList.add('hidden');
             document.getElementById('conteudo-site').classList.remove('hidden');
             renderizar();
@@ -364,7 +399,6 @@
             }
         }
 
-        // APLICAR PERÍODO (INÍCIO AO FIM)
         function aplicarPeriodo() {
             const inicioStr = document.getElementById('dataInicio').value;
             const fimStr = document.getElementById('dataFim').value;
@@ -399,12 +433,11 @@
                 atual.setDate(atual.getDate() + 1);
             }
 
-            try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
-            alert("Período aplicado com sucesso!");
+            salvarNaNuvem();
+            alert("Período aplicado e sincronizado com a nuvem!");
             renderizar();
         }
 
-        // MICROFONE INTELIGENTE
         function ouvirVoz() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
@@ -454,9 +487,9 @@
                         overrides[chave] = { resp: respDetectada, desc: desc };
                     }
 
-                    try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+                    salvarNaNuvem();
                     renderizar();
-                    alert(`Voz aplicada com sucesso: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
+                    alert(`Voz aplicada e salva na nuvem: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
                 } else {
                     alert(`Comando ouvido: "${texto}". Dica: Diga algo como "18 a 19 mãe".`);
                 }
@@ -492,7 +525,7 @@
             const desc = document.getElementById('inputDesc').value || (resp === 'mae' ? 'Mãe' : 'Pai');
             
             overrides[chave] = { resp: resp, desc: desc };
-            try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+            salvarNaNuvem();
             
             fecharModal();
             renderizar();
@@ -501,7 +534,7 @@
         function apagarEdicao(ano, mes, dia) {
             const chave = `${ano}-${mes}-${dia}`;
             delete overrides[chave];
-            try { localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides)); } catch(e) {}
+            salvarNaNuvem();
             
             fecharModal();
             renderizar();
@@ -716,7 +749,6 @@
             renderizar();
         }
 
-        // IMPRESSÃO EXATA A PARTIR DO MÊS E ANO ATUALMENTE MOSTRADOS NA TELA (COM RISCOS NOS DIAS PASSADOS)
         function gerenarAnoCompletoPDF() {
             let hojeObj = new Date();
             let dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
@@ -738,7 +770,6 @@
                     .cell-mae { background-color: #ffe4e6 !important; color: #9f1239 !important; }
                     .cell-pai { background-color: #e0f2fe !important; color: #1e40af !important; }
                     
-                    /* Traço fino, longo e elegante para dias passados no PDF */
                     .past-day .day-num::after {
                         content: "";
                         position: absolute;
