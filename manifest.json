@@ -1,14 +1,14 @@
 {
   "name": "Sophia",
   "short_name": "Sophia",
-  "description": "Aplicação de gestão e acompanhamento de calendário e rotinas.",
+  "description": "Aplicativo de gestao e acompanhamento Sophia",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#3b82f6",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "https://api.iconify.design/solar:calendar-date-bold-duotone.png?width=512&height=512&color=%233b82f6",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
