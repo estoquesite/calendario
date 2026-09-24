@@ -1,7 +1,7 @@
 {
-  "name": "Sophia",
-  "short_name": "Sophia",
-  "description": "Aplicativo de gestao e acompanhamento Sophia",
+  "name": "Guarda Compartilhada",
+  "short_name": "Guarda",
+  "description": "Aplicativo de gestao de calendario e rotina compartilhada",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
