@@ -1,8 +1,17 @@
 {
-  "name": "Roteiro Europa",
-  "short_name": "Roteiro",
+  "name": "Sophia",
+  "short_name": "Sophia",
+  "description": "Aplicação de gestão e acompanhamento de calendário e rotinas.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff"
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
