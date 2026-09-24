@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guarda Compartilhada Sophia</title>
+    <title>Guarda Compartilhada</title>
     <!-- Ícone personalizado -->
-    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" type="image/png">
+    <link rel="icon" href="https://api.iconify.design/solar:calendar-date-bold-duotone.png?width=512&height=512&color=%233b82f6" type="image/png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,16 +13,8 @@
     </script>
     <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Manifesto Dinâmico para Instalação como App no Celular -->
-    <link id="pwa-manifest" rel="manifest" href="data:application/manifest+json;charset=utf-8,{
-        %22name%22: %22Guarda Compartilhada Sophia%22,
-        %22short_name%22: %22Sophia%22,
-        %22start_url%22: %22.%22,
-        %22display%22: %22standalone%22,
-        %22background_color%22: %22%23f9f9f9%22,
-        %22theme_color%22: %22%232563eb%22,
-        %22icons%22: [{%22src%22: %22https://cdn-icons-png.flaticon.com/512/3209/3209265.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22}]
-    }">
+    <!-- Ligação Direta ao Arquivo de Manifesto -->
+    <link rel="manifest" href="manifest.json">
     <style>
         .day-cell-screen {
             min-height: 40px !important;
@@ -81,7 +73,7 @@
             <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
             <div>
                 <h2 class="text-xl font-bold text-gray-900 dark:text-white">Acesso Restrito</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Guarda Compartilhada - Sophia (Nuvem)</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Guarda Compartilhada (Nuvem)</p>
             </div>
             
             <form onsubmit="verificarLogin(event)" class="space-y-3 text-left">
@@ -102,13 +94,13 @@
         </div>
     </div>
 
-    <!-- CONTEÚDO PRINCIPAL DA SOPHIA -->
+    <!-- CONTEÚDO PRINCIPAL -->
     <div id="conteudo-site" class="hidden max-w-lg mx-auto p-2.5 space-y-2.5">
         
         <!-- TÍTULO PRINCIPAL NO TOPO -->
         <div class="text-center py-1 flex justify-between items-center px-1">
             <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
-                👧 Guarda Sophia
+                📅 Guarda Compartilhada
             </h1>
             <button onclick="window.location.reload()" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-lg text-[10px] font-bold transition" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
         </div>
@@ -269,7 +261,7 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
             } else {
-                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial' ou 'Instalar aplicativo'.\n• No iPhone (Safari): Toque no botão de Compartilhar e escolha 'Adicionar à Tela de Início'.");
+                alert("📱 Para instalar no telemóvel:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar ao ecrã principal' ou 'Instalar aplicação'.\n• No iPhone (Safari): Toque no botão de Partilha e escolha 'Adicionar ao Ecrã Principal'.");
             }
         }
 
@@ -438,8 +430,8 @@
 
                 const createCredentialOptions = {
                     challenge: challenge,
-                    rp: { name: "Guarda Sophia", id: window.location.hostname },
-                    user: { id: userId, name: "sophia@guarda.local", displayName: "Mariana" },
+                    rp: { name: "Guarda Compartilhada", id: window.location.hostname },
+                    user: { id: userId, name: "guarda@local", displayName: "Usuário" },
                     pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
                     authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
                     timeout: 60000
@@ -864,7 +856,7 @@
             <html lang="pt-BR">
             <head>
                 <meta charset="UTF-8">
-                <title>Guarda Compartilhada Sophia - A partir de ${nomesMeses[mesAtual]} ${anoAtual}</title>
+                <title>Guarda Compartilhada - A partir de ${nomesMeses[mesAtual]} ${anoAtual}</title>
                 <style>
                     body { font-family: sans-serif; padding: 20px; color: #0f172a; margin: 0; }
                     .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
@@ -935,7 +927,7 @@
 
                     htmlAnual += `
                         <div class="mes-pagina-impressao">
-                            <h2>Guarda Compartilhada Sophia - ${mesNome} ${y}</h2>
+                            <h2>Guarda Compartilhada - ${mesNome} ${y}</h2>
                             ${tableHtml}
                             <div class="rule-box">${regra}</div>
                         </div>
