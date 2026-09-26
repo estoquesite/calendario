@@ -48,13 +48,23 @@
             body { background: white !important; color: black !important; padding: 0 !important; }
             .print-hidden, #tela-login, .fixed, button, input, select, #toast { display: none !important; }
             #conteudo-site { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-            .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
+            .mes-pagina-impressao { 
+                page-break-inside: avoid !important; 
+                break-inside: avoid !important; 
+                page-break-after: always !important; 
+                break-after: page !important; 
+                padding-bottom: 10px !important; 
+            }
+            .mes-pagina-impressao:last-child {
+                page-break-after: auto !important;
+                break-after: auto !important;
+            }
             .day-cell-screen {
-                min-height: 65px !important;
+                min-height: 55px !important;
                 max-height: none !important;
             }
             th { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; }
-            td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
+            td { width: 14.28%; height: 55px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
             
             .past-day .day-num { position: relative; }
             .past-day .day-num::after {
@@ -1214,7 +1224,7 @@
                 <style>
                     @page {
                         size: A4 portrait;
-                        margin: 10mm 12mm 10mm 12mm;
+                        margin: 8mm 10mm 8mm 10mm;
                     }
                     * {
                         box-sizing: border-box;
@@ -1229,50 +1239,53 @@
                         background: #ffffff;
                     }
                     .mes-pagina-impressao {
+                        page-break-inside: avoid !important;
+                        break-inside: avoid !important;
                         page-break-after: always;
                         break-after: page;
-                        height: 100vh;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                        padding: 8px 0;
+                        box-sizing: border-box;
+                        padding: 0;
+                    }
+                    .mes-pagina-impressao:last-child {
+                        page-break-after: auto !important;
+                        break-after: auto !important;
                     }
                     .cabecalho-mes {
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
                         border-bottom: 2px solid #e2e8f0;
-                        padding-bottom: 8px;
-                        margin-bottom: 10px;
+                        padding-bottom: 5px;
+                        margin-bottom: 6px;
                     }
                     .titulo-bloco h1 {
-                        font-size: 18px;
+                        font-size: 16px;
                         font-weight: 800;
                         margin: 0;
                         color: #0f172a;
                         display: flex;
                         align-items: center;
-                        gap: 6px;
+                        gap: 5px;
                     }
                     .titulo-bloco p {
-                        font-size: 10px;
+                        font-size: 9.5px;
                         color: #64748b;
-                        margin: 2px 0 0 0;
+                        margin: 1px 0 0 0;
                         font-weight: 600;
                     }
                     .resumo-dias {
                         display: flex;
-                        gap: 8px;
+                        gap: 6px;
                         align-items: center;
                     }
                     .tag-resumo {
-                        font-size: 10px;
+                        font-size: 9.5px;
                         font-weight: 700;
-                        padding: 4px 9px;
-                        border-radius: 8px;
+                        padding: 3px 8px;
+                        border-radius: 6px;
                         display: flex;
                         align-items: center;
-                        gap: 4px;
+                        gap: 3px;
                     }
                     .tag-mae { background: #ffe4e6; color: #be123c; border: 1px solid #fecdd3; }
                     .tag-pai { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
@@ -1280,30 +1293,32 @@
                     table {
                         width: 100%;
                         border-collapse: separate;
-                        border-spacing: 5px;
+                        border-spacing: 4px;
                         table-layout: fixed;
                     }
                     th {
                         text-align: center;
-                        font-size: 10px;
+                        font-size: 9.5px;
                         font-weight: 800;
                         color: #64748b;
                         text-transform: uppercase;
                         letter-spacing: 0.5px;
-                        padding-bottom: 4px;
+                        padding-bottom: 2px;
                     }
                     td {
                         width: 14.28%;
-                        height: 70px;
+                        height: 52px;
+                        max-height: 52px;
                         vertical-align: top;
-                        border-radius: 8px;
-                        padding: 5px 6px;
+                        border-radius: 6px;
+                        padding: 4px 5px;
                         border: 1px solid transparent;
+                        overflow: hidden;
                     }
                     td.vazio {
                         background: #f8fafc;
                         border: 1px dashed #e2e8f0;
-                        opacity: 0.4;
+                        opacity: 0.35;
                     }
                     td.mae {
                         background-color: #fff1f2 !important;
@@ -1314,7 +1329,7 @@
                         border-color: #bae6fd !important;
                     }
                     td.past-day {
-                        opacity: 0.55;
+                        opacity: 0.5;
                     }
                     td.past-day .num-dia {
                         position: relative;
@@ -1335,55 +1350,57 @@
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
-                        margin-bottom: 3px;
+                        margin-bottom: 2px;
                     }
                     .num-dia {
-                        font-size: 12px;
+                        font-size: 11px;
                         font-weight: 800;
                         color: #0f172a;
                     }
                     .sigla-resp {
-                        font-size: 8px;
+                        font-size: 7.5px;
                         font-weight: 800;
-                        padding: 1px 4px;
-                        border-radius: 4px;
+                        padding: 1px 3px;
+                        border-radius: 3px;
                     }
                     .sigla-m { color: #e11d48; background: #ffe4e6; }
                     .sigla-p { color: #0284c7; background: #e0f2fe; }
 
                     .desc-evento {
-                        font-size: 8px;
+                        font-size: 7.5px;
                         font-weight: 700;
                         line-height: 1.1;
                         color: #334155;
-                        background: rgba(255, 255, 255, 0.85);
-                        padding: 2px 4px;
-                        border-radius: 4px;
-                        display: inline-block;
+                        background: rgba(255, 255, 255, 0.9);
+                        padding: 1.5px 3.5px;
+                        border-radius: 3px;
+                        display: block;
                         border: 1px solid rgba(0,0,0,0.06);
-                        margin-top: 3px;
-                        word-break: break-word;
+                        margin-top: 2px;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
                     }
 
                     .caixa-regra {
                         background: #f8fafc;
                         border: 1px solid #e2e8f0;
-                        border-radius: 8px;
-                        padding: 8px 12px;
-                        font-size: 10px;
-                        line-height: 1.4;
+                        border-radius: 6px;
+                        padding: 6px 10px;
+                        font-size: 9.5px;
+                        line-height: 1.35;
                         color: #334155;
-                        margin-top: 8px;
+                        margin-top: 6px;
                     }
                     .rodape-documento {
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
-                        font-size: 8.5px;
+                        font-size: 8px;
                         color: #94a3b8;
                         border-top: 1px solid #f1f5f9;
-                        padding-top: 6px;
-                        margin-top: 6px;
+                        padding-top: 4px;
+                        margin-top: 4px;
                     }
                 </style>
             </head>
@@ -1442,27 +1459,25 @@
 
                     htmlAnual += `
                         <div class="mes-pagina-impressao">
-                            <div>
-                                <div class="cabecalho-mes">
-                                    <div class="titulo-bloco">
-                                        <h1>📅 ${mesNome} ${y}</h1>
-                                        <p>Guarda Compartilhada — Sophia</p>
-                                    </div>
-                                    <div class="resumo-dias">
-                                        <span class="tag-resumo tag-mae">👩 Mãe: ${contMae} dias</span>
-                                        <span class="tag-resumo tag-pai">👔 Pai: ${contPai} dias</span>
-                                    </div>
+                            <div class="cabecalho-mes">
+                                <div class="titulo-bloco">
+                                    <h1>📅 ${mesNome} ${y}</h1>
+                                    <p>Guarda Compartilhada — Sophia</p>
                                 </div>
-                                ${tableHtml}
+                                <div class="resumo-dias">
+                                    <span class="tag-resumo tag-mae">👩 Mãe: ${contMae} dias</span>
+                                    <span class="tag-resumo tag-pai">👔 Pai: ${contPai} dias</span>
+                                </div>
                             </div>
-                            <div>
-                                <div class="caixa-regra">
-                                    <b>Regra do Mês:</b> ${regra}
-                                </div>
-                                <div class="rodape-documento">
-                                    <span>Gerado pelo Aplicativo Guarda Compartilhada</span>
-                                    <span>Emissão: ${dataEmissao}</span>
-                                </div>
+                            
+                            ${tableHtml}
+                            
+                            <div class="caixa-regra">
+                                <b>Regra do Mês:</b> ${regra}
+                            </div>
+                            <div class="rodape-documento">
+                                <span>Gerado pelo Aplicativo Guarda Compartilhada</span>
+                                <span>Emissão: ${dataEmissao}</span>
                             </div>
                         </div>
                     `;
