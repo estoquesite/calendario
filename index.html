@@ -56,7 +56,7 @@
             transition: transform 0.08s ease;
         }
 
-        /* ANIMAÇÃO DA BOLINHA VERDE PISCANTE */
+        /* ANIMAÇÃO DA BOLINHA VERDE PISCANTE (FERIADOS) */
         @keyframes pulsoVerdeFeriado {
             0%, 100% {
                 transform: scale(0.95);
@@ -64,17 +64,62 @@
             }
             50% {
                 transform: scale(1.15);
-                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+                box-shadow: 0 0 0 3.5px rgba(16, 185, 129, 0);
             }
         }
 
         .bolinha-verde-ativa {
-            display: inline-flex;
+            display: inline-block;
             width: 7px;
             height: 7px;
             background-color: #10b981;
             border-radius: 9999px;
-            animation: pulsoVerdeFeriado 1.3s infinite ease-in-out;
+            animation: pulsoVerdeFeriado 1.4s infinite ease-in-out;
+            flex-shrink: 0;
+        }
+
+        /* ANIMAÇÃO DA BOLINHA VERMELHA (EMENDAS) */
+        @keyframes pulsoVermelhoEmenda {
+            0%, 100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            50% {
+                transform: scale(1.15);
+                box-shadow: 0 0 0 3.5px rgba(239, 68, 68, 0);
+            }
+        }
+
+        .bolinha-vermelha-ativa {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background-color: #ef4444;
+            border-radius: 9999px;
+            animation: pulsoVermelhoEmenda 1.4s infinite ease-in-out;
+            flex-shrink: 0;
+        }
+
+        /* ANIMAÇÃO DA BOLINHA AZUL (HOJE) */
+        @keyframes pulsoAzulHoje {
+            0%, 100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+            50% {
+                transform: scale(1.15);
+                box-shadow: 0 0 0 3.5px rgba(59, 130, 246, 0);
+            }
+        }
+
+        .bolinha-azul-hoje {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background-color: #3b82f6;
+            border-radius: 9999px;
+            animation: pulsoAzulHoje 1.4s infinite ease-in-out;
+            flex-shrink: 0;
         }
 
         @media print {
@@ -237,23 +282,28 @@
                 <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95">Próx ›</button>
             </div>
 
-            <!-- INSTRUÇÃO VISUAL E LEGENDA DE FERIADO / GRAMPINHO -->
-            <div class="print-hidden flex flex-col gap-1 px-1">
+            <!-- INSTRUÇÃO VISUAL E LEGENDA DAS BOLINHAS -->
+            <div class="print-hidden flex flex-col gap-1.5 px-1">
                 <div class="flex justify-between items-center text-[10px] text-gray-500">
                     <span class="font-medium text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
                         <span>✨</span> Segure e arraste nos dias para marcar
                     </span>
                     <span class="text-[9px] text-gray-400">ou toque para editar</span>
                 </div>
-                <!-- LEGENDA DOS NOVOS ELEMENTOS -->
-                <div class="flex items-center gap-3 pt-0.5 border-t border-gray-100 dark:border-gray-700/60 text-[9px] font-semibold text-gray-500 dark:text-gray-400">
-                    <span class="flex items-center gap-1">
+
+                <!-- LEGENDA COMPLETA DAS BOLINHAS -->
+                <div class="flex items-center gap-3 pt-1 border-t border-gray-100 dark:border-gray-700/60 text-[9.5px] font-semibold text-gray-600 dark:text-gray-300 flex-wrap">
+                    <span class="flex items-center gap-1.5">
                         <span class="bolinha-verde-ativa"></span>
-                        <span>Feriado Nacional / RJ</span>
+                        <span>Feriado</span>
                     </span>
-                    <span class="flex items-center gap-1 text-rose-600 dark:text-rose-400">
-                        <span class="text-[12px] leading-none">📎</span>
-                        <span>Grampinho (Emenda/Feriado)</span>
+                    <span class="flex items-center gap-1.5 text-rose-600 dark:text-rose-400">
+                        <span class="bolinha-vermelha-ativa"></span>
+                        <span>Emenda</span>
+                    </span>
+                    <span class="flex items-center gap-1.5 text-blue-600 dark:text-blue-400">
+                        <span class="bolinha-azul-hoje"></span>
+                        <span>Hoje</span>
                     </span>
                 </div>
             </div>
@@ -313,11 +363,12 @@
                 </div>
             </div>
             
-            <!-- CHECKBOX PARA MARCAR PERÍODO COM GRAMPINHO VERMELHO -->
+            <!-- CHECKBOX PARA MARCAR PERÍODO COM BOLINHA VERMELHA (EMENDA) -->
             <div class="flex items-center gap-1.5 pt-0.5">
-                <label for="checkGrampinhoPeriodo" class="flex items-center gap-1.5 text-[10px] font-bold text-rose-600 dark:text-rose-400 cursor-pointer">
-                    <input type="checkbox" id="checkGrampinhoPeriodo" class="w-3.5 h-3.5 accent-rose-600 rounded cursor-pointer">
-                    <span>📎 Marcar este período com grampinho vermelho (Emenda / Feriado)</span>
+                <label for="checkEmendaPeriodo" class="flex items-center gap-1.5 text-[10px] font-bold text-rose-600 dark:text-rose-400 cursor-pointer">
+                    <input type="checkbox" id="checkEmendaPeriodo" class="w-3.5 h-3.5 accent-rose-600 rounded cursor-pointer">
+                    <span class="bolinha-vermelha-ativa"></span>
+                    <span>Marcar este período com bolinha vermelha (Emenda de Feriado)</span>
                 </label>
             </div>
 
@@ -349,7 +400,7 @@
         </button>
     </div>
 
-    <!-- NOVO: MINI MODAL RÁPIDO AO SOLTAR O DEDO DO ARRASTO -->
+    <!-- MINI MODAL RÁPIDO AO SOLTAR O DEDO DO ARRASTO -->
     <div id="modalPeriodoRapido" onclick="if(event.target === this) fecharModalPeriodoRapido()" class="print-hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden flex items-end sm:items-center justify-center p-3">
         <div id="boxPeriodoRapido" class="bg-white dark:bg-gray-800 p-4 rounded-3xl shadow-2xl max-w-xs w-full space-y-3 border border-gray-100 dark:border-gray-700">
             <div class="flex justify-between items-center">
@@ -379,7 +430,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE EDIÇÃO DO DIA (COM GRAMPINHO VERMELHO) -->
+    <!-- MODAL DE EDIÇÃO DO DIA (COM BOLINHA VERMELHA DE EMENDA) -->
     <div id="customModal" onclick="if(event.target === this) fecharModal()" class="print-hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-xl max-w-xs w-full space-y-3.5 border border-gray-100 dark:border-gray-700">
             <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
@@ -399,17 +450,17 @@
                     <input type="text" id="inputDesc" placeholder="Digite apenas se houver motivo..." class="w-full text-xs p-2 mt-1 border rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none">
                 </div>
 
-                <!-- CAMPO PARA DEFINIR / ALTERNAR GRAMPINHO VERMELHO (FERIADO/EMENDA) -->
+                <!-- CAMPO PARA ATIVAR / DESATIVAR BOLINHA VERMELHA (EMENDA) -->
                 <div class="p-2.5 rounded-xl bg-rose-50/80 dark:bg-rose-950/40 border border-rose-200/70 dark:border-rose-900/50">
-                    <label for="checkGrampinho" class="flex items-center gap-2 cursor-pointer text-xs font-bold text-rose-700 dark:text-rose-300">
-                        <input type="checkbox" id="checkGrampinho" class="w-4 h-4 accent-rose-600 rounded cursor-pointer">
-                        <span class="flex items-center gap-1">
-                            <span class="text-base text-rose-600">📎</span>
-                            <span>Grampinho Vermelho (Emenda / Feriado)</span>
+                    <label for="checkEmenda" class="flex items-center gap-2 cursor-pointer text-xs font-bold text-rose-700 dark:text-rose-300">
+                        <input type="checkbox" id="checkEmenda" class="w-4 h-4 accent-rose-600 rounded cursor-pointer">
+                        <span class="flex items-center gap-1.5">
+                            <span class="bolinha-vermelha-ativa"></span>
+                            <span>Bolinha Vermelha (Emenda de Feriado)</span>
                         </span>
                     </label>
                     <p class="text-[9px] text-rose-500/90 dark:text-rose-400 mt-1 pl-6">
-                        Exibe o grampinho vermelho no calendário para sinalizar emendas e feriados.
+                        Exibe a bolinha vermelha piscante no dia para sinalizar emendas e pontes de feriado.
                     </p>
                 </div>
             </div>
@@ -658,7 +709,7 @@
             const dadosBackup = {
                 overrides: overrides,
                 listaMotivos: listaMotivos,
-                versao: "3.6",
+                versao: "3.7",
                 data: new Date().toISOString()
             };
             const jsonStr = JSON.stringify(dadosBackup, null, 2);
@@ -929,8 +980,8 @@
                 desc = document.getElementById('descOutros').value.trim() || 'Outros';
             }
 
-            const isGrampinhoPeriodo = document.getElementById('checkGrampinhoPeriodo') 
-                ? document.getElementById('checkGrampinhoPeriodo').checked 
+            const isEmendaPeriodo = document.getElementById('checkEmendaPeriodo') 
+                ? document.getElementById('checkEmendaPeriodo').checked 
                 : false;
 
             let dataLoop = new Date(atual);
@@ -943,7 +994,7 @@
                 overrides[chave] = { 
                     resp: resp, 
                     desc: desc,
-                    grampinho: isGrampinhoPeriodo
+                    emenda: isEmendaPeriodo
                 };
                 dataLoop.setDate(dataLoop.getDate() + 1);
             }
@@ -969,7 +1020,7 @@
             mostrarToast(`Período salvo! Próximo inicia em ${dSeg}/${mSeg}.`);
         }
 
-        // NOVO: SISTEMA DE SELEÇÃO POR ARRASTO (LONG PRESS)
+        // SISTEMA DE SELEÇÃO POR ARRASTO (LONG PRESS)
         function configurarArrastoCalendario() {
             const grid = document.getElementById('calendarioGrid');
             if (!grid) return;
@@ -1076,7 +1127,7 @@
                 overrides[`${ano}-${mes}-${d}`] = { 
                     resp, 
                     desc,
-                    grampinho: chaveExistente ? chaveExistente.grampinho : false
+                    emenda: chaveExistente ? (chaveExistente.emenda || chaveExistente.grampinho || false) : false
                 };
             }
 
@@ -1192,10 +1243,10 @@
                 : '';
             document.getElementById('inputDesc').value = descPersonalizada;
 
-            // PREENCHER O CHECKBOX DO GRAMPINHO VERMELHO
-            const checkGrampinho = document.getElementById('checkGrampinho');
-            if (checkGrampinho) {
-                checkGrampinho.checked = !!(info.grampinho);
+            // PREENCHER O CHECKBOX DA BOLINHA VERMELHA (EMENDA)
+            const checkEmenda = document.getElementById('checkEmenda');
+            if (checkEmenda) {
+                checkEmenda.checked = !!(info.emenda || info.grampinho);
             }
 
             modal.classList.remove('hidden');
@@ -1210,18 +1261,18 @@
             const chave = `${ano}-${mes}-${dia}`;
             const resp = document.getElementById('selectResp').value;
             const desc = document.getElementById('inputDesc').value.trim();
-            const isGrampinho = document.getElementById('checkGrampinho') ? document.getElementById('checkGrampinho').checked : false;
+            const isEmenda = document.getElementById('checkEmenda') ? document.getElementById('checkEmenda').checked : false;
 
             overrides[chave] = { 
                 resp: resp, 
                 desc: desc ? desc : (resp === 'mae' ? 'Mãe' : 'Pai'),
-                grampinho: isGrampinho
+                emenda: isEmenda
             };
             
             salvarNaNuvem();
             renderizar();
             fecharModal();
-            mostrarToast(isGrampinho ? "Dia atualizado com Grampinho Vermelho! 📎" : "Dia atualizado!");
+            mostrarToast(isEmenda ? "Dia atualizado com Bolinha Vermelha (Emenda)! 🔴" : "Dia atualizado!");
         }
 
         function apagarEdicao() {
@@ -1386,7 +1437,7 @@
             "2026-11": "<b>Dezembro 2026:</b> Férias Escolares (1-15 com Pai, 16-31 com Mãe)."
         };
 
-        // LISTA COMPLETA DE FERIADOS NACIONAIS E FERIADOS DO ESTADO E MUNICÍPIO DO RIO DE JANEIRO
+        // LISTA DE FERIADOS NACIONAIS E FERIADOS DO ESTADO E MUNICÍPIO DO RIO DE JANEIRO
         const feriados = {
             // FIXOS NACIONAIS
             "0-1": "Confraternização Universal",
@@ -1435,7 +1486,7 @@
             if (regrasEspeciais[chaveMes]) {
                 for (let regra of regrasEspeciais[chaveMes]) {
                     if (dia >= regra.d[0] && dia <= regra.d[1]) {
-                        return { resp: regra.resp, desc: regra.desc, grampinho: false };
+                        return { resp: regra.resp, desc: regra.desc, emenda: false };
                     }
                 }
             }
@@ -1447,9 +1498,9 @@
                 for (let i = 1; i <= dia; i++) {
                     if (new Date(ano, mes, i).getDay() === 5) numSexta++;
                 }
-                if (numSexta === 2 || numSexta === 4) return { resp: 'pai', desc: 'FDS Pai', grampinho: false };
+                if (numSexta === 2 || numSexta === 4) return { resp: 'pai', desc: 'FDS Pai', emenda: false };
             }
-            return { resp: 'mae', desc: 'Mãe', grampinho: false };
+            return { resp: 'mae', desc: 'Mãe', emenda: false };
         }
 
         function renderizar() {
@@ -1492,7 +1543,7 @@
                 else if (info.resp === 'pai') totalPaiMes++;
 
                 const feriadoNome = feriados[`${anoAtual}-${mesAtual}-${dia}`] || feriados[`${mesAtual}-${dia}`];
-                const temGrampinho = info.grampinho === true;
+                const temEmenda = !!(info.emenda || info.grampinho);
 
                 const dataCelula = new Date(anoAtual, mesAtual, dia);
                 const isPassado = dataCelula < dataHoje;
@@ -1522,30 +1573,23 @@
 
                 cell.innerHTML = `
                     <div class="flex justify-between items-center w-full px-1">
-                        <div class="flex items-center gap-1">
+                        <div class="flex items-center gap-1.5">
                             <span class="day-num text-xs font-black">${dia}</span>
                             
-                            <!-- BOLINHA VERDE PISCANTE PARA FERIADOS NACIONAIS E DO RIO -->
-                            ${feriadoNome ? `
-                                <span class="relative flex items-center justify-center" title="Feriado: ${feriadoNome}">
-                                    <span class="bolinha-verde-ativa"></span>
-                                </span>
-                            ` : ''}
+                            <!-- GRUPO DE BOLINHAS (LADO A LADO: FERIADO / EMENDA / HOJE) -->
+                            <div class="flex items-center gap-1">
+                                ${feriadoNome ? `
+                                    <span class="bolinha-verde-ativa" title="Feriado: ${feriadoNome}"></span>
+                                ` : ''}
 
-                            <!-- GRAMPINHO VERMELHO PARA FERIADOS / EMENDAS -->
-                            ${temGrampinho ? `
-                                <span class="inline-flex items-center justify-center text-rose-600 dark:text-rose-400 font-black text-xs leading-none drop-shadow-sm" title="Grampinho Vermelho (Emenda / Feriado)">
-                                    📎
-                                </span>
-                            ` : ''}
+                                ${temEmenda ? `
+                                    <span class="bolinha-vermelha-ativa" title="Emenda de Feriado"></span>
+                                ` : ''}
 
-                            <!-- INDICADOR DE HOJE -->
-                            ${isHoje ? `
-                                <span class="relative flex h-1.5 w-1.5" title="Hoje">
-                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-600"></span>
-                                </span>
-                            ` : ''}
+                                ${isHoje ? `
+                                    <span class="bolinha-azul-hoje" title="Hoje"></span>
+                                ` : ''}
+                            </div>
                         </div>
                         <span class="text-[8px] font-bold ${info.resp === 'mae' ? 'text-rose-600 dark:text-rose-400' : 'text-sky-600 dark:text-sky-400'}">${info.resp === 'mae' ? 'M' : 'P'}</span>
                     </div>
@@ -1864,15 +1908,22 @@
                         if (colCount % 7 === 0 && colCount !== 0) tableHtml += '</tr><tr>';
                         let info = regraPadrao(d, m, y);
                         let feriadoNome = feriados[`${y}-${m}-${d}`] || feriados[`${m}-${d}`];
+                        let temEmenda = !!(info.emenda || info.grampinho);
                         let temDescDiferente = info.desc && !['Mãe', 'FDS Pai'].includes(info.desc);
 
                         let dataCelula = new Date(y, m, d);
                         let isPassado = dataCelula < dataHoje;
+                        let isHojeCell = dataCelula.getTime() === dataHoje.getTime();
+
+                        let pontosPdf = '';
+                        if (feriadoNome) pontosPdf += '<span style="color:#10b981;font-size:10px;margin-left:2px;">●</span>';
+                        if (temEmenda) pontosPdf += '<span style="color:#ef4444;font-size:10px;margin-left:2px;">●</span>';
+                        if (isHojeCell) pontosPdf += '<span style="color:#3b82f6;font-size:10px;margin-left:2px;">●</span>';
 
                         tableHtml += `
                             <td class="${info.resp === 'mae' ? 'mae' : 'pai'} ${isPassado ? 'past-day' : ''}">
                                 <div class="dia-topo">
-                                    <span class="num-dia">${d} ${feriadoNome ? '🟢' : ''} ${info.grampinho ? '📎' : ''}</span>
+                                    <span class="num-dia">${d}${pontosPdf}</span>
                                     <span class="sigla-resp ${info.resp === 'mae' ? 'sigla-m' : 'sigla-p'}">${info.resp === 'mae' ? 'MÃE' : 'PAI'}</span>
                                 </div>
                                 ${temDescDiferente ? `<div class="desc-evento">${info.desc}</div>` : ''}
@@ -1896,7 +1947,6 @@
                                 <div class="resumo-dias">
                                     <span class="tag-resumo tag-mae">👩 Mãe: ${contMae} dias</span>
                                     <span class="tag-resumo tag-pai">👔 Pai: ${contPai} dias</span>
-                                </div> class="tag-resumo tag-pai">👔 Pai: ${contPai} dias</span>
                                 </div>
                             </div>
                             
