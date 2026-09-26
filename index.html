@@ -102,7 +102,7 @@
                 <span>Validar Digital</span>
             </button>
 
-            <p id=\"erro-senha\" class="text-xs text-red-500 hidden font-medium">Leitura não reconhecida. Tente novamente.</p>
+            <p id="erro-senha" class="text-xs text-red-500 hidden font-medium">Leitura não reconhecida. Tente novamente.</p>
         </div>
     </div>
 
@@ -184,9 +184,6 @@
 
             <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
-            
-            <!-- LISTA RÁPIDA DE EXCEÇÕES E EVENTOS DO MÊS -->
-            <div id="listaEventosMesContainer" class="print-hidden space-y-1"></div>
         </div>
 
         <!-- BOTÕES DE EXPORTAÇÃO E WHATSAPP -->
@@ -1040,7 +1037,6 @@
             
             let totalMaeMes = 0;
             let totalPaiMes = 0;
-            const eventosDiferenciados = [];
 
             for (let dia = 1; dia <= totalDias; dia++) {
                 const info = regraPadrao(dia, mesAtual, anoAtual);
@@ -1048,11 +1044,6 @@
                 else if (info.resp === 'pai') totalPaiMes++;
 
                 const feriadoNome = feriados[`${anoAtual}-${mesAtual}-${dia}`] || feriados[`${mesAtual}-${dia}`];
-                if (info.desc && !['Mãe', 'FDS Pai'].includes(info.desc)) {
-                    eventosDiferenciados.push({ dia, desc: info.desc, resp: info.resp });
-                } else if (feriadoNome) {
-                    eventosDiferenciados.push({ dia, desc: feriadoNome, resp: info.resp });
-                }
 
                 const dataCelula = new Date(anoAtual, mesAtual, dia);
                 const isPassado = dataCelula < dataHoje;
@@ -1115,27 +1106,6 @@
             }
             document.getElementById('countMaeAno').innerText = `${totalMaeAno} dias`;
             document.getElementById('countPaiAno').innerText = `${totalPaiAno} dias`;
-
-            // RENDERIZAR DESTAQUES DO MÊS
-            const listaEventosCont = document.getElementById('listaEventosMesContainer');
-            if (listaEventosCont) {
-                listaEventosCont.innerHTML = '';
-                if (eventosDiferenciados.length > 0) {
-                    const divDestaques = document.createElement('div');
-                    divDestaques.className = "bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 p-2 rounded-xl";
-                    divDestaques.innerHTML = `
-                        <p class="text-[9px] font-bold text-amber-800 dark:text-amber-300 uppercase mb-1">⭐ Destaques deste Mês:</p>
-                        <div class="flex flex-wrap gap-1">
-                            ${eventosDiferenciados.map(ev => `
-                                <span class="text-[9px] bg-white dark:bg-gray-800 border border-amber-200 dark:border-amber-800 px-1.5 py-0.5 rounded-md font-medium text-gray-700 dark:text-gray-300">
-                                    Dia ${ev.dia}: <b>${ev.desc}</b> (${ev.resp === 'mae' ? 'Mãe' : 'Pai'})
-                                </span>
-                            `).join('')}
-                        </div>
-                    `;
-                    listaEventosCont.appendChild(divDestaques);
-                }
-            }
         }
 
         function irParaHoje() {
@@ -1175,7 +1145,6 @@
                     table { width: 100%; border-collapse: separate; border-spacing: 4px; }
                     th { border: 1px solid #cbd5e1; background: #f8fafc; font-size: 11px; padding: 6px; }
                     td { width: 14.28%; height: 60px; vertical-align: top; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; box-sizing: border-box; }
-                    .mae { background-; border-radius: 6px; padding: 4px; box-sizing: border-box; }
                     .mae { background-color: #ffe4e6 !important; }
                     .pai { background-color: #e0f2fe !important; }
                     .past-day { text-decoration: line-through; opacity: 0.6; }
