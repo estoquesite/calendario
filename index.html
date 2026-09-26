@@ -809,6 +809,20 @@
             }
         }
 
+        // SINCRONIZAR CAMPOS DE PERÍODO COM O MÊS ATUAL DO CALENDÁRIO
+        function sincronizarCamposPeriodoComMes(forcar = false) {
+            const inputIni = document.getElementById('dataInicio');
+            const inputFim = document.getElementById('dataFim');
+            if (!inputIni || !inputFim) return;
+
+            if (forcar || !inputIni.value) {
+                const mStr = String(mesAtual + 1).padStart(2, '0');
+                const padrao = `${anoAtual}-${mStr}-01`;
+                inputIni.value = padrao;
+                inputFim.value = padrao;
+            }
+        }
+
         function aplicarPeriodo() {
             vibrar();
             const inicioStr = document.getElementById('dataInicio').value;
@@ -834,18 +848,35 @@
                 desc = document.getElementById('descOutros').value.trim() || 'Outros';
             }
 
-            while (atual <= final) {
-                let y = atual.getFullYear();
-                let m = atual.getMonth();
-                let d = atual.getDate();
+            let dataLoop = new Date(atual);
+            while (dataLoop <= final) {
+                let y = dataLoop.getFullYear();
+                let m = dataLoop.getMonth();
+                let d = dataLoop.getDate();
                 let chave = `${y}-${m}-${d}`;
                 overrides[chave] = { resp: resp, desc: desc };
-                atual.setDate(atual.getDate() + 1);
+                dataLoop.setDate(dataLoop.getDate() + 1);
             }
 
             salvarNaNuvem();
             renderizar();
-            mostrarToast("Período atualizado com sucesso!");
+
+            // CONTINUIDADE AUTOMÁTICA: dia seguinte ao término deste período
+            let proximoInicio = new Date(final);
+            proximoInicio.setDate(proximoInicio.getDate() + 1);
+            
+            const ySeg = proximoInicio.getFullYear();
+            const mSeg = String(proximoInicio.getMonth() + 1).padStart(2, '0');
+            const dSeg = String(proximoInicio.getDate()).padStart(2, '0');
+            const proximaDataStr = `${ySeg}-${mSeg}-${dSeg}`;
+
+            document.getElementById('dataInicio').value = proximaDataStr;
+            document.getElementById('dataFim').value = proximaDataStr;
+
+            // Inverte o responsável para facilitar a marcação do período seguinte
+            document.getElementById('respPeriodo').value = (resp === 'mae') ? 'pai' : 'mae';
+
+            mostrarToast(`Período salvo! Próximo inicia em ${dSeg}/${mSeg}.`);
         }
 
         // COMANDO POR VOZ
@@ -967,7 +998,6 @@
             const resp = document.getElementById('selectResp').value;
             const desc = document.getElementById('inputDesc').value.trim();
 
-            // Se você não digitou nada, não salva textos indesejados; salva apenas a designação limpa
             overrides[chave] = { 
                 resp: resp, 
                 desc: desc ? desc : (resp === 'mae' ? 'Mãe' : 'Pai') 
@@ -1121,6 +1151,7 @@
             mesAtual = parseInt(selMes.value);
             anoAtual = parseInt(selAno.value);
             fecharSeletorMesAno();
+            sincronizarCamposPeriodoComMes(true);
             renderizar();
             mostrarToast(`📅 ${nomesMeses[mesAtual]} de ${anoAtual}`);
         }
@@ -1320,6 +1351,7 @@
             const agora = new Date();
             anoAtual = agora.getFullYear();
             mesAtual = agora.getMonth();
+            sincronizarCamposPeriodoComMes(true);
             renderizar();
             mostrarToast("📅 Voltando para hoje!");
         }
@@ -1335,6 +1367,7 @@
                 mesAtual = 11;
                 anoAtual--;
             }
+            sincronizarCamposPeriodoComMes(true);
             renderizar();
         }
 
@@ -1636,6 +1669,19 @@
         carregarCacheLocal();
         atualizarSelectMotivos();
         configurarGestosSwipe();
+
+        // Conectar ouvinte para garantir que Data Fim nunca seja anterior a Data Início
+        const campoDataIni = document.getElementById('dataInicio');
+        if (campoDataIni) {
+            campoDataIni.addEventListener('change', function() {
+                const fimInput = document.getElementById('dataFim');
+                if (!fimInput.value || fimInput.value < this.value) {
+                    fimInput.value = this.value;
+                }
+            });
+        }
+
+        sincronizarCamposPeriodoComMes(true);
 
         if (ehDispositivoMovel() && !sessionStorage.getItem('auth_unlocked')) {
             const telaLogin = document.getElementById('tela-login');
