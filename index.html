@@ -932,19 +932,7 @@
             "2026-8": "<b>Setembro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
             "2026-9": "<b>Outubro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
             "2026-10": "<b>Novembro 2026:</b> Férias Escolares e Aniversário do Pai.",
-            "2026-11": "<b>Dezembro 2026:</b> Férias Escolares (1-15 com Pai, 16-31 com Mãe).",
-            "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe | Dias 15 a 31 Viagem com o Pai.",
-            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval) | Dias 10 a 16 com a Mãe.",
-            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe.",
-            "2027-5": "<b>Junho 2027:</b> Aniversário da Sophia.",
-            "2027-6": "<b>Julho 2027:</b> Dias 9 a 23 Férias Pai | Dias 24 a 31 Férias Mãe.",
-            "2027-7": "<b>Agosto 2027:</b> Dia dos Pais — semana com o Pai.",
-            "2027-8": "<b>Setembro 2027:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2027-9": "<b>Outubro 2027:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2027-10": "<b>Novembro 2027:</b> Férias Escolares e Aniversário do Pai.",
-            "2027-11": "<b>Dezembro 2027:</b> Férias Escolares (1-15 Mãe, 16-31 Pai)."
+            "2026-11": "<b>Dezembro 2026:</b> Férias Escolares (1-15 com Pai, 16-31 com Mãe)."
         };
 
         const feriados = {
@@ -953,29 +941,14 @@
             "10-15": "Proclamação", "10-20": "Consciência Negra", "11-25": "Natal",
             
             "2026-1-16": "Carnaval", "2026-1-17": "Carnaval", "2026-1-18": "Cinzas",
-            "2026-3-3": "Sexta Santa", "2026-3-5": "Páscoa", "2026-5-4": "Corpus Christi",
-            
-            "2027-1-8": "Carnaval", "2027-1-9": "Carnaval", "2027-1-10": "Cinzas",
-            "2027-2-26": "Sexta Santa", "2027-2-28": "Páscoa", "2027-4-27": "Corpus Christi"
+            "2026-3-3": "Sexta Santa", "2026-3-5": "Páscoa", "2026-5-4": "Corpus Christi"
         };
 
         const regrasEspeciais = {
             "2026-8": [{ d: [3, 7], resp: 'pai', desc: 'Pai' }, { d: [18, 20], resp: 'pai', desc: 'Pai' }],
             "2026-9": [{ d: [2, 4], resp: 'pai', desc: 'Pai' }, { d: [16, 18], resp: 'pai', desc: 'Pai' }, { d: [30, 31], resp: 'pai', desc: 'Pai' }],
             "2026-10": [{ d: [1, 2], resp: 'pai', desc: 'Pai' }, { d: [12, 15], resp: 'pai', desc: 'Pai' }, { d: [19, 22], resp: 'pai', desc: 'Aniv. Pai' }, { d: [27, 29], resp: 'pai', desc: 'Pai' }],
-            "2026-11": [{ d: [1, 15], resp: 'pai', desc: 'Férias Pai' }, { d: [16, 31], resp: 'mae', desc: 'Férias Mãe' }],
-            "2027-0": [{ d: [1, 14], resp: 'mae', desc: 'Viagem Mãe' }, { d: [15, 31], resp: 'pai', desc: 'Viagem Pai' }],
-            "2027-1": [{ d: [1, 9], resp: 'pai', desc: 'Carnaval Pai' }, { d: [10, 16], resp: 'mae', desc: 'Carnaval Mãe' }, { d: [19, 21], resp: 'pai', desc: 'Pai' }, { d: [26, 28], resp: 'mae', desc: 'Mãe' }],
-            "2027-2": [{ d: [5, 7], resp: 'pai', desc: 'Pai' }, { d: [12, 14], resp: 'mae', desc: 'Mãe' }, { d: [19, 21], resp: 'pai', desc: 'Pai' }, { d: [26, 28], resp: 'mae', desc: 'Mãe' }],
-            "2027-3": [{ d: [2, 4], resp: 'pai', desc: 'Pai' }, { d: [9, 11], resp: 'mae', desc: 'Mãe' }, { d: [16, 18], resp: 'pai', desc: 'Pai' }, { d: [23, 25], resp: 'mae', desc: 'Mãe' }],
-            "2027-4": [{ d: [7, 10], resp: 'mae', desc: 'Dia das Mães' }, { d: [14, 16], resp: 'pai', desc: 'Pai' }, { d: [21, 23], resp: 'mae', desc: 'Mãe' }, { d: [28, 30], resp: 'pai', desc: 'Pai' }],
-            "2027-5": [{ d: [4, 6], resp: 'mae', desc: 'Sophia' }],
-            "2027-6": [{ d: [9, 23], resp: 'pai', desc: 'Férias Pai' }, { d: [24, 31], resp: 'mae', desc: 'Férias Mãe' }],
-            "2027-7": [{ d: [6, 8], resp: 'pai', desc: 'Dia Pais' }, { d: [13, 15], resp: 'mae', desc: 'Mãe' }, { d: [20, 22], resp: 'pai', desc: 'Pai' }, { d: [27, 29], resp: 'mae', desc: 'Mãe' }],
-            "2027-8": [{ d: [3, 5], resp: 'pai', desc: 'Pai' }, { d: [10, 12], resp: 'mae', desc: 'Mãe' }, { d: [17, 19], resp: 'pai', desc: 'Pai' }, { d: [24, 26], resp: 'mae', desc: 'Mãe' }],
-            "2027-9": [{ d: [1, 3], resp: 'pai', desc: 'Pai' }, { d: [15, 17], resp: 'pai', desc: 'Pai' }, { d: [29, 31], resp: 'pai', desc: 'Pai' }],
-            "2027-10": [{ d: [12, 14], resp: 'mae', desc: 'Mãe' }, { d: [19, 28], resp: 'pai', desc: 'Aniv. Pai' }],
-            "2027-11": [{ d: [1, 15], resp: 'mae', desc: 'Férias Mãe' }, { d: [16, 31], resp: 'pai', desc: 'Fim de Ano' }]
+            "2026-11": [{ d: [1, 15], resp: 'pai', desc: 'Férias Pai' }, { d: [16, 31], resp: 'mae', desc: 'Férias Mãe' }]
         };
 
         function regraPadrao(dia, mes, ano) {
@@ -1005,7 +978,6 @@
 
         function renderizar() {
             if (anoAtual < 2026) { anoAtual = 2026; mesAtual = 0; }
-            if (anoAtual > 2027) { anoAtual = 2027; mesAtual = 11; }
 
             document.getElementById('tituloCalendarioMes').innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
             
@@ -1133,28 +1105,197 @@
 
         function gerenarAnoCompletoPDF() {
             vibrar();
+            const dataEmissao = new Date().toLocaleDateString('pt-BR');
+            const hojeObj = new Date();
+            const dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
+
             let htmlAnual = `<!DOCTYPE html>
             <html lang="pt-BR">
             <head>
                 <meta charset="UTF-8">
-                <title>Guarda Compartilhada - A partir de ${nomesMeses[mesAtual]} ${anoAtual}</title>
+                <title>Guarda Compartilhada - Sophia</title>
+                <link rel="preconnect" href="https://fonts.googleapis.com">
+                <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
                 <style>
-                    body { font-family: sans-serif; padding: 20px; color: #1e293b; }
-                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 25px; }
-                    h2 { text-align: center; color: #0f172a; margin-bottom: 12px; }
-                    table { width: 100%; border-collapse: separate; border-spacing: 4px; }
-                    th { border: 1px solid #cbd5e1; background: #f8fafc; font-size: 11px; padding: 6px; }
-                    td { width: 14.28%; height: 60px; vertical-align: top; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; box-sizing: border-box; }
-                    .mae { background-color: #ffe4e6 !important; }
-                    .pai { background-color: #e0f2fe !important; }
-                    .past-day { text-decoration: line-through; opacity: 0.6; }
-                    .rule-box { margin-top: 10px; font-size: 11px; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; background: #f8fafc; }
-                    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                    @page {
+                        size: A4 portrait;
+                        margin: 10mm 12mm 10mm 12mm;
+                    }
+                    * {
+                        box-sizing: border-box;
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    body {
+                        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+                        color: #0f172a;
+                        margin: 0;
+                        padding: 0;
+                        background: #ffffff;
+                    }
+                    .mes-pagina-impressao {
+                        page-break-after: always;
+                        break-after: page;
+                        height: 100vh;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                        padding: 8px 0;
+                    }
+                    .cabecalho-mes {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        border-bottom: 2px solid #e2e8f0;
+                        padding-bottom: 8px;
+                        margin-bottom: 10px;
+                    }
+                    .titulo-bloco h1 {
+                        font-size: 18px;
+                        font-weight: 800;
+                        margin: 0;
+                        color: #0f172a;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                    }
+                    .titulo-bloco p {
+                        font-size: 10px;
+                        color: #64748b;
+                        margin: 2px 0 0 0;
+                        font-weight: 600;
+                    }
+                    .resumo-dias {
+                        display: flex;
+                        gap: 8px;
+                        align-items: center;
+                    }
+                    .tag-resumo {
+                        font-size: 10px;
+                        font-weight: 700;
+                        padding: 4px 9px;
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                    }
+                    .tag-mae { background: #ffe4e6; color: #be123c; border: 1px solid #fecdd3; }
+                    .tag-pai { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+
+                    table {
+                        width: 100%;
+                        border-collapse: separate;
+                        border-spacing: 5px;
+                        table-layout: fixed;
+                    }
+                    th {
+                        text-align: center;
+                        font-size: 10px;
+                        font-weight: 800;
+                        color: #64748b;
+                        text-transform: uppercase;
+                        letter-spacing: 0.5px;
+                        padding-bottom: 4px;
+                    }
+                    td {
+                        width: 14.28%;
+                        height: 70px;
+                        vertical-align: top;
+                        border-radius: 8px;
+                        padding: 5px 6px;
+                        border: 1px solid transparent;
+                    }
+                    td.vazio {
+                        background: #f8fafc;
+                        border: 1px dashed #e2e8f0;
+                        opacity: 0.4;
+                    }
+                    td.mae {
+                        background-color: #fff1f2 !important;
+                        border-color: #fecdd3 !important;
+                    }
+                    td.pai {
+                        background-color: #f0f9ff !important;
+                        border-color: #bae6fd !important;
+                    }
+                    td.past-day {
+                        opacity: 0.55;
+                    }
+                    td.past-day .num-dia {
+                        position: relative;
+                        color: #64748b;
+                    }
+                    td.past-day .num-dia::after {
+                        content: "";
+                        position: absolute;
+                        left: -2px;
+                        right: -2px;
+                        top: 50%;
+                        height: 1.5px;
+                        background-color: #475569;
+                        transform: translateY(-50%);
+                    }
+
+                    .dia-topo {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 3px;
+                    }
+                    .num-dia {
+                        font-size: 12px;
+                        font-weight: 800;
+                        color: #0f172a;
+                    }
+                    .sigla-resp {
+                        font-size: 8px;
+                        font-weight: 800;
+                        padding: 1px 4px;
+                        border-radius: 4px;
+                    }
+                    .sigla-m { color: #e11d48; background: #ffe4e6; }
+                    .sigla-p { color: #0284c7; background: #e0f2fe; }
+
+                    .desc-evento {
+                        font-size: 8px;
+                        font-weight: 700;
+                        line-height: 1.1;
+                        color: #334155;
+                        background: rgba(255, 255, 255, 0.85);
+                        padding: 2px 4px;
+                        border-radius: 4px;
+                        display: inline-block;
+                        border: 1px solid rgba(0,0,0,0.06);
+                        margin-top: 3px;
+                        word-break: break-word;
+                    }
+
+                    .caixa-regra {
+                        background: #f8fafc;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 8px;
+                        padding: 8px 12px;
+                        font-size: 10px;
+                        line-height: 1.4;
+                        color: #334155;
+                        margin-top: 8px;
+                    }
+                    .rodape-documento {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        font-size: 8.5px;
+                        color: #94a3b8;
+                        border-top: 1px solid #f1f5f9;
+                        padding-top: 6px;
+                        margin-top: 6px;
+                    }
                 </style>
             </head>
             <body>`;
 
-            for (let y = anoAtual; y <= 2027; y++) {
+            for (let y = anoAtual; y <= anoAtual + 1; y++) {
                 let startM = (y === anoAtual) ? mesAtual : 0;
                 for (let m = startM; m < 12; m++) {
                     let primeiroDia = new Date(y, m, 1).getDay();
@@ -1163,32 +1304,71 @@
                     let chaveRegra = `${y}-${m}`;
                     let regra = regrasPorAnoMes[chaveRegra] || `Guarda Compartilhada (2º e 4º finais de semana com o Pai).`;
 
-                    let tableHtml = '<table><thead><tr><th>DOM</th><th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th><th>SÁB</th></tr></thead><tbody><tr>';
+                    let contMae = 0;
+                    let contPai = 0;
+                    for (let d = 1; d <= totalDias; d++) {
+                        let inf = regraPadrao(d, m, y);
+                        if (inf.resp === 'mae') contMae++;
+                        else contPai++;
+                    }
+
+                    let tableHtml = '<table><thead><tr><th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th></tr></thead><tbody><tr>';
                     let colCount = 0;
+
                     for (let i = 0; i < primeiroDia; i++) {
-                        tableHtml += `<td></td>`;
+                        tableHtml += `<td class="vazio"></td>`;
                         colCount++;
                     }
 
                     for (let d = 1; d <= totalDias; d++) {
                         if (colCount % 7 === 0 && colCount !== 0) tableHtml += '</tr><tr>';
                         let info = regraPadrao(d, m, y);
+                        let temDescDiferente = info.desc && !['Mãe', 'FDS Pai'].includes(info.desc);
+
+                        let dataCelula = new Date(y, m, d);
+                        let isPassado = dataCelula < dataHoje;
+
                         tableHtml += `
-                            <td class="${info.resp === 'mae' ? 'mae' : 'pai'}">
-                                <b>${d}</b><br>
-                                <small>${info.desc || ''}</small>
+                            <td class="${info.resp === 'mae' ? 'mae' : 'pai'} ${isPassado ? 'past-day' : ''}">
+                                <div class="dia-topo">
+                                    <span class="num-dia">${d}</span>
+                                    <span class="sigla-resp ${info.resp === 'mae' ? 'sigla-m' : 'sigla-p'}">${info.resp === 'mae' ? 'MÃE' : 'PAI'}</span>
+                                </div>
+                                ${temDescDiferente ? `<div class="desc-evento">${info.desc}</div>` : ''}
                             </td>
                         `;
                         colCount++;
                     }
-                    while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
+                    while (colCount % 7 !== 0) {
+                        tableHtml += `<td class="vazio"></td>`;
+                        colCount++;
+                    }
                     tableHtml += '</tr></tbody></table>';
 
                     htmlAnual += `
                         <div class="mes-pagina-impressao">
-                            <h2>Guarda Compartilhada - ${mesNome} ${y}</h2>
-                            ${tableHtml}
-                            <div class="rule-box">${regra}</div>
+                            <div>
+                                <div class="cabecalho-mes">
+                                    <div class="titulo-bloco">
+                                        <h1>📅 ${mesNome} ${y}</h1>
+                                        <p>Guarda Compartilhada — Sophia</p>
+                                    </div>
+                                    <div class="resumo-dias">
+                                        <span class="tag-resumo tag-mae">👩 Mãe: ${contMae} dias</span>
+                                        <span class="tag-resumo tag-pai">👔 Pai: ${contPai} dias</span>
+                                    </div>
+                                </div>
+                                ${tableHtml}
+                            </div>
+                            <div>
+                                <div class="caixa-regra">
+                                    <b>Regra do Mês:</b> ${regra}
+                                </div>
+                                <div class="rodape-documento">
+                                    <span>Gerado pelo Aplicativo Guarda Compartilhada</span>
+                                    <span>Emissão: ${dataEmissao}</span>
+                                </div>
+                            </div>
                         </div>
                     `;
                 }
