@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Guarda Compartilhada</title>
     
-    <!-- Meta tags PWA para visual e tela cheia no celular -->
+    <!-- Meta tags PWA para visual nativo no celular -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#f9fafb" media="(prefers-color-scheme: light)">
@@ -13,7 +13,7 @@
 
     <link rel="icon" href="https://api.iconify.design/solar:calendar-date-bold-duotone.png?width=512&height=512&color=%233b82f6" type="image/png">
     
-    <!-- Tipografia moderna: Plus Jakarta Sans -->
+    <!-- Fonte moderna Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overscroll-behavior-y: contain; /* Trava o pull-to-refresh acidental */
+            overscroll-behavior-y: contain; /* Evita recarregar a tela por puxão acidental no celular */
         }
 
         .day-cell-screen {
@@ -88,10 +88,10 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28 select-none font-sans">
 
-    <!-- NOTIFICAÇÃO FLUTUANTE MODERNA (TOAST) -->
+    <!-- NOTIFICAÇÃO FLUTUANTE (TOAST) -->
     <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-gray-900/95 dark:bg-gray-800/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none -translate-y-2 flex items-center gap-2 border border-gray-700/50"></div>
 
-    <!-- TELA DE LOGIN / CAPA EXCLUSIVA POR BIOMETRIA (MD:HIDDEN) -->
+    <!-- TELA DE LOGIN / CAPA EXCLUSIVA POR BIOMETRIA (SOMENTE CELULAR: md:hidden) -->
     <div id="tela-login" class="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-sm hidden flex items-center justify-center p-4 md:hidden">
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-5 border border-gray-100 dark:border-gray-700">
             <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
@@ -112,11 +112,19 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <div id="conteudo-site" class="max-w-lg mx-auto p-2.5 space-y-2.5">
         
-        <!-- TÍTULO PRINCIPAL NO TOPO -->
-        <div class="text-center py-1 flex justify-between items-center px-1">
-            <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
-                📅 Guarda Compartilhada
-            </h1>
+        <!-- TÍTULO PRINCIPAL COM STATUS DA NUVEM -->
+        <div class="py-1 flex justify-between items-center px-1">
+            <div class="flex items-center gap-2">
+                <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
+                    📅 Guarda Compartilhada
+                </h1>
+                <!-- INDICADOR DA NUVEM -->
+                <div id="statusNuvem" class="flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50 px-2 py-0.5 rounded-full text-[9px] font-semibold" title="Status da Conexão com Supabase">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="textoStatusNuvem">Nuvem ativa</span>
+                </div>
+            </div>
+            
             <button onclick="sincronizarComNuvem().then(() => mostrarToast('🔄 Sincronizado com a Nuvem!'))" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-2.5 py-1 rounded-xl text-[10px] font-bold transition active:scale-95" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
         </div>
 
@@ -134,7 +142,7 @@
                 </div>
             </div>
 
-            <!-- BARRA DINÂMICA DE EQUILÍBRIO DO MÊS -->
+            <!-- BARRA DE PROPORÇÃO VISUAL (MÃE X PAI) -->
             <div class="space-y-1">
                 <div class="w-full bg-gray-100 dark:bg-gray-700/50 h-2 rounded-full overflow-hidden flex shadow-inner">
                     <div id="barraMae" class="bg-rose-500 transition-all duration-500 h-full" style="width: 50%;"></div>
@@ -159,11 +167,16 @@
 
         </div>
 
-        <!-- CALENDÁRIO -->
+        <!-- CALENDÁRIO COM GESTOS DE TOQUE (SWIPE) -->
         <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
             <div class="flex justify-between items-center px-1">
                 <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95">‹ Ant</button>
-                <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                
+                <div class="flex items-center gap-1.5">
+                    <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                    <button onclick="irParaHoje()" class="print-hidden px-1.5 py-0.5 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60 rounded-md text-[9px] font-bold active:scale-95 transition" title="Ir para o Mês Atual">Hoje</button>
+                </div>
+
                 <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95">Próx ›</button>
             </div>
 
@@ -171,10 +184,13 @@
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
-        <!-- BOTÃO DE IMPRESSÃO -->
-        <div class="print-hidden text-center pb-1">
-            <button onclick="gerenarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2 active:scale-95">
-                <span>📄</span> Imprimir a partir deste mês
+        <!-- BOTÕES DE EXPORTAÇÃO E COMPARTILHAMENTO -->
+        <div class="print-hidden grid grid-cols-2 gap-2 pb-1">
+            <button onclick="gerenarAnoCompletoPDF()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95">
+                <span>📄</span> Imprimir em PDF
+            </button>
+            <button onclick="compartilharResumoWhatsApp()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95">
+                <span>💬</span> Copiar WhatsApp
             </button>
         </div>
 
@@ -255,7 +271,7 @@
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 md:hidden active:scale-95" title="Bloquear Celular">
                 🔒 Bloquear
             </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.8</span>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v3.0</span>
         </div>
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
             🎤
@@ -267,13 +283,15 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_54ORrLbP7naW7n-KlKCdUA_hZnpjguH';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        let hojeReal = new Date();
         let anoAtual = 2026;
         let mesAtual = 8;
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
         let deferredPrompt = null;
         let overrides = {};
 
-        const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe"];
+        // LISTA DE MOTIVOS (COM OPÇÕES DE TROCA E COMPENSAÇÃO)
+        const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe", "Troca de Dia", "Compensação"];
         let listaMotivos = [...motivosPadrao];
 
         // FEEDBACK TÁTIL (HAPTIC)
@@ -297,6 +315,14 @@
             }, 2600);
         }
 
+        function irParaHoje() {
+            vibrar(10);
+            anoAtual = hojeReal.getFullYear();
+            mesAtual = hojeReal.getMonth();
+            renderizar();
+            mostrarToast(`📅 Exibindo ${nomesMeses[mesAtual]} de ${anoAtual}`);
+        }
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -312,15 +338,29 @@
             }
         }
 
+        function setStatusNuvem(conectado, texto = null) {
+            const el = document.getElementById('statusNuvem');
+            const txt = document.getElementById('textoStatusNuvem');
+            if (!el || !txt) return;
+
+            if (conectado) {
+                el.className = "flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50 px-2 py-0.5 rounded-full text-[9px] font-semibold";
+                txt.innerText = texto || "Nuvem ativa";
+            } else {
+                el.className = "flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 px-2 py-0.5 rounded-full text-[9px] font-semibold";
+                txt.innerText = texto || "Offline (Local)";
+            }
+        }
+
         async function sincronizarComNuvem() {
             try {
-                let { data } = await supabaseClient
+                let { data, error } = await supabaseClient
                     .from('app_dados_guarda')
                     .select('conteudo')
                     .eq('id', '1')
                     .single();
 
-                if (data && data.conteudo) {
+                if (!error && data && data.conteudo) {
                     if (data.conteudo.overrides) {
                         overrides = data.conteudo.overrides;
                         listaMotivos = data.conteudo.motivos || [...motivosPadrao];
@@ -329,27 +369,30 @@
                     }
                     localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
                     localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
+                    setStatusNuvem(true, "Nuvem ativa");
                 } else {
-                    let salvo = localStorage.getItem('sophia_overrides_all');
-                    if (salvo) overrides = JSON.parse(salvo);
-                    let motivosSalvos = localStorage.getItem('sophia_motivos_list');
-                    if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
+                    carregarCacheLocal();
                 }
             } catch(e) {
-                let salvo = localStorage.getItem('sophia_overrides_all');
-                if (salvo) overrides = JSON.parse(salvo);
-                let motivosSalvos = localStorage.getItem('sophia_motivos_list');
-                if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
+                carregarCacheLocal();
             }
             atualizarSelectMotivos();
             renderizar();
+        }
+
+        function carregarCacheLocal() {
+            let salvo = localStorage.getItem('sophia_overrides_all');
+            if (salvo) overrides = JSON.parse(salvo);
+            let motivosSalvos = localStorage.getItem('sophia_motivos_list');
+            if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
+            setStatusNuvem(false, "Offline (Local)");
         }
 
         async function salvarNaNuvem() {
             localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
             localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
             try {
-                await supabaseClient
+                let { error } = await supabaseClient
                     .from('app_dados_guarda')
                     .upsert({ 
                         id: '1', 
@@ -358,8 +401,13 @@
                             motivos: listaMotivos 
                         } 
                     });
+                if (!error) {
+                    setStatusNuvem(true, "Nuvem ativa");
+                } else {
+                    setStatusNuvem(false, "Salvo local");
+                }
             } catch (err) {
-                console.error("Erro ao sincronizar com nuvem:", err);
+                setStatusNuvem(false, "Salvo local");
             }
         }
 
@@ -517,16 +565,13 @@
             }
         }
 
+        // Auto-Lock exclusivo para quando o app for minimizado ou a tela desligar (sem interferir em seletores de data)
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 bloquearNovamente();
             } else if (ehDispositivoMovel() && sessionStorage.getItem('autenticado_calendario') !== 'true') {
                 setTimeout(entrarComBiometria, 300);
             }
-        });
-
-        window.addEventListener('blur', () => {
-            bloquearNovamente();
         });
 
         window.addEventListener('DOMContentLoaded', async () => {
@@ -546,7 +591,32 @@
                 bloquearNovamente();
                 setTimeout(entrarComBiometria, 400);
             }
+
+            configurarGestosSwipe();
         });
+
+        // GESTOS DE ARRASTAR (SWIPE) NO CELULAR
+        function configurarGestosSwipe() {
+            const container = document.getElementById('bloco-calendario-print');
+            let touchStartX = 0;
+            let touchEndX = 0;
+
+            container.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            container.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchEndX - touchStartX;
+                if (Math.abs(diff) > 45) { // deslize mínimo de 45px
+                    if (diff < 0) {
+                        mudarMes(1); // Deslizar p/ esquerda = próximo
+                    } else {
+                        mudarMes(-1); // Deslizar p/ direita = anterior
+                    }
+                }
+            }, { passive: true });
+        }
 
         function alternarDarkMode() {
             vibrar();
@@ -688,7 +758,7 @@
                     <option value="mae" ${info.resp === 'mae' ? 'selected' : ''}>👩 Mãe</option>
                     <option value="pai" ${info.resp === 'pai' ? 'selected' : ''}>👔 Pai</option>
                 </select>
-                <input type="text" id="inputDesc" value="${info.desc || ''}" placeholder="Descrição (ex: Férias, Viagem)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded-xl text-xs mb-3 dark:text-white focus:ring-1 focus:ring-blue-500">
+                <input type="text" id="inputDesc" value="${info.desc || ''}" placeholder="Descrição (ex: Férias, Viagem, Troca)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded-xl text-xs mb-3 dark:text-white focus:ring-1 focus:ring-blue-500">
                 <div class="flex gap-2">
                     <button onclick="salvarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white py-2 rounded-xl text-xs font-bold shadow-sm transition">Salvar</button>
                     <button onclick="apagarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white py-2 rounded-xl text-xs font-bold shadow-sm transition">Apagar</button>
@@ -726,13 +796,50 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
+        // COMPARTILHAR RESUMO DO MÊS VIA WHATSAPP / COPIAR
+        function compartilharResumoWhatsApp() {
+            vibrar(20);
+            let totalMae = 0;
+            let totalPai = 0;
+            const totalDias = new Date(anoAtual, mesAtual + 1, 0).getDate();
+            let diasPaiList = [];
+            let diasMaeList = [];
+
+            for (let d = 1; d <= totalDias; d++) {
+                const info = regraPadrao(d, mesAtual, anoAtual);
+                if (info.resp === 'mae') {
+                    totalMae++;
+                    diasMaeList.push(d);
+                } else {
+                    totalPai++;
+                    diasPaiList.push(d);
+                }
+            }
+
+            const textoWhatsApp = `📅 *Guarda Sophia - ${nomesMeses[mesAtual]} ${anoAtual}*\n` +
+                `👩 *Mãe:* ${totalMae} dias\n` +
+                `👔 *Pai:* ${totalPai} dias\n` +
+                `📌 *Regra do mês:* ${document.getElementById('textoRegraMes').innerText.replace(/\n/g, ' ')}\n\n` +
+                `_Gerado pelo App de Guarda Compartilhada_`;
+
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(textoWhatsApp).then(() => {
+                    mostrarToast("📋 Resumo copiado para o WhatsApp!");
+                }).catch(() => {
+                    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoWhatsApp)}`, '_blank');
+                });
+            } else {
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textoWhatsApp)}`, '_blank');
+            }
+        }
+
         const regrasPorAnoMes = {
             "2026-0": "<b>Janeiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Férias alternadas.",
-            "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Carnaval dias 16 a 18.",
             "2026-2": "<b>Março 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-3": "<b>Abril 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-3": "<b>Abril 2026:</b> Guarda Compartilhada. Sexta-feira Santa dia 3.",
             "2026-4": "<b>Maio 2026:</b> Dia das Mães — semana com a Mãe.",
-            "2026-5": "<b>Junho 2026:</b> Aniversário da Sophia.",
+            "2026-5": "<b>Junho 2026:</b> Aniversário da Sophia. Corpus Christi dia 4.",
             "2026-6": "<b>Julho 2026:</b> Férias de Julho Alternadas.",
             "2026-7": "<b>Agosto 2026:</b> Dia dos Pais — semana com o Pai.",
             "2026-8": "<b>Setembro 2026:</b> Dias 3 a 7 com o Pai; dias 8 a 17 com a Mãe; dias 18 a 20 com o Pai; dias 21 a 30 com a Mãe.",
@@ -741,10 +848,10 @@
             "2026-11": "<b>Dezembro 2026:</b> Férias de Dezembro Alternadas. Natal e Ano Novo.",
             
             "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe; dias 16 a 31 com o Pai (Férias).",
-            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval); dias 12 a 14 com a Mãe.",
-            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada.",
+            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval dias 8 a 10); dias 12 a 14 com a Mãe.",
+            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada. Sexta-feira Santa dia 26.",
             "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada.",
-            "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe.",
+            "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe. Corpus Christi dia 27.",
             "2027-5": "<b>Junho 2027:</b> Aniversário da Sophia.",
             "2027-6": "<b>Julho 2027:</b> Férias de Julho Alternadas.",
             "2027-7": "<b>Agosto 2027:</b> Dia dos Pais — semana com o Pai.",
@@ -754,13 +861,22 @@
             "2027-11": "<b>Dezembro 2027:</b> Férias de Dezembro Alternadas."
         };
 
+        // FERIADOS NACIONAIS FIXOS E MÓVEIS (2026 E 2027)
         const feriados = {
+            // Fixos (mês-dia)
             "0-1": "Confraternização", "3-21": "Tiradentes", "4-1": "Trabalho",
             "8-7": "Independência", "9-12": "Aparecida", "10-2": "Finados",
-            "10-15": "Proclamação", "11-25": "Natal"
+            "10-15": "Proclamação", "10-20": "Consciência Negra", "11-25": "Natal",
+            
+            // Móveis 2026 (ano-mês-dia)
+            "2026-1-16": "Carnaval", "2026-1-17": "Carnaval", "2026-1-18": "Cinzas",
+            "2026-3-3": "Sexta Santa", "2026-3-5": "Páscoa", "2026-5-4": "Corpus Christi",
+
+            // Móveis 2027 (ano-mês-dia)
+            "2027-1-8": "Carnaval", "2027-1-9": "Carnaval", "2027-1-10": "Cinzas",
+            "2027-2-26": "Sexta Santa", "2027-2-28": "Páscoa", "2027-4-27": "Corpus Christi"
         };
 
-        // Regras especiais predefinidas codificadas de forma limpa e modular
         const regrasEspeciais = {
             "2026-8": [{ d: [3, 7], resp: 'pai', desc: 'Pai' }, { d: [18, 20], resp: 'pai', desc: 'Pai' }],
             "2026-9": [{ d: [2, 4], resp: 'pai', desc: 'Pai' }, { d: [16, 18], resp: 'pai', desc: 'Pai' }, { d: [30, 31], resp: 'pai', desc: 'Pai' }],
@@ -832,22 +948,21 @@
                 grid.appendChild(vazio);
             }
 
-            const hojeObj = new Date();
-            const dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
+            const dataHoje = new Date(hojeReal.getFullYear(), hojeReal.getMonth(), hojeReal.getDate());
 
             let totalMaeMes = 0;
             let totalPaiMes = 0;
 
             for (let dia = 1; dia <= totalDias; dia++) {
                 const info = regraPadrao(dia, mesAtual, anoAtual);
-                const feriadoNome = feriados[`${mesAtual}-${dia}`];
+                const feriadoNome = feriados[`${anoAtual}-${mesAtual}-${dia}`] || feriados[`${mesAtual}-${dia}`];
                 
                 if (info.resp === 'mae') totalMaeMes++;
                 else if (info.resp === 'pai') totalPaiMes++;
 
                 const dataCelula = new Date(anoAtual, mesAtual, dia);
                 const isPassado = dataCelula < dataHoje;
-                const isHoje = (anoAtual === hojeObj.getFullYear() && mesAtual === hojeObj.getMonth() && dia === hojeObj.getDate());
+                const isHoje = (anoAtual === hojeReal.getFullYear() && mesAtual === hojeReal.getMonth() && dia === hojeReal.getDate());
 
                 const cell = document.createElement('div');
                 
@@ -914,8 +1029,7 @@
 
         function gerenarAnoCompletoPDF() {
             vibrar();
-            let hojeObj = new Date();
-            let dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
+            let dataHoje = new Date(hojeReal.getFullYear(), hojeReal.getMonth(), hojeReal.getDate());
 
             let htmlAnual = `<!DOCTYPE html>
             <html lang="pt-BR">
@@ -970,6 +1084,11 @@
 
                     let colCount = 0;
                     for (let i = 0; i < primeiroDia; i++) {
+                        tableHtml += `<td></td>`;
+                        colCount++;
+                    }
+
+ primeiroDia; i++) {
                         tableHtml += `<td></td>`;
                         colCount++;
                     }
