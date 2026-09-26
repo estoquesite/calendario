@@ -148,11 +148,11 @@
                 </div>
             </div>
 
-            <!-- BARRA DINÂMICA DE EQUILÍBRIO DO MÊS -->
+            <!-- BARRA DINÂMICA DE EQUILÍBRIO DO MÊS COM GRADIENTE SUAVE -->
             <div class="space-y-1">
-                <div class="w-full bg-gray-100 dark:bg-gray-700/50 h-2 rounded-full overflow-hidden flex shadow-inner">
-                    <div id="barraMae" class="bg-rose-500 transition-all duration-500 h-full" style="width: 50%;"></div>
-                    <div id="barraPai" class="bg-sky-500 transition-all duration-500 h-full" style="width: 50%;"></div>
+                <div class="w-full bg-gray-100 dark:bg-gray-700/50 h-2.5 rounded-full overflow-hidden flex shadow-inner">
+                    <div id="barraMae" class="bg-gradient-to-r from-rose-500 to-pink-500 transition-all duration-500 h-full" style="width: 50%;"></div>
+                    <div id="barraPai" class="bg-gradient-to-r from-sky-500 to-blue-500 transition-all duration-500 h-full" style="width: 50%;"></div>
                 </div>
                 <div class="flex justify-between text-[8px] font-bold text-gray-400 px-0.5">
                     <span id="labelPctMae">50% Mãe</span>
@@ -173,12 +173,32 @@
 
         </div>
 
+        <!-- NOVO: CARD DE DESTAQUE "COM QUEM A SOPHIA ESTÁ HOJE?" -->
+        <div id="cardStatusHoje" class="print-hidden bg-gradient-to-r from-blue-50/90 via-indigo-50/70 to-purple-50/90 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800 p-2.5 rounded-2xl border border-blue-100/80 dark:border-gray-700 flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-xl bg-white dark:bg-gray-700 shadow-xs flex items-center justify-center text-lg">👧</div>
+                <div>
+                    <div class="text-[8.5px] font-extrabold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+                        <span>Hoje</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                        <span id="dataHojeFormatada" class="text-gray-400 font-semibold"></span>
+                    </div>
+                    <p id="textoStatusHoje" class="text-xs font-bold text-gray-900 dark:text-white leading-tight mt-0.5"></p>
+                </div>
+            </div>
+            <div id="badgeStatusHoje"></div>
+        </div>
+
         <!-- CALENDÁRIO COM GESTOS SWIPE E BOTÃO HOJE -->
         <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
             <div class="flex justify-between items-center px-1">
                 <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95">‹ Ant</button>
                 <div class="flex items-center gap-1.5">
-                    <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                    <!-- TÍTULO CLICÁVEL PARA ESCOLHER MÊS/ANO DIRETO -->
+                    <button onclick="abrirSeletorMesAno()" class="print-hidden flex items-center gap-1 hover:opacity-80 active:scale-95 transition cursor-pointer text-left" title="Pular para outro mês/ano">
+                        <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                        <span class="text-xs text-gray-400">▾</span>
+                    </button>
                     <button onclick="irParaHoje()" class="print-hidden px-2 py-0.5 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60 rounded-md text-[10px] font-bold active:scale-95 transition" title="Ir para o Mês Atual">Hoje</button>
                 </div>
                 <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95">Próx ›</button>
@@ -192,7 +212,7 @@
                 </button>
             </div>
 
-            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
+            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full transition-opacity duration-150"></div>
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
@@ -355,6 +375,35 @@
             <div class="flex gap-2 pt-2">
                 <button onclick="confirmarGerarPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 shadow-md flex items-center justify-center gap-1.5">
                     <span>🖨️</span> Gerar PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVO: MODAL SELETOR RÁPIDO DE MÊS E ANO -->
+    <div id="modalSeletorMesAno" onclick="if(event.target === this) fecharSeletorMesAno()" class="print-hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-xl max-w-xs w-full space-y-3.5 border border-gray-100 dark:border-gray-700">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                    🗓️ Pular para Data
+                </h3>
+                <button onclick="fecharSeletorMesAno()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm">✕</button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Mês</label>
+                    <select id="seletorRapidoMes" class="w-full text-xs p-2 mt-1 border rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"></select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Ano</label>
+                    <select id="seletorRapidoAno" class="w-full text-xs p-2 mt-1 border rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100"></select>
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-1">
+                <button onclick="confirmarPuloData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 shadow-sm">
+                    Ir para o Mês
                 </button>
             </div>
         </div>
@@ -1018,6 +1067,54 @@
             gerenarAnoCompletoPDF(anoIni, mesIni, anoFim, mesFim);
         }
 
+        // SELETOR RÁPIDO DE MÊS E ANO
+        function abrirSeletorMesAno() {
+            vibrar();
+            const modal = document.getElementById('modalSeletorMesAno');
+            const selMes = document.getElementById('seletorRapidoMes');
+            const selAno = document.getElementById('seletorRapidoAno');
+            if (!modal || !selMes || !selAno) return;
+
+            selMes.innerHTML = '';
+            nomesMeses.forEach((m, idx) => {
+                const opt = document.createElement('option');
+                opt.value = idx;
+                opt.innerText = m;
+                if (idx === mesAtual) opt.selected = true;
+                selMes.appendChild(opt);
+            });
+
+            selAno.innerHTML = '';
+            const anoBase = 2026;
+            for (let a = anoBase; a <= anoBase + 10; a++) {
+                const opt = document.createElement('option');
+                opt.value = a;
+                opt.innerText = a;
+                if (a === anoAtual) opt.selected = true;
+                selAno.appendChild(opt);
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function fecharSeletorMesAno() {
+            const modal = document.getElementById('modalSeletorMesAno');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function confirmarPuloData() {
+            vibrar(10);
+            const selMes = document.getElementById('seletorRapidoMes');
+            const selAno = document.getElementById('seletorRapidoAno');
+            if (!selMes || !selAno) return;
+
+            mesAtual = parseInt(selMes.value);
+            anoAtual = parseInt(selAno.value);
+            fecharSeletorMesAno();
+            renderizar();
+            mostrarToast(`📅 ${nomesMeses[mesAtual]} de ${anoAtual}`);
+        }
+
         const regrasPorAnoMes = {
             "2026-0": "<b>Janeiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Férias alternadas.",
             "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
@@ -1141,12 +1238,42 @@
 
                 cell.innerHTML = `
                     <div class="flex justify-between items-center w-full px-1">
-                        <span class="day-num text-xs font-black">${dia}</span>
+                        <div class="flex items-center gap-1">
+                            <span class="day-num text-xs font-black">${dia}</span>
+                            ${isHoje ? `
+                                <span class="relative flex h-1.5 w-1.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-blue-600"></span>
+                                </span>
+                            ` : ''}
+                        </div>
                         <span class="text-[8px] font-bold ${info.resp === 'mae' ? 'text-rose-600 dark:text-rose-400' : 'text-sky-600 dark:text-sky-400'}">${info.resp === 'mae' ? 'M' : 'P'}</span>
                     </div>
                     <span class="text-[7.5px] leading-tight truncate px-0.5 rounded w-full font-medium ${info.desc && !['Mãe', 'FDS Pai'].includes(info.desc) ? 'bg-amber-200/80 text-amber-900 dark:bg-amber-950 dark:text-amber-200 font-bold' : ''}">${badgeDesc}</span>
                 `;
                 grid.appendChild(cell);
+            }
+
+            // ATUALIZAR CARD "COM QUEM A SOPHIA ESTÁ HOJE"
+            const agoraHoje = new Date();
+            const infoHoje = regraPadrao(agoraHoje.getDate(), agoraHoje.getMonth(), agoraHoje.getFullYear());
+            const elCardHojeTexto = document.getElementById('textoStatusHoje');
+            const elCardHojeData = document.getElementById('dataHojeFormatada');
+            const elCardBadge = document.getElementById('badgeStatusHoje');
+
+            if (elCardHojeTexto && elCardBadge) {
+                elCardHojeData.innerText = `• ${agoraHoje.getDate()} de ${nomesMeses[agoraHoje.getMonth()]}`;
+                const respNome = infoHoje.resp === 'mae' ? 'Mãe' : 'Pai';
+                const respIcone = infoHoje.resp === 'mae' ? '👩' : '👔';
+                const descExtra = infoHoje.desc && !['Mãe', 'FDS Pai'].includes(infoHoje.desc) ? ` (${infoHoje.desc})` : '';
+                
+                elCardHojeTexto.innerHTML = `Sophia está com a <span class="${infoHoje.resp === 'mae' ? 'text-rose-600 dark:text-rose-400' : 'text-sky-600 dark:text-sky-400'} font-black">${respNome}</span>${descExtra}`;
+                
+                elCardBadge.innerHTML = `
+                    <span class="px-2.5 py-1 rounded-xl text-[10px] font-bold flex items-center gap-1 shadow-xs ${infoHoje.resp === 'mae' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-900/50' : 'bg-sky-100 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border border-sky-200 dark:border-sky-900/50'}">
+                        ${respIcone} ${respNome}
+                    </span>
+                `;
             }
 
             // ATUALIZAR CONTADORES DO MÊS
