@@ -42,6 +42,18 @@
             min-height: 42px !important;
             max-height: 50px !important;
             border-color: #cbd5e1 !important;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* DESTAQUE VISUAL AO ARRASTAR O DEDO */
+        .arrasto-highlight {
+            outline: 2.5px solid #6366f1 !important;
+            outline-offset: -2px;
+            transform: scale(1.04);
+            z-index: 20 !important;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.4) !important;
+            transition: transform 0.08s ease;
         }
 
         @media print {
@@ -204,15 +216,15 @@
                 <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95">Próx ›</button>
             </div>
 
-            <!-- MODO DE SELEÇÃO RÁPIDA DIRETO NO GRID -->
+            <!-- INSTRUÇÃO VISUAL DE ARRASTO -->
             <div class="print-hidden flex justify-between items-center px-1 text-[10px] text-gray-500">
-                <span id="avisoSelecaoRapida" class="font-medium text-blue-600 dark:text-blue-400">💡 Toque em um dia para editar</span>
-                <button onclick="alternarModoSelecao()" id="btnModoSelecao" class="px-2 py-0.5 rounded-lg border border-gray-200 dark:border-gray-700 text-[10px] font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition">
-                    Marcar Período ✏️
-                </button>
+                <span class="font-medium text-indigo-600 dark:text-indigo-400 flex items-center gap-1">
+                    <span>✨</span> Segure e arraste nos dias para marcar
+                </span>
+                <span class="text-[9px] text-gray-400">ou toque para editar</span>
             </div>
 
-            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full transition-opacity duration-150"></div>
+            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full transition-opacity duration-150 relative"></div>
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
@@ -293,6 +305,36 @@
             <span class="text-base">📱</span>
             <span class="text-[9px] font-medium">Instalar</span>
         </button>
+    </div>
+
+    <!-- NOVO: MINI MODAL RÁPIDO AO SOLTAR O DEDO DO ARRASTO -->
+    <div id="modalPeriodoRapido" onclick="if(event.target === this) fecharModalPeriodoRapido()" class="print-hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs hidden flex items-end sm:items-center justify-center p-3">
+        <div id="boxPeriodoRapido" class="bg-white dark:bg-gray-800 p-4 rounded-3xl shadow-2xl max-w-xs w-full space-y-3 border border-gray-100 dark:border-gray-700">
+            <div class="flex justify-between items-center">
+                <div>
+                    <span class="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Período Selecionado</span>
+                    <h4 id="textoPeriodoRapido" class="text-sm font-extrabold text-gray-900 dark:text-white mt-0.5">Dias 5 a 16 (12 dias)</h4>
+                </div>
+                <button onclick="fecharModalPeriodoRapido()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm p-1">✕</button>
+            </div>
+            
+            <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Com quem a Sophia vai ficar?</p>
+
+            <!-- BOTÕES DE 1 TOQUE -->
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="salvarPeriodoArrasto('mae')" class="bg-rose-500 hover:bg-rose-600 active:scale-95 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer">
+                    <span class="text-base">👩</span> Mãe
+                </button>
+                <button onclick="salvarPeriodoArrasto('pai')" class="bg-sky-500 hover:bg-sky-600 active:scale-95 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer">
+                    <span class="text-base">👔</span> Pai
+                </button>
+            </div>
+
+            <!-- BOTÃO DE EDIÇÃO DETALHADA COM MOTIVO -->
+            <button onclick="abrirEdicaoDetalhadaArrasto()" class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95 text-gray-700 dark:text-gray-200 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>✏️</span> Adicionar Motivo / Detalhes
+            </button>
+        </div>
     </div>
 
     <!-- MODAL DE EDIÇÃO DO DIA -->
@@ -431,9 +473,13 @@
         const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe", "Aniversário Sophia", "Passeio", "Médico", "Outros"];
         let listaMotivos = [...motivosPadrao];
 
-        // Estado da seleção rápida por toque no grid
-        let modoSelecaoAtivo = false;
-        let diaInicioSelecao = null;
+        // Estado do arrasto inteligente por Long Press
+        let timerLongPress = null;
+        let isArrastandoPeriodo = false;
+        let diaInicioArrasto = null;
+        let diaAtualArrasto = null;
+        let bloquearCliqueAposArrasto = false;
+        let periodoArrastoAtual = null;
 
         function vibrar(ms = 15) {
             if (navigator.vibrate) {
@@ -755,15 +801,17 @@
             let touchStartY = 0;
 
             container.addEventListener('touchstart', (e) => {
+                if (isArrastandoPeriodo) return;
                 touchStartX = e.touches[0].clientX;
                 touchStartY = e.touches[0].clientY;
             }, { passive: true });
 
             container.addEventListener('touchend', (e) => {
+                if (isArrastandoPeriodo) return;
                 let diffX = e.changedTouches[0].clientX - touchStartX;
                 let diffY = e.changedTouches[0].clientY - touchStartY;
 
-                if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+                if (Math.abs(diffX) > 55 && Math.abs(diffX) > Math.abs(diffY)) {
                     if (diffX < 0) mudarMes(1);
                     else mudarMes(-1);
                 }
@@ -783,29 +831,6 @@
             if (divOutros) {
                 if (val === 'Outros') divOutros.classList.remove('hidden');
                 else divOutros.classList.add('hidden');
-            }
-        }
-
-        // MODO DE SELEÇÃO RÁPIDA DIRETO NO GRID
-        function alternarModoSelecao() {
-            vibrar();
-            modoSelecaoAtivo = !modoSelecaoAtivo;
-            diaInicioSelecao = null;
-
-            const btn = document.getElementById('btnModoSelecao');
-            const aviso = document.getElementById('avisoSelecaoRapida');
-
-            if (modoSelecaoAtivo) {
-                btn.innerText = "Cancelar ✕";
-                btn.className = "px-2 py-0.5 rounded-lg border border-rose-300 bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 text-[10px] font-bold";
-                aviso.innerText = "👉 Toque no DIA INICIAL";
-                aviso.className = "font-bold text-amber-600 dark:text-amber-400 animate-pulse";
-            } else {
-                btn.innerText = "Marcar Período ✏️";
-                btn.className = "px-2 py-0.5 rounded-lg border border-gray-200 dark:border-gray-700 text-[10px] font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition";
-                aviso.innerText = "💡 Toque em um dia para editar";
-                aviso.className = "font-medium text-blue-600 dark:text-blue-400";
-                renderizar();
             }
         }
 
@@ -879,6 +904,145 @@
             mostrarToast(`Período salvo! Próximo inicia em ${dSeg}/${mSeg}.`);
         }
 
+        // NOVO: SISTEMA DE SELEÇÃO POR ARRASTO (LONG PRESS)
+        function configurarArrastoCalendario() {
+            const grid = document.getElementById('calendarioGrid');
+            if (!grid) return;
+
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            grid.addEventListener('touchstart', (e) => {
+                const cell = e.target.closest('.celula-dia');
+                if (!cell || !cell.dataset.dia) return;
+
+                const touch = e.touches[0];
+                touchStartX = touch.clientX;
+                touchStartY = touch.clientY;
+                const diaTocado = parseInt(cell.dataset.dia);
+
+                clearTimeout(timerLongPress);
+                timerLongPress = setTimeout(() => {
+                    isArrastandoPeriodo = true;
+                    diaInicioArrasto = diaTocado;
+                    diaAtualArrasto = diaTocado;
+                    vibrar(25);
+                    atualizarHighlightArrasto(diaInicioArrasto, diaAtualArrasto);
+                }, 280);
+            }, { passive: true });
+
+            grid.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                const diffX = Math.abs(touch.clientX - touchStartX);
+                const diffY = Math.abs(touch.clientY - touchStartY);
+
+                if (!isArrastandoPeriodo) {
+                    if (diffX > 8 || diffY > 8) {
+                        clearTimeout(timerLongPress);
+                    }
+                    return;
+                }
+
+                if (e.cancelable) e.preventDefault();
+
+                const el = document.elementFromPoint(touch.clientX, touch.clientY);
+                const cell = el ? el.closest('.celula-dia') : null;
+                if (cell && cell.dataset.dia) {
+                    const diaNovo = parseInt(cell.dataset.dia);
+                    if (diaNovo !== diaAtualArrasto) {
+                        diaAtualArrasto = diaNovo;
+                        vibrar(8);
+                        atualizarHighlightArrasto(diaInicioArrasto, diaAtualArrasto);
+                    }
+                }
+            }, { passive: false });
+
+            grid.addEventListener('touchend', () => {
+                clearTimeout(timerLongPress);
+                if (isArrastandoPeriodo) {
+                    isArrastandoPeriodo = false;
+                    bloquearCliqueAposArrasto = true;
+                    setTimeout(() => { bloquearCliqueAposArrasto = false; }, 250);
+
+                    const dIni = Math.min(diaInicioArrasto, diaAtualArrasto);
+                    const dFim = Math.max(diaInicioArrasto, diaAtualArrasto);
+                    const totalDias = (dFim - dIni) + 1;
+
+                    periodoArrastoAtual = { dIni, dFim, mes: mesAtual, ano: anoAtual };
+
+                    const txtEl = document.getElementById('textoPeriodoRapido');
+                    if (txtEl) {
+                        txtEl.innerText = `${dIni} a ${dFim} de ${nomesMeses[mesAtual]} (${totalDias} ${totalDias === 1 ? 'dia' : 'dias'})`;
+                    }
+
+                    const modal = document.getElementById('modalPeriodoRapido');
+                    if (modal) modal.classList.remove('hidden');
+                }
+            }, { passive: true });
+
+            grid.addEventListener('touchcancel', () => {
+                clearTimeout(timerLongPress);
+                isArrastandoPeriodo = false;
+                document.querySelectorAll('.arrasto-highlight').forEach(el => el.classList.remove('arrasto-highlight'));
+            });
+        }
+
+        function atualizarHighlightArrasto(d1, d2) {
+            const dMin = Math.min(d1, d2);
+            const dMax = Math.max(d1, d2);
+            document.querySelectorAll('.celula-dia').forEach(cell => {
+                const d = parseInt(cell.dataset.dia);
+                if (d >= dMin && d <= dMax) {
+                    cell.classList.add('arrasto-highlight');
+                } else {
+                    cell.classList.remove('arrasto-highlight');
+                }
+            });
+        }
+
+        function salvarPeriodoArrasto(resp) {
+            vibrar(15);
+            if (!periodoArrastoAtual) return;
+            const { dIni, dFim, mes, ano } = periodoArrastoAtual;
+            const desc = (resp === 'mae') ? 'Mãe' : 'Pai';
+
+            for (let d = dIni; d <= dFim; d++) {
+                overrides[`${ano}-${mes}-${d}`] = { resp, desc };
+            }
+
+            salvarNaNuvem();
+            renderizar();
+            fecharModalPeriodoRapido();
+            mostrarToast(`Salvo: dias ${dIni} a ${dFim} com ${resp.toUpperCase()}!`);
+        }
+
+        function abrirEdicaoDetalhadaArrasto() {
+            vibrar(10);
+            if (!periodoArrastoAtual) return;
+            const { dIni, dFim, mes, ano } = periodoArrastoAtual;
+            fecharModalPeriodoRapido();
+
+            const mStr = String(mes + 1).padStart(2, '0');
+            const dIniStr = String(dIni).padStart(2, '0');
+            const dFimStr = String(dFim).padStart(2, '0');
+
+            document.getElementById('dataInicio').value = `${ano}-${mStr}-${dIniStr}`;
+            document.getElementById('dataFim').value = `${ano}-${mStr}-${dFimStr}`;
+
+            const seletorPeriodo = document.getElementById('dataInicio');
+            if (seletorPeriodo) {
+                seletorPeriodo.scrollIntoView({ behavior: 'smooth' });
+            }
+            mostrarToast("Período copiado! Escolha o motivo e confirme.");
+        }
+
+        function fecharModalPeriodoRapido() {
+            document.querySelectorAll('.arrasto-highlight').forEach(el => el.classList.remove('arrasto-highlight'));
+            const modal = document.getElementById('modalPeriodoRapido');
+            if (modal) modal.classList.add('hidden');
+            periodoArrastoAtual = null;
+        }
+
         // COMANDO POR VOZ
         function ouvirVoz() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -938,36 +1102,9 @@
 
         // INTERAÇÃO AO CLICAR EM UM DIA
         function clicarDia(ano, mes, dia) {
+            if (bloquearCliqueAposArrasto) return;
             vibrar(12);
-            if (modoSelecaoAtivo) {
-                const aviso = document.getElementById('avisoSelecaoRapida');
-                if (!diaInicioSelecao) {
-                    diaInicioSelecao = { ano, mes, dia };
-                    aviso.innerText = `Início: dia ${dia}. Toque no DIA FINAL`;
-                    renderizar();
-                } else {
-                    let dIni = new Date(diaInicioSelecao.ano, diaInicioSelecao.mes, diaInicioSelecao.dia);
-                    let dFim = new Date(ano, mes, dia);
-                    if (dIni > dFim) {
-                        let t = dIni;
-                        dIni = dFim;
-                        dFim = t;
-                    }
-                    
-                    const mStr = String(dIni.getMonth() + 1).padStart(2, '0');
-                    const dIniStr = String(dIni.getDate()).padStart(2, '0');
-                    const dFimStr = String(dFim.getDate()).padStart(2, '0');
-                    
-                    document.getElementById('dataInicio').value = `${dIni.getFullYear()}-${mStr}-${dIniStr}`;
-                    document.getElementById('dataFim').value = `${dFim.getFullYear()}-${mStr}-${dFimStr}`;
-                    
-                    alternarModoSelecao();
-                    document.getElementById('dataInicio').scrollIntoView({ behavior: 'smooth' });
-                    mostrarToast("Período selecionado nos campos abaixo!");
-                }
-            } else {
-                editarDia(ano, mes, dia);
-            }
+            editarDia(ano, mes, dia);
         }
 
         function editarDia(ano, mes, dia) {
@@ -1236,7 +1373,7 @@
 
             for (let i = 0; i < primeiroDia; i++) {
                 const vazio = document.createElement('div');
-                vazio.className = "day-cell-screen p-1 rounded-xl opacity-0";
+                vazio.className = "day-cell-screen p-1 rounded-xl opacity-0 pointer-events-none";
                 grid.appendChild(vazio);
             }
 
@@ -1256,14 +1393,16 @@
                 const dataCelula = new Date(anoAtual, mesAtual, dia);
                 const isPassado = dataCelula < dataHoje;
                 const isHoje = dataCelula.getTime() === dataHoje.getTime();
-                const isSelecionadoInicio = diaInicioSelecao && diaInicioSelecao.ano === anoAtual && diaInicioSelecao.mes === mesAtual && diaInicioSelecao.dia === dia;
 
                 const cell = document.createElement('div');
-                let classes = "day-cell-screen p-1 rounded-xl flex flex-col justify-between items-center transition cursor-pointer border relative text-center ";
+                cell.dataset.dia = dia;
+                cell.dataset.mes = mesAtual;
+                cell.dataset.ano = anoAtual;
+
+                let classes = "celula-dia day-cell-screen p-1 rounded-xl flex flex-col justify-between items-center transition cursor-pointer border relative text-center ";
                 
                 if (isPassado) classes += "past-day opacity-50 ";
                 if (isHoje) classes += "ring-2 ring-blue-500 shadow-md scale-[1.02] z-10 ";
-                if (isSelecionadoInicio) classes += "ring-2 ring-amber-500 bg-amber-100 ";
 
                 if (info.resp === 'mae') {
                     classes += "bg-rose-100/90 dark:bg-rose-950/60 border-rose-300 dark:border-rose-900/60 text-rose-950 dark:text-rose-100";
@@ -1669,6 +1808,7 @@
         carregarCacheLocal();
         atualizarSelectMotivos();
         configurarGestosSwipe();
+        configurarArrastoCalendario();
 
         // Conectar ouvinte para garantir que Data Fim nunca seja anterior a Data Início
         const campoDataIni = document.getElementById('dataInicio');
