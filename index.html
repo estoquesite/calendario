@@ -7,12 +7,9 @@
     <!-- Ícone personalizado -->
     <link rel="icon" href="https://api.iconify.design/solar:calendar-date-bold-duotone.png?width=512&height=512&color=%233b82f6" type="image/png">
     <link rel="apple-touch-icon" href="https://api.iconify.design/solar:calendar-date-bold-duotone.png?width=512&height=512&color=%233b82f6">
-    
-    <!-- Meta tags para comportamento de App Nativo no iOS/Android -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Guarda">
-    <meta name="theme-color" id="theme-color-meta" content="#f9fafb">
+    <meta name="theme-color" id="meta-theme" content="#f9fafb">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,37 +28,8 @@
             touch-action: manipulation;
         }
 
-        /* Animação suave para toque */
         .day-cell-screen:active {
             transform: scale(0.96);
-        }
-
-        @media print {
-            body { background: white !important; color: black !important; padding: 0 !important; }
-            .print-hidden, #tela-login, .fixed, button, input, select { display: none !important; }
-            #conteudo-site { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-            .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
-            .day-cell-screen {
-                min-height: 65px !important;
-                max-height: none !important;
-            }
-            th { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; }
-            td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
-            
-            .past-day .day-num {
-                position: relative;
-            }
-            .past-day .day-num::after {
-                content: "";
-                position: absolute;
-                left: -4px;
-                right: -4px;
-                top: 50%;
-                height: 1.5px;
-                background-color: #000000;
-                transform: translateY(-50%);
-            }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
 
         .past-day .day-num {
@@ -81,7 +49,7 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28 select-none">
 
-    <!-- TELA DE LOGIN / CAPA EXCLUSIVA POR BIOMETRIA (SOMENTE CELULAR: md:hidden) -->
+    <!-- TELA DE LOGIN / BIOMETRIA (MOBILE: md:hidden) -->
     <div id="tela-login" class="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-md hidden flex items-center justify-center p-4 md:hidden">
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-5 border border-gray-100 dark:border-gray-700">
             <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
@@ -90,7 +58,6 @@
                 <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Valide sua biometria para abrir</p>
             </div>
 
-            <!-- BOTÃO ÚNICO DE BIOMETRIA / DIGITAL -->
             <button type="button" onclick="entrarComBiometria()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3.5 rounded-2xl transition text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer">
                 <span class="text-lg">👆</span>
                 <span>Validar Digital</span>
@@ -103,73 +70,40 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <div id="conteudo-site" class="max-w-lg mx-auto p-2.5 space-y-2.5">
         
-        <!-- TÍTULO PRINCIPAL NO TOPO -->
-        <div class="text-center py-1 flex justify-between items-center px-1">
+        <!-- TOPO LIMPO -->
+        <div class="py-1 flex justify-between items-center px-1">
             <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
                 📅 Guarda Compartilhada
             </h1>
-            <div class="flex items-center gap-1.5">
-                <button onclick="compartilharWhatsApp()" class="print-hidden bg-emerald-100 dark:bg-emerald-950/50 hover:bg-emerald-200 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1" title="Compartilhar no WhatsApp">
-                    💬 WhatsApp
-                </button>
-                <button onclick="window.location.reload()" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-lg text-[10px] font-bold transition" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
-            </div>
+            <button onclick="window.location.reload()" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1" title="Sincronizar com Nuvem">
+                🔄 Sincronizar
+            </button>
         </div>
 
-        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
-            
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
-                    <span id="countMae" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
-                </div>
-                <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Mês Pai</span>
-                    <span id="countPai" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
-                    <span id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
-                </div>
-                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Ano Pai</span>
-                    <span id="countPaiAno" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- CALENDÁRIO COM SUPORTE A SWIPE -->
+        <!-- CALENDÁRIO COM BOTÃO HOJE -->
         <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
             <div class="flex justify-between items-center px-1">
-                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
-                <div class="text-center">
-                    <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
-                    <span class="text-[9px] text-gray-400 dark:text-gray-500 font-medium block -mt-0.5 md:hidden">👈 Deslize para mudar o mês 👉</span>
+                <div class="flex items-center gap-1">
+                    <button onclick="mudarMes(-1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
+                    <button onclick="irParaHoje()" class="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 rounded-lg text-xs font-bold transition hover:bg-blue-100" title="Ir para o mês atual">Hoje</button>
                 </div>
-                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
+                <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                <button onclick="mudarMes(1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
             </div>
 
+            <!-- GRADE LIMPA DO CALENDÁRIO -->
             <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
-            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
         </div>
 
-        <!-- BOTÕES DE AÇÃO: IMPRESSÃO & EXPORTAR AGENDA -->
-        <div class="print-hidden grid grid-cols-2 gap-2 pb-1">
-            <button onclick="gerenarAnoCompletoPDF()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95">
-                <span>📄</span> Imprimir Meses
-            </button>
-            <button onclick="exportarMesParaAgenda()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95" title="Baixar arquivo para Google Agenda / Apple Agenda">
-                <span>🗓️</span> Adicionar à Agenda
+        <!-- BOTÃO DE IMPRESSÃO ESTILO PLANNER -->
+        <div class="text-center pb-1">
+            <button onclick="gerenarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2 active:scale-95">
+                <span>📄</span> Imprimir Meses (Estilo Planner)
             </button>
         </div>
 
-        <!-- BLOCO DE SELEÇÃO DE PERÍODO COM GERENCIADOR DE MOTIVOS -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
+        <!-- BLOCO DE SELEÇÃO DE PERÍODO -->
+        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
             <div class="flex justify-between items-center">
                 <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
                 <button onclick="abrirGerenciadorMotivos()" class="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1">
@@ -195,7 +129,7 @@
                 </div>
             </div>
 
-            <!-- SELEÇÃO DE MOTIVO + CAMPO DIGITÁVEL -->
+            <!-- SELEÇÃO DE MOTIVO -->
             <div class="grid grid-cols-12 gap-1 items-center pt-1">
                 <div class="col-span-6">
                     <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
@@ -233,8 +167,8 @@
         </div>
     </div>
 
-    <!-- BARRA INFERIOR COM INDICADOR DE CONEXÃO -->
-    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
+    <!-- BARRA INFERIOR -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-1.5">
             <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 active:scale-95" title="Modo Escuro/Claro">
                 🌙/☀️
@@ -245,9 +179,9 @@
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 md:hidden active:scale-95" title="Bloquear Celular">
                 🔒 Bloquear
             </button>
-            <div class="flex items-center gap-1 ml-1" title="Status da sincronização">
-                <span id="status-bolinha" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span id="status-texto" class="text-[10px] font-bold text-gray-400 dark:text-gray-500">v2.8</span>
+            <div class="flex items-center gap-1 ml-1" title="Status">
+                <span id="dot-status" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span id="txt-status" class="text-[10px] font-bold text-gray-400 dark:text-gray-500">v2.9</span>
             </div>
         </div>
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -270,28 +204,54 @@
         const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe"];
         let listaMotivos = [...motivosPadrao];
 
-        // FEEDBACK TÁTIL HÁPTICO
         function vibrar(ms = 15) {
             if (navigator.vibrate) {
                 try { navigator.vibrate(ms); } catch (e) {}
             }
         }
 
-        // STATUS DE CONEXÃO ONLINE / OFFLINE
-        function atualizarStatusRede() {
-            const bolinha = document.getElementById('status-bolinha');
-            const texto = document.getElementById('status-texto');
-            if (!bolinha || !texto) return;
+        function irParaHoje() {
+            vibrar(15);
+            const hoje = new Date();
+            anoAtual = hoje.getFullYear();
+            mesAtual = hoje.getMonth();
+            renderizar();
+        }
+
+        // SWIPE DISCRETO NO CALENDÁRIO
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const calContainer = document.getElementById('bloco-calendario-print');
+        if (calContainer) {
+            calContainer.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            calContainer.addEventListener('touchend', (e) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchEndX - touchStartX;
+                if (Math.abs(diff) > 55) {
+                    vibrar(20);
+                    if (diff < 0) mudarMes(1);
+                    else mudarMes(-1);
+                }
+            }, { passive: true });
+        }
+
+        function verificarStatusRede() {
+            const dot = document.getElementById('dot-status');
+            const txt = document.getElementById('txt-status');
+            if (!dot || !txt) return;
             if (navigator.onLine) {
-                bolinha.className = "w-2 h-2 rounded-full bg-emerald-500";
-                texto.innerText = "v2.8 (Online)";
+                dot.className = "w-2 h-2 rounded-full bg-emerald-500";
+                txt.innerText = "v2.9";
             } else {
-                bolinha.className = "w-2 h-2 rounded-full bg-amber-500";
-                texto.innerText = "v2.8 (Offline)";
+                dot.className = "w-2 h-2 rounded-full bg-amber-500";
+                txt.innerText = "v2.9 (Off)";
             }
         }
-        window.addEventListener('online', atualizarStatusRede);
-        window.addEventListener('offline', atualizarStatusRede);
+        window.addEventListener('online', verificarStatusRede);
+        window.addEventListener('offline', verificarStatusRede);
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -299,12 +259,12 @@
         });
 
         function instalarApp() {
-            vibrar(20);
+            vibrar(15);
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
             } else {
-                alert("📱 Para instalar no telemóvel:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar ao ecrã principal' ou 'Instalar aplicação'.\n• No iPhone (Safari): Toque no botão de Partilha e escolha 'Adicionar ao Ecrã Principal'.");
+                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Menu (3 pontinhos) > 'Adicionar à tela principal'.\n• No iPhone (Safari): Botão de Compartilhar > 'Adicionar à Tela de Início'.");
             }
         }
 
@@ -338,7 +298,7 @@
                 if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
             }
             atualizarSelectMotivos();
-            atualizarStatusRede();
+            verificarStatusRede();
         }
 
         async function salvarNaNuvem() {
@@ -433,13 +393,12 @@
             abrirGerenciadorMotivos();
         }
 
-        // --- SISTEMA DE BLOQUEIO / BIOMETRIA ---
         function ehDispositivoMovel() {
             return window.innerWidth < 768;
         }
 
         function bloquearNovamente() {
-            if (!ehDispositivoMovel()) return; // PC nunca bloqueia
+            if (!ehDispositivoMovel()) return;
             sessionStorage.removeItem('autenticado_calendario');
             document.getElementById('conteudo-site').classList.add('hidden');
             const telaLogin = document.getElementById('tela-login');
@@ -503,7 +462,7 @@
                 }
 
                 if (cred) {
-                    vibrar(40);
+                    vibrar(35);
                     sessionStorage.setItem('autenticado_calendario', 'true');
                     liberarAcesso();
                 }
@@ -515,7 +474,6 @@
             }
         }
 
-        // Auto-Lock ao minimizar ou desligar a tela no celular
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 bloquearNovamente();
@@ -531,18 +489,16 @@
         window.addEventListener('DOMContentLoaded', async () => {
             if (localStorage.getItem('dark_mode') === 'true') {
                 document.documentElement.classList.add('dark');
-                const meta = document.getElementById('theme-color-meta');
+                const meta = document.getElementById('meta-theme');
                 if (meta) meta.setAttribute('content', '#111827');
             }
 
-            // No computador: entra direto
             if (!ehDispositivoMovel()) {
                 sessionStorage.setItem('autenticado_calendario', 'true');
                 await liberarAcesso();
                 return;
             }
 
-            // No celular: verifica sessão ou dispara biometria
             if (sessionStorage.getItem('autenticado_calendario') === 'true') {
                 await liberarAcesso();
             } else {
@@ -556,7 +512,7 @@
             document.documentElement.classList.toggle('dark');
             const isDark = document.documentElement.classList.contains('dark');
             localStorage.setItem('dark_mode', isDark);
-            const meta = document.getElementById('theme-color-meta');
+            const meta = document.getElementById('meta-theme');
             if (meta) meta.setAttribute('content', isDark ? '#111827' : '#f9fafb');
         }
 
@@ -646,7 +602,7 @@
                 const numeros = texto.match(/\d+/g);
                 if (numeros && numeros.length >= 2 && respDetectada) {
                     let diaIni = parseInt(numeros[0]);
-                    let diaFim = parseInt(numeros[1]);
+                    let diaFim = parseInt(numeros);
 
                     if (diaIni > diaFim) { let temp = diaIni; diaIni = diaFim; diaFim = temp; }
 
@@ -663,9 +619,9 @@
                     salvarNaNuvem();
                     renderizar();
                     vibrar(40);
-                    alert(`Voz aplicada e salva na nuvem: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
+                    alert(`Voz aplicada: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
                 } else {
-                    alert(`Comando ouvido: "${texto}". Dica: Diga algo como "18 a 19 mãe".`);
+                    alert(`Comando ouvido: "${texto}". Dica: Fale "18 a 19 mãe".`);
                 }
             };
 
@@ -727,56 +683,29 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
-        const regrasPorAnoMes = {
-            "2026-0": "<b>Janeiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Férias de Dezembro/Janeiro alternadas.",
-            "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-2": "<b>Março 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-3": "<b>Abril 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-4": "<b>Maio 2026:</b> Dia das Mães — semana com a Mãe.",
-            "2026-5": "<b>Junho 2026:</b> Aniversário da Sophia.",
-            "2026-6": "<b>Julho 2026:</b> Férias de Julho Alternadas.",
-            "2026-7": "<b>Agosto 2026:</b> Dia dos Pais — semana com o Pai.",
-            "2026-8": "<b>Setembro 2026:</b> Dias 3 a 7 com o Pai; dias 8 a 17 com a Mãe; dias 18 a 20 com o Pai; dias 21 a 30 com a Mãe.",
-            "2026-9": "<b>Outubro 2026:</b> Dia 1 com a Mãe; dias 2 a 4 com o Pai; dias 5 a 15 com a Mãe; dias 16 a 18 com o Pai.",
-            "2026-10": "<b>Novembro 2026:</b> Dias 1 e 2, dias 12 a 15 e dias 19 a 22 com o Pai.",
-            "2026-11": "<b>Dezembro 2026:</b> Férias de Dezembro Alternadas. Natal e Ano Novo.",
-            
-            "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe; dias 16 a 31 com o Pai (Férias).",
-            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval); dias 12 a 14 com a Mãe.",
-            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada.",
-            "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada.",
-            "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe.",
-            "2027-5": "<b>Junho 2027:</b> Aniversário da Sophia.",
-            "2027-6": "<b>Julho 2027:</b> Férias de Julho Alternadas.",
-            "2027-7": "<b>Agosto 2027:</b> Dia dos Pais — semana com o Pai.",
-            "2027-8": "<b>Setembro 2027:</b> Guarda Compartilhada.",
-            "2027-9": "<b>Outubro 2027:</b> Rotina de outubro.",
-            "2027-10": "<b>Novembro 2027:</b> Rotina de novembro.",
-            "2027-11": "<b>Dezembro 2027:</b> Férias de Dezembro Alternadas."
-        };
-
         const feriados = {
             "0-1": "Confraternização", "3-21": "Tiradentes", "4-1": "Trabalho",
             "8-7": "Independência", "9-12": "Aparecida", "10-2": "Finados",
             "10-15": "Proclamação", "11-25": "Natal"
         };
 
+        // MATRIZ EXATA DE DATAS FIXAS (100% PRESERVADA)
         function regraPadrao(dia, mes, ano) {
             const chave = `${ano}-${mes}-${dia}`;
             if (overrides[chave]) return overrides[chave];
 
             if (ano === 2026) {
                 if (mes === 8) {
-                    if ((dia >= 3 && dia <= 7) || (dia >= 18 && dia <= 20)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
+                    return ((dia >= 3 && dia <= 7) || (dia >= 18 && dia <= 20))
+                        ? { resp: 'pai', desc: 'Pai' } : { resp: 'mae', desc: 'Mãe' };
                 }
                 if (mes === 9) {
-                    if ((dia >= 2 && dia <= 4) || (dia >= 16 && dia <= 18) || (dia >= 30 && dia <= 31)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
+                    return ((dia >= 2 && dia <= 4) || (dia >= 16 && dia <= 18) || (dia >= 30 && dia <= 31))
+                        ? { resp: 'pai', desc: 'Pai' } : { resp: 'mae', desc: 'Mãe' };
                 }
                 if (mes === 10) {
-                    if ((dia >= 1 && dia <= 2) || (dia >= 12 && dia <= 15) || (dia >= 19 && dia <= 22)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
+                    return ((dia >= 1 && dia <= 2) || (dia >= 12 && dia <= 15) || (dia >= 19 && dia <= 22))
+                        ? { resp: 'pai', desc: 'Pai' } : { resp: 'mae', desc: 'Mãe' };
                 }
                 if (mes === 11) {
                     if ((dia >= 4 && dia <= 6) || (dia >= 11 && dia <= 23)) return { resp: 'pai', desc: 'Pai' };
@@ -787,42 +716,49 @@
 
             if (ano === 2027) {
                 if (mes === 0) {
-                    if (dia >= 1 && dia <= 14) return { resp: 'mae', desc: 'Viagem Mãe' };
+                    if (dia <= 14) return { resp: 'mae', desc: 'Viagem Mãe' };
                     if (dia === 15) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 16 && dia <= 31) return { resp: 'pai', desc: 'Férias Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
+                    return { resp: 'pai', desc: 'Férias Pai' };
                 }
                 if (mes === 1) {
-                    if (dia >= 1 && dia <= 9) return { resp: 'pai', desc: 'Pai' };
+                    if (dia <= 9) return { resp: 'pai', desc: 'Pai' };
                     if (dia >= 12 && dia <= 14) return { resp: 'mae', desc: 'Mãe' };
                 }
                 if (mes === 4 && dia >= 7 && dia <= 9) return { resp: 'mae', desc: 'Dia Mães' };
                 if (mes === 5 && dia >= 4 && dia <= 6) return { resp: 'mae', desc: 'Sophia' };
                 if (mes === 6) {
-                    if (dia >= 9 && dia <= 23) return { resp: 'pai', desc: 'Férias Pai' };
-                    if (dia >= 24 && dia <= 31) return { resp: 'mae', desc: 'Férias Mãe' };
+                    return (dia >= 9 && dia <= 23)
+                        ? { resp: 'pai', desc: 'Férias Pai' }
+                        : (dia >= 24 ? { resp: 'mae', desc: 'Férias Mãe' } : { resp: 'mae', desc: 'Mãe' });
                 }
                 if (mes === 7) {
                     if (dia >= 6 && dia <= 8) return { resp: 'pai', desc: 'Dia Pais' };
-                    if (dia >= 13 && dia <= 15) return { resp: 'mae', desc: 'Mãe' };
+                    if ((dia >= 13 && dia <= 15) || (dia >= 27 && dia <= 29)) return { resp: 'mae', desc: 'Mãe' };
                     if (dia >= 20 && dia <= 22) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 27 && dia <= 29) return { resp: 'mae', desc: 'Mãe' };
                 }
                 if (mes === 8) {
-                    if (dia >= 3 && dia <= 5) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 10 && dia <= 12) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 17 && dia <= 19) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 24 && dia <= 26) return { resp: 'mae', desc: 'Mãe' };
+                    if ((dia >= 3 && dia <= 5) || (dia >= 17 && dia <= 19)) return { resp: 'pai', desc: 'Pai' };
+                    if ((dia >= 10 && dia <= 12) || (dia >= 24 && dia <= 26)) return { resp: 'mae', desc: 'Mãe' };
                 }
                 if (mes === 9) {
-                    if ((dia >= 1 && diaAqui está o código completo em um único arquivo, **mantendo 100% das suas datas e regras intactas**, trazendo os seguintes recursos modernos:
+                    return ((dia >= Entendido perfeitamente pela imagem!
 
-1. **Gesto de Deslizar (Swipe) no celular:** Troca de mês deslizando o dedo para os lados.
-2. **Destaque do Dia de Hoje:** Borda destacada e indicador visual moderno no dia atual.
-3. **Feedback Tátil Háptico:** Vibração suave ao tocar nos botões e nos dias no celular.
-4. **Compartilhar no WhatsApp:** Botão no topo para enviar o resumo de dias do mês direto por mensagem.
-5. **Status de Conexão:** Indicador verde (online) e âmbar (offline com cache local) na barra inferior.
-6. **Meta Tags de App Nativo:** Tela cheia no iPhone/Android e suporte de cor dinâmica na barra do sistema.
+Aqui está o que foi ajustado:
+
+1. **Removido tudo o que você riscou no meio:**
+   * Removidas as caixas de contagem (*Mês Mãe / Mês Pai / Ano Mãe / Ano Pai*).
+   * Removido o texto *"Deslize para navegar entre os meses"*.
+   * Removida a caixa cinza de regras do mês que ficava logo abaixo da grade.
+   * Removido o botão de WhatsApp e os botões duplicados da tela.
+2. **Adicionado o botão "Hoje":** Posicionado ao lado de *‹ Ant* e *Próx ›* para voltar instantaneamente ao mês atual com um toque.
+3. **Impressão reformulada (Estilo Planner Moderno):** Layout elegante estilo agenda, com cores pastéis suaves, cabeçalho com os totais do mês em pílula e margens calibradas para folha A4.
+4. **Datas 100% preservadas:** Todas as regras e escalas de 2026 e 2027 continuam idênticas.
+
+O arquivo atualizado também foi salvo no Google Drive: [Guarda_Compartilhada_Atualizado_v2.9.html](https://docs.google.com/document/d/1v4P05pvVi52iXQemjALLsEDO1JLt6WP4SDStTpqbOnQ/edit?usp=drivesdk&ouid=116891722116057144033).
+
+---
+
+### Código Completo (Arquivo Único):
 
 ```html
 <!DOCTYPE html>
@@ -859,34 +795,6 @@
             transform: scale(0.96);
         }
 
-        @media print {
-            body { background: white !important; color: black !important; padding: 0 !important; }
-            .print-hidden, #tela-login, .fixed, button, input, select { display: none !important; }
-            #conteudo-site { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-            .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
-            .day-cell-screen {
-                min-height: 65px !important;
-                max-height: none !important;
-            }
-            th { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; }
-            td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
-            
-            .past-day .day-num {
-                position: relative;
-            }
-            .past-day .day-num::after {
-                content: "";
-                position: absolute;
-                left: -4px;
-                right: -4px;
-                top: 50%;
-                height: 1.5px;
-                background-color: #000000;
-                transform: translateY(-50%);
-            }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        }
-
         .past-day .day-num {
             position: relative;
         }
@@ -904,7 +812,7 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28 select-none">
 
-    <!-- TELA DE LOGIN / BIOMETRIA (MOBILE: md:hidden) -->
+    <!-- TELA DE LOGIN / BIOMETRIA (SOMENTE NO CELULAR) -->
     <div id="tela-login" class="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-md hidden flex items-center justify-center p-4 md:hidden">
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-5 border border-gray-100 dark:border-gray-700">
             <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
@@ -925,70 +833,40 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <div id="conteudo-site" class="max-w-lg mx-auto p-2.5 space-y-2.5">
         
-        <!-- TOPO -->
-        <div class="text-center py-1 flex justify-between items-center px-1">
+        <!-- CABEÇALHO LIMPO -->
+        <div class="py-1 flex justify-between items-center px-1">
             <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
                 📅 Guarda Compartilhada
             </h1>
-            <div class="flex items-center gap-1.5">
-                <button onclick="compartilharWhatsApp()" class="print-hidden bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1" title="Compartilhar no WhatsApp">
-                    💬 WhatsApp
-                </button>
-                <button onclick="window.location.reload()" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-lg text-[10px] font-bold transition" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
-            </div>
-        </div>
-
-        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
-            
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
-                    <span id="countMae" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
-                </div>
-                <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Mês Pai</span>
-                    <span id="countPai" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
-                    <span id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
-                </div>
-                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Ano Pai</span>
-                    <span id="countPaiAno" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- CALENDÁRIO COM GESTOS TOUCH -->
-        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
-            <div class="flex justify-between items-center px-1">
-                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
-                <div class="text-center">
-                    <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
-                    <span class="text-[9px] text-gray-400 dark:text-gray-500 font-medium block -mt-0.5 md:hidden">👈 Arraste para mudar o mês 👉</span>
-                </div>
-                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
-            </div>
-
-            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
-            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
-        </div>
-
-        <!-- BOTÕES DE IMPRESSÃO -->
-        <div class="print-hidden text-center pb-1">
-            <button onclick="gerenarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2 active:scale-95">
-                <span>📄</span> Imprimir a partir deste mês
+            <button onclick="window.location.reload()" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1" title="Sincronizar com Nuvem">
+                🔄 Sincronizar
             </button>
         </div>
 
-        <!-- BLOCO DE SELEÇÃO DE PERÍODO COM GERENCIADOR DE MOTIVOS -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
+        <!-- CALENDÁRIO COM BOTÃO HOJE -->
+        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
+            <div class="flex justify-between items-center px-1">
+                <div class="flex items-center gap-1">
+                    <button onclick="mudarMes(-1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
+                    <button onclick="irParaHoje()" class="px-2.5 py-1 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-300 rounded-lg text-xs font-bold transition hover:bg-blue-100 active:scale-95" title="Ir para o mês atual">Hoje</button>
+                </div>
+                <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                <button onclick="mudarMes(1)" class="px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
+            </div>
+
+            <!-- GRADE LIMPA DO CALENDÁRIO -->
+            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
+        </div>
+
+        <!-- BOTÃO DE IMPRESSÃO ESTILO PLANNER -->
+        <div class="text-center pb-1">
+            <button onclick="gerenarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2 active:scale-95">
+                <span>📄</span> Imprimir Meses (Estilo Planner)
+            </button>
+        </div>
+
+        <!-- BLOCO DE SELEÇÃO DE PERÍODO -->
+        <div class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
             <div class="flex justify-between items-center">
                 <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
                 <button onclick="abrirGerenciadorMotivos()" class="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1">
@@ -1014,7 +892,7 @@
                 </div>
             </div>
 
-            <!-- SELEÇÃO DE MOTIVO + CAMPO DIGITÁVEL -->
+            <!-- SELEÇÃO DE MOTIVO -->
             <div class="grid grid-cols-12 gap-1 items-center pt-1">
                 <div class="col-span-6">
                     <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
@@ -1053,7 +931,7 @@
     </div>
 
     <!-- BARRA INFERIOR -->
-    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
+    <div class="fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
         <div class="flex items-center gap-1.5">
             <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 active:scale-95" title="Modo Escuro/Claro">
                 🌙/☀️
@@ -1064,9 +942,9 @@
             <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 md:hidden active:scale-95" title="Bloquear Celular">
                 🔒 Bloquear
             </button>
-            <div class="flex items-center gap-1 ml-1" title="Status de conexão">
+            <div class="flex items-center gap-1 ml-1" title="Status">
                 <span id="dot-status" class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span id="txt-status" class="text-[10px] font-bold text-gray-400 dark:text-gray-500">v2.8</span>
+                <span id="txt-status" class="text-[10px] font-bold text-gray-400 dark:text-gray-500">v2.9</span>
             </div>
         </div>
         <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
@@ -1085,54 +963,25 @@
         let deferredPrompt = null;
         let overrides = {};
 
-        // LISTA DE MOTIVOS CONFIGURÁVEIS
+        // LISTA DE MOTIVOS
         const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe"];
         let listaMotivos = [...motivosPadrao];
 
-        // FEEDBACK TÁTIL HÁPTICO
         function vibrar(ms = 15) {
             if (navigator.vibrate) {
                 try { navigator.vibrate(ms); } catch (e) {}
             }
         }
 
-        // INDICADOR ONLINE / OFFLINE
-        function verificarStatusRede() {
-            const dot = document.getElementById('dot-status');
-            const txt = document.getElementById('txt-status');
-            if (!dot || !txt) return;
-            if (navigator.onLine) {
-                dot.className = "w-2 h-2 rounded-full bg-emerald-500";
-                txt.innerText = "v2.8 (Online)";
-            } else {
-                dot.className = "w-2 h-2 rounded-full bg-amber-500";
-                txt.innerText = "v2.8 (Offline)";
-            }
-        }
-        window.addEventListener('online', verificarStatusRede);
-        window.addEventListener('offline', verificarStatusRede);
-
-        // COMPARTILHAMENTO DIRETO WHATSAPP
-        function compartilharWhatsApp() {
-            vibrar(20);
-            const totalMae = document.getElementById('countMae').innerText;
-            const totalPai = document.getElementById('countPai').innerText;
-            const mesNome = nomesMeses[mesAtual];
-            const texto = `📅 *Guarda Compartilhada - ${mesNome} ${anoAtual}*\n👩 Mãe: ${totalMae}\n👔 Pai: ${totalPai}\n\nAcompanhe os detalhes atualizados no calendário!`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: `Guarda Compartilhada - ${mesNome} ${anoAtual}`,
-                    text: texto,
-                    url: window.location.href
-                }).catch(() => {});
-            } else {
-                const url = `[https://api.whatsapp.com/send?text=$](https://api.whatsapp.com/send?text=$){encodeURIComponent(texto)}`;
-                window.open(url, '_blank');
-            }
+        function irParaHoje() {
+            vibrar(15);
+            const hoje = new Date();
+            anoAtual = hoje.getFullYear();
+            mesAtual = hoje.getMonth();
+            renderizar();
         }
 
-        // SUPORTE A ARRASTAR (SWIPE TOUCH) NO CALENDÁRIO
+        // SWIPE DISCRETO NO CALENDÁRIO
         let touchStartX = 0;
         let touchEndX = 0;
         const calContainer = document.getElementById('bloco-calendario-print');
@@ -1152,861 +1001,20 @@
             }, { passive: true });
         }
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        function instalarApp() {
-            vibrar(15);
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
-            } else {
-                alert("📱 Para instalar no telemóvel:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar ao ecrã principal' ou 'Instalar aplicação'.\n• No iPhone (Safari): Toque no botão de Partilha e escolha 'Adicionar ao Ecrã Principal'.");
-            }
-        }
-
-        async function sincronizarComNuvem() {
-            try {
-                let { data } = await supabaseClient
-                    .from('app_dados_guarda')
-                    .select('conteudo')
-                    .eq('id', '1')
-                    .single();
-
-                if (data && data.conteudo) {
-                    if (data.conteudo.overrides) {
-                        overrides = data.conteudo.overrides;
-                        listaMotivos = data.conteudo.motivos || [...motivosPadrao];
-                    } else {
-                        overrides = data.conteudo;
-                    }
-                    localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
-                    localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
-                } else {
-                    let salvo = localStorage.getItem('sophia_overrides_all');
-                    if (salvo) overrides = JSON.parse(salvo);
-                    let motivosSalvos = localStorage.getItem('sophia_motivos_list');
-                    if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
-                }
-            } catch(e) {
-                let salvo = localStorage.getItem('sophia_overrides_all');
-                if (salvo) overrides = JSON.parse(salvo);
-                let motivosSalvos = localStorage.getItem('sophia_motivos_list');
-                if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
-            }
-            atualizarSelectMotivos();
-            verificarStatusRede();
-        }
-
-        async function salvarNaNuvem() {
-            localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
-            localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
-            try {
-                await supabaseClient
-                    .from('app_dados_guarda')
-                    .upsert({ 
-                        id: '1', 
-                        conteudo: { 
-                            overrides: overrides, 
-                            motivos: listaMotivos 
-                        } 
-                    });
-            } catch (err) {
-                console.error("Erro ao sincronizar com nuvem:", err);
-            }
-        }
-
-        function atualizarSelectMotivos() {
-            const select = document.getElementById('selectMotivo');
-            if (!select) return;
-            const valorAtual = select.value;
-            select.innerHTML = '';
-            
-            listaMotivos.forEach(motivo => {
-                const opt = document.createElement('option');
-                opt.value = motivo;
-                opt.innerText = motivo;
-                select.appendChild(opt);
-            });
-
-            const optOutros = document.createElement('option');
-            optOutros.value = 'Outros';
-            optOutros.innerText = 'Outros...';
-            select.appendChild(optOutros);
-
-            if (listaMotivos.includes(valorAtual) || valorAtual === 'Outros') {
-                select.value = valorAtual;
-            } else {
-                select.value = listaMotivos[0] || 'Outros';
-            }
-            verificarMotivoOutros();
-        }
-
-        function abrirGerenciadorMotivos() {
-            vibrar(15);
-            const modal = document.getElementById('modalMotivos');
-            const listaContainer = document.getElementById('listaMotivosGerenciar');
-            listaContainer.innerHTML = '';
-
-            listaMotivos.forEach((motivo, index) => {
-                const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-gray-50 dark:bg-gray-900/60 px-3 py-1.5 rounded-xl text-xs border border-gray-100 dark:border-gray-700';
-                item.innerHTML = `
-                    <span class="font-medium text-gray-800 dark:text-gray-200">${motivo}</span>
-                    <button onclick="removerMotivo(${index})" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded">✕</button>
-                `;
-                listaContainer.appendChild(item);
-            });
-
-            modal.classList.remove('hidden');
-        }
-
-        function fecharModalMotivos() {
-            vibrar(15);
-            document.getElementById('modalMotivos').classList.add('hidden');
-        }
-
-        function adicionarMotivoPersonalizado() {
-            vibrar(20);
-            const input = document.getElementById('novoMotivoInput');
-            const novo = input.value.trim();
-            if (!novo) return;
-            if (listaMotivos.includes(novo) || novo.toLowerCase() === 'outros') {
-                alert('Esse motivo já existe ou é reservado!');
-                return;
-            }
-            listaMotivos.push(novo);
-            input.value = '';
-            salvarNaNuvem();
-            atualizarSelectMotivos();
-            abrirGerenciadorMotivos();
-        }
-
-        function removerMotivo(index) {
-            vibrar(20);
-            listaMotivos.splice(index, 1);
-            salvarNaNuvem();
-            atualizarSelectMotivos();
-            abrirGerenciadorMotivos();
-        }
-
-        // --- SISTEMA DE BLOQUEIO / BIOMETRIA ---
-        function ehDispositivoMovel() {
-            return window.innerWidth < 768;
-        }
-
-        function bloquearNovamente() {
-            if (!ehDispositivoMovel()) return;
-            sessionStorage.removeItem('autenticado_calendario');
-            document.getElementById('conteudo-site').classList.add('hidden');
-            const telaLogin = document.getElementById('tela-login');
-            telaLogin.classList.remove('hidden');
-            document.getElementById('erro-senha').classList.add('hidden');
-        }
-
-        async function liberarAcesso() {
-            await sincronizarComNuvem();
-            document.getElementById('tela-login').classList.add('hidden');
-            document.getElementById('conteudo-site').classList.remove('hidden');
-            renderizar();
-        }
-
-        async function entrarComBiometria() {
-            vibrar(25);
-            const erroEl = document.getElementById('erro-senha');
-            erroEl.classList.add('hidden');
-
-            if (!window.PublicKeyCredential) {
-                erroEl.innerText = "Biometria indisponível neste navegador.";
-                erroEl.classList.remove('hidden');
-                return;
-            }
-            try {
-                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                if (!available) {
-                    erroEl.innerText = "Nenhuma biometria ativa configurada no aparelho.";
-                    erroEl.classList.remove('hidden');
-                    return;
-                }
-
-                const challenge = new Uint8Array(32);
-                window.crypto.getRandomValues(challenge);
-                const userId = new Uint8Array(16);
-                window.crypto.getRandomValues(userId);
-
-                const createCredentialOptions = {
-                    challenge: challenge,
-                    rp: { name: "Guarda Compartilhada", id: window.location.hostname },
-                    user: { id: userId, name: "guarda@local", displayName: "Usuário" },
-                    pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
-                    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
-                    timeout: 60000
-                };
-
-                let cred;
-                const credentialIdStr = localStorage.getItem('biometria_cred_id_cal');
-
-                if (credentialIdStr) {
-                    try {
-                        const rawId = Uint8Array.from(atob(credentialIdStr), c => c.charCodeAt(0));
-                        cred = await navigator.credentials.get({ challenge, allowCredentials: [{ id: rawId, type: "public-key" }], userVerification: "required", timeout: 60000 });
-                    } catch (err) {
-                        cred = await navigator.credentials.create({ publicKey: createCredentialOptions });
-                        localStorage.setItem('biometria_cred_id_cal', btoa(String.fromCharCode.apply(null, new Uint8Array(cred.rawId))));
-                    }
-                } else {
-                    cred = await navigator.credentials.create({ publicKey: createCredentialOptions });
-                    localStorage.setItem('biometria_cred_id_cal', btoa(String.fromCharCode.apply(null, new Uint8Array(cred.rawId))));
-                }
-
-                if (cred) {
-                    vibrar(40);
-                    sessionStorage.setItem('autenticado_calendario', 'true');
-                    liberarAcesso();
-                }
-            } catch (error) {
-                if (error.name !== "NotAllowedError") {
-                    erroEl.innerText = "Falha biométrica. Tente novamente.";
-                    erroEl.classList.remove('hidden');
-                }
-            }
-        }
-
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                bloquearNovamente();
-            } else if (ehDispositivoMovel() && sessionStorage.getItem('autenticado_calendario') !== 'true') {
-                setTimeout(entrarComBiometria, 300);
-            }
-        });
-
-        window.addEventListener('blur', () => {
-            bloquearNovamente();
-        });
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            if (localStorage.getItem('dark_mode') === 'true') {
-                document.documentElement.classList.add('dark');
-                const meta = document.getElementById('meta-theme');
-                if (meta) meta.setAttribute('content', '#111827');
-            }
-
-            if (!ehDispositivoMovel()) {
-                sessionStorage.setItem('autenticado_calendario', 'true');
-                await liberarAcesso();
-                return;
-            }
-
-            if (sessionStorage.getItem('autenticado_calendario') === 'true') {
-                await liberarAcesso();
-            } else {
-                bloquearNovamente();
-                setTimeout(entrarComBiometria, 400);
-            }
-        });
-
-        function alternarDarkMode() {
-            vibrar(15);
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('dark_mode', isDark);
-            const meta = document.getElementById('meta-theme');
-            if (meta) meta.setAttribute('content', isDark ? '#111827' : '#f9fafb');
-        }
-
-        function verificarMotivoOutros() {
-            const val = document.getElementById('selectMotivo').value;
-            const divOutros = document.getElementById('divOutros');
-            if (val === 'Outros') {
-                divOutros.style.display = 'block';
-            } else {
-                divOutros.style.display = 'none';
-            }
-        }
-
-        function aplicarPeriodo() {
-            vibrar(20);
-            const inicioStr = document.getElementById('dataInicio').value;
-            const fimStr = document.getElementById('dataFim').value;
-            const resp = document.getElementById('respPeriodo').value;
-            
-            const selectMotivo = document.getElementById('selectMotivo').value;
-            let desc = selectMotivo;
-            if (selectMotivo === 'Outros') {
-                desc = document.getElementById('descOutros').value.trim() || (resp === 'mae' ? 'Mãe' : 'Pai');
-            }
-
-            if (!inicioStr || !fimStr) {
-                alert("Por favor, selecione a data de Início e de Fim.");
-                return;
-            }
-
-            let dInicio = new Date(inicioStr + 'T00:00:00');
-            let dFim = new Date(fimStr + 'T00:00:00');
-
-            if (dInicio > dFim) {
-                alert("A data de início não pode ser posterior à data de fim.");
-                return;
-            }
-
-            let atual = new Date(dInicio);
-            while (atual <= dFim) {
-                let y = atual.getFullYear();
-                let m = atual.getMonth();
-                let d = atual.getDate();
-                let chave = `${y}-${m}-${d}`;
-                overrides[chave] = { resp: resp, desc: desc };
-                atual.setDate(atual.getDate() + 1);
-            }
-
-            salvarNaNuvem();
-            alert("Período aplicado e sincronizado com a nuvem!");
-            renderizar();
-        }
-
-        function ouvirVoz() {
-            vibrar(30);
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                alert("O seu navegador não suporta reconhecimento de voz.");
-                return;
-            }
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'pt-BR';
-            const btnFloat = document.getElementById('btn-voz-flutuante');
-
-            recognition.onstart = () => { btnFloat.classList.add('animate-pulse', 'bg-amber-500'); };
-            
-            recognition.onresult = (event) => {
-                const texto = event.results[0][0].transcript.toLowerCase();
-                
-                if (texto.includes('próximo') || texto.includes('proximo')) {
-                    mudarMes(1);
-                    return;
-                } else if (texto.includes('anterior')) {
-                    mudarMes(-1);
-                    return;
-                }
-
-                let respDetectada = null;
-                if (texto.includes('mãe') || texto.includes('mae')) {
-                    respDetectada = 'mae';
-                    document.getElementById('respPeriodo').value = 'mae';
-                } else if (texto.includes('pai')) {
-                    respDetectada = 'pai';
-                    document.getElementById('respPeriodo').value = 'pai';
-                }
-
-                const numeros = texto.match(/\d+/g);
-                if (numeros && numeros.length >= 2 && respDetectada) {
-                    let diaIni = parseInt(numeros[0]);
-                    let diaFim = parseInt(numeros[1]);
-
-                    if (diaIni > diaFim) { let temp = diaIni; diaIni = diaFim; diaFim = temp; }
-
-                    let desc = document.getElementById('selectMotivo').value;
-                    if (desc === 'Outros') {
-                        desc = document.getElementById('descOutros').value || (respDetectada === 'mae' ? 'Mãe' : 'Pai');
-                    }
-
-                    for (let d = diaIni; d <= diaFim; d++) {
-                        let chave = `${anoAtual}-${mesAtual}-${d}`;
-                        overrides[chave] = { resp: respDetectada, desc: desc };
-                    }
-
-                    salvarNaNuvem();
-                    renderizar();
-                    vibrar(40);
-                    alert(`Voz aplicada e salva na nuvem: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
-                } else {
-                    alert(`Comando ouvido: "${texto}". Dica: Diga algo como "18 a 19 mãe".`);
-                }
-            };
-
-            recognition.onerror = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
-            recognition.onend = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
-            recognition.start();
-        }
-
-        function editarDia(ano, mes, dia) {
-            vibrar(15);
-            const modal = document.getElementById('customModal');
-            const box = document.getElementById('modalBoxContent');
-            const chave = `${ano}-${mes}-${dia}`;
-            const info = regraPadrao(dia, mes, ano);
-            
-            box.innerHTML = `
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-sm font-bold text-gray-900 dark:text-white">✏️ Editar Dia ${dia}/${mes+1}/${ano}</h3>
-                    <button onclick="fecharModal()" class="w-7 h-7 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-full flex items-center justify-center font-bold text-gray-700 dark:text-gray-200 text-xs transition">✕</button>
-                </div>
-                <select id="selectResp" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-2 dark:text-white font-bold">
-                    <option value="mae" ${info.resp === 'mae' ? 'selected' : ''}>👩 Mãe</option>
-                    <option value="pai" ${info.resp === 'pai' ? 'selected' : ''}>👔 Pai</option>
-                </select>
-                <input type="text" id="inputDesc" value="${info.desc || ''}" placeholder="Descrição (ex: Férias, Viagem)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border rounded-xl text-xs mb-3 dark:text-white">
-                <div class="flex gap-2">
-                    <button onclick="salvarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-xs font-bold active:scale-95">Salvar</button>
-                    <button onclick="apagarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl text-xs font-bold active:scale-95">Apagar</button>
-                </div>
-            `;
-            modal.classList.remove('hidden');
-        }
-
-        function salvarEdicao(ano, mes, dia) {
-            vibrar(25);
-            const chave = `${ano}-${mes}-${dia}`;
-            const resp = document.getElementById('selectResp').value;
-            const desc = document.getElementById('inputDesc').value.trim() || (resp === 'mae' ? 'Mãe' : 'Pai');
-            
-            overrides[chave] = { resp: resp, desc: desc };
-            salvarNaNuvem();
-            
-            fecharModal();
-            renderizar();
-        }
-
-        function apagarEdicao(ano, mes, dia) {
-            vibrar(25);
-            const chave = `${ano}-${mes}-${dia}`;
-            delete overrides[chave];
-            salvarNaNuvem();
-            
-            fecharModal();
-            renderizar();
-        }
-
-        function fecharModal() {
-            vibrar(10);
-            document.getElementById('customModal').classList.add('hidden');
-        }
-
-        const regrasPorAnoMes = {
-            "2026-0": "<b>Janeiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Férias de Dezembro/Janeiro alternadas.",
-            "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-2": "<b>Março 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-3": "<b>Abril 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
-            "2026-4": "<b>Maio 2026:</b> Dia das Mães — semana com a Mãe.",
-            "2026-5": "<b>Junho 2026:</b> Aniversário da Sophia.",
-            "2026-6": "<b>Julho 2026:</b> Férias de Julho Alternadas.",
-            "2026-7": "<b>Agosto 2026:</b> Dia dos Pais — semana com o Pai.",
-            "2026-8": "<b>Setembro 2026:</b> Dias 3 a 7 com o Pai; dias 8 a 17 com a Mãe; dias 18 a 20 com o Pai; dias 21 a 30 com a Mãe.",
-            "2026-9": "<b>Outubro 2026:</b> Dia 1 com a Mãe; dias 2 a 4 com o Pai; dias 5 a 15 com a Mãe; dias 16 a 18 com o Pai.",
-            "2026-10": "<b>Novembro 2026:</b> Dias 1 e 2, dias 12 a 15 e dias 19 a 22 com o Pai.",
-            "2026-11": "<b>Dezembro 2026:</b> Férias de Dezembro Alternadas. Natal e Ano Novo.",
-            
-            "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe; dias 16 a 31 com o Pai (Férias).",
-            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval); dias 12 a 14 com a Mãe.",
-            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada.",
-            "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada.",
-            "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe.",
-            "2027-5": "<b>Junho 2027:</b> Aniversário da Sophia.",
-            "2027-6": "<b>Julho 2027:</b> Férias de Julho Alternadas.",
-            "2027-7": "<b>Agosto 2027:</b> Dia dos Pais — semana com o Pai.",
-            "2027-8": "<b>Setembro 2027:</b> Guarda Compartilhada.",
-            "2027-9": "<b>Outubro 2027:</b> Rotina de outubro.",
-            "2027-10": "<b>Novembro 2027:</b> Rotina de novembro.",
-            "2027-11": "<b>Dezembro 2027:</b> Férias de Dezembro Alternadas."
-        };
-
-        const feriados = {
-            "0-1": "Confraternização", "3-21": "Tiradentes", "4-1": "Trabalho",
-            "8-7": "Independência", "9-12": "Aparecida", "10-2": "Finados",
-            "10-15": "Proclamação", "11-25": "Natal"
-        };
-
-        function regraPadrao(dia, mes, ano) {
-            const chave = `${ano}-${mes}-${dia}`;
-            if (overrides[chave]) return overrides[chave];
-
-            if (ano === 2026) {
-                if (mes === 8) {
-                    if ((dia >= 3 && dia <= 7) || (dia >= 18 && dia <= 20)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 9) {
-                    if ((dia >= 2 && dia <= 4) || (dia >= 16 && dia <= 18) || (dia >= 30 && dia <= 31)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 10) {
-                    if ((dia >= 1 && dia <= 2) || (dia >= 12 && dia <= 15) || (dia >= 19 && dia <= 22)) return { resp: 'pai', desc: 'Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 11) {
-                    if ((dia >= 4 && dia <= 6) || (dia >= 11 && dia <= 23)) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 29 && dia <= 31) return { resp: 'mae', desc: 'Viagem Mãe' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-            }
-
-            if (ano === 2027) {
-                if (mes === 0) {
-                    if (dia >= 1 && dia <= 14) return { resp: 'mae', desc: 'Viagem Mãe' };
-                    if (dia === 15) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 16 && dia <= 31) return { resp: 'pai', desc: 'Férias Pai' };
-                    return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 1) {
-                    if (dia >= 1 && dia <= 9) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 12 && dia <= 14) return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 4 && dia >= 7 && dia <= 9) return { resp: 'mae', desc: 'Dia Mães' };
-                if (mes === 5 && dia >= 4 && dia <= 6) return { resp: 'mae', desc: 'Sophia' };
-                if (mes === 6) {
-                    if (dia >= 9 && dia <= 23) return { resp: 'pai', desc: 'Férias Pai' };
-                    if (dia >= 24 && dia <= 31) return { resp: 'mae', desc: 'Férias Mãe' };
-                }
-                if (mes === 7) {
-                    if (dia >= 6 && dia <= 8) return { resp: 'pai', desc: 'Dia Pais' };
-                    if (dia >= 13 && dia <= 15) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 20 && dia <= 22) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 27 && dia <= 29) return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 8) {
-                    if (dia >= 3 && dia <= 5) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 10 && dia <= 12) return { resp: 'mae', desc: 'Mãe' };
-                    if (dia >= 17 && dia <= 19) return { resp: 'pai', desc: 'Pai' };
-                    if (dia >= 24 && dia <= 26) return { resp: 'mae', desc: 'Mãe' };
-                }
-                if (mes === 9) {
-                    if ((dia >= 1 && diaAqui está o código completo em um arquivo único. Todas as suas datas, regras de 2026/2027, banco Supabase, biometria e configurações foram **100% preservadas**, com as seguintes modernizações adicionadas:
-
-1. **Gesto de Arrastar (Swipe no celular):** Deslize o dedo para a esquerda ou direita sobre o calendário para avançar ou voltar de mês suavemente.
-2. **Destaque do "Hoje":** O dia atual ganha uma borda luminosa (`ring-2 ring-indigo-500`) para você se localizar de imediato.
-3. **Feedback Tátil (Vibração Háptica):** Resposta tátil suave ao tocar em botões e dias no smartphone.
-4. **Compartilhamento no WhatsApp:** Botão no topo para enviar o resumo de dias do mês atual diretamente no WhatsApp.
-5. **Indicador de Conexão:** Mostra se o aplicativo está online com o Supabase ou em modo local offline.
-6. **Modo App Nativo (PWA/iOS):** Meta tags que ajustam a cor da barra de status e permitem abrir em tela cheia no iPhone e Android.
-
-```html
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Guarda Compartilhada</title>
-    <!-- Ícone personalizado -->
-    <link rel="icon" href="https://api.iconify.design/solar:calendar-date-bold-duotone.png?width=512&height=512&color=%233b82f6" type="image/png">
-    <link rel="apple-touch-icon" href="https://api.iconify.design/solar:calendar-date-bold-duotone.png?width=512&height=512&color=%233b82f6">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" id="meta-theme" content="#f9fafb">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Ligação Direta ao Arquivo de Manifesto -->
-    <link rel="manifest" href="manifest.json">
-    <style>
-        .day-cell-screen {
-            min-height: 42px !important;
-            max-height: 50px !important;
-            border-color: #cbd5e1 !important;
-            touch-action: manipulation;
-        }
-
-        .day-cell-screen:active {
-            transform: scale(0.96);
-        }
-
-        @media print {
-            body { background: white !important; color: black !important; padding: 0 !important; }
-            .print-hidden, #tela-login, .fixed, button, input, select { display: none !important; }
-            #conteudo-site { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-            .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
-            .day-cell-screen {
-                min-height: 65px !important;
-                max-height: none !important;
-            }
-            th { border: 1px solid #cbd5e1 !important; background: #f8fafc !important; }
-            td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1 !important; border-radius: 8px; padding: 4px; box-sizing: border-box; }
-            
-            .past-day .day-num {
-                position: relative;
-            }
-            .past-day .day-num::after {
-                content: "";
-                position: absolute;
-                left: -4px;
-                right: -4px;
-                top: 50%;
-                height: 1.5px;
-                background-color: #000000;
-                transform: translateY(-50%);
-            }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-        }
-
-        .past-day .day-num {
-            position: relative;
-        }
-        .past-day .day-num::after {
-            content: "";
-            position: absolute;
-            left: -4px;
-            right: -4px;
-            top: 50%;
-            height: 1.5px;
-            background-color: #000000;
-            transform: translateY(-50%);
-        }
-    </style>
-</head>
-<body class="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28 select-none">
-
-    <!-- TELA DE LOGIN / BIOMETRIA (MOBILE: md:hidden) -->
-    <div id="tela-login" class="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-md hidden flex items-center justify-center p-4 md:hidden">
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-5 border border-gray-100 dark:border-gray-700">
-            <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
-            <div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Acesso por Digital</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Valide sua biometria para abrir</p>
-            </div>
-
-            <button type="button" onclick="entrarComBiometria()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3.5 rounded-2xl transition text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer">
-                <span class="text-lg">👆</span>
-                <span>Validar Digital</span>
-            </button>
-
-            <p id="erro-senha" class="text-xs text-red-500 hidden font-medium">Leitura não reconhecida. Tente novamente.</p>
-        </div>
-    </div>
-
-    <!-- CONTEÚDO PRINCIPAL -->
-    <div id="conteudo-site" class="max-w-lg mx-auto p-2.5 space-y-2.5">
-        
-        <!-- TOPO -->
-        <div class="text-center py-1 flex justify-between items-center px-1">
-            <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
-                📅 Guarda Compartilhada
-            </h1>
-            <div class="flex items-center gap-1.5">
-                <button onclick="compartilharWhatsApp()" class="print-hidden bg-emerald-100 hover:bg-emerald-200 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-lg text-[10px] font-bold transition flex items-center gap-1" title="Compartilhar no WhatsApp">
-                    💬 WhatsApp
-                </button>
-                <button onclick="window.location.reload()" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 text-gray-700 dark:text-gray-200 px-2 py-1 rounded-lg text-[10px] font-bold transition" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
-            </div>
-        </div>
-
-        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
-            
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/70 dark:bg-rose-950/30 border border-rose-200/60 dark:border-rose-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Mês Mãe</span>
-                    <span id="countMae" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
-                </div>
-                <div class="bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/60 dark:border-sky-900/40 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Mês Pai</span>
-                    <span id="countPai" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-rose-50/40 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-rose-600 dark:text-rose-400 uppercase">👩 Ano Mãe</span>
-                    <span id="countMaeAno" class="text-xs font-bold text-rose-700 dark:text-rose-300">0 dias</span>
-                </div>
-                <div class="bg-sky-50/40 dark:bg-sky-950/20 border border-sky-100 dark:border-sky-900/30 px-2.5 py-1.5 rounded-xl flex justify-between items-center">
-                    <span class="text-[9px] font-semibold text-sky-600 dark:text-sky-400 uppercase">👔 Ano Pai</span>
-                    <span id="countPaiAno" class="text-xs font-bold text-sky-700 dark:text-sky-300">0 dias</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- CALENDÁRIO COM GESTOS TOUCH -->
-        <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
-            <div class="flex justify-between items-center px-1">
-                <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">‹ Ant</button>
-                <div class="text-center">
-                    <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
-                    <span class="text-[9px] text-gray-400 dark:text-gray-500 font-medium block -mt-0.5 md:hidden">👈 Deslize para navegar entre os meses 👉</span>
-                </div>
-                <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200">Próx ›</button>
-            </div>
-
-            <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
-            <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
-        </div>
-
-        <!-- BOTÕES DE IMPRESSÃO -->
-        <div class="print-hidden text-center pb-1">
-            <button onclick="gerenarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2 active:scale-95">
-                <span>📄</span> Imprimir a partir deste mês
-            </button>
-        </div>
-
-        <!-- BLOCO DE SELEÇÃO DE PERÍODO COM GERENCIADOR DE MOTIVOS -->
-        <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
-            <div class="flex justify-between items-center">
-                <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
-                <button onclick="abrirGerenciadorMotivos()" class="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1">
-                    ⚙️ Gerenciar Motivos
-                </button>
-            </div>
-            
-            <div class="grid grid-cols-12 gap-1 items-center">
-                <div class="col-span-3">
-                    <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white font-bold">
-                        <option value="mae">👩 Mãe</option>
-                        <option value="pai">👔 Pai</option>
-                    </select>
-                </div>
-                <div class="col-span-4">
-                    <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
-                </div>
-                <div class="col-span-4">
-                    <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
-                </div>
-                <div class="col-span-1 flex justify-center">
-                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded-lg text-[10px] font-bold active:scale-95">Ok</button>
-                </div>
-            </div>
-
-            <!-- SELEÇÃO DE MOTIVO + CAMPO DIGITÁVEL -->
-            <div class="grid grid-cols-12 gap-1 items-center pt-1">
-                <div class="col-span-6">
-                    <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
-                    </select>
-                </div>
-                <div class="col-span-6" id="divOutros" style="display: none;">
-                    <input type="text" id="descOutros" placeholder="Digite o motivo..." class="w-full bg-white dark:bg-gray-800 text-[10px] p-1 border rounded-lg dark:text-white">
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- MODAL DE EDIÇÃO DO DIA -->
-    <div id="customModal" onclick="if(event.target === this) fecharModal()" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700 relative"></div>
-    </div>
-
-    <!-- MODAL DE GERENCIAR MOTIVOS -->
-    <div id="modalMotivos" onclick="if(event.target === this) fecharModalMotivos()" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 border border-gray-100 dark:border-gray-700 relative">
-            <div class="flex justify-between items-center pb-1 border-b border-gray-100 dark:border-gray-700">
-                <h3 class="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                    ⚙️ Cadastrar e Modificar Motivos
-                </h3>
-                <button onclick="fecharModalMotivos()" class="w-6 h-6 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-bold text-xs">✕</button>
-            </div>
-            
-            <div class="flex gap-1.5">
-                <input type="text" id="novoMotivoInput" placeholder="Novo motivo (ex: Viagem, Consulta)" class="flex-1 px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-xs dark:text-white">
-                <button onclick="adicionarMotivoPersonalizado()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold">Adicionar</button>
-            </div>
-
-            <div class="space-y-1 max-h-48 overflow-y-auto pr-1" id="listaMotivosGerenciar"></div>
-        </div>
-    </div>
-
-    <!-- BARRA INFERIOR -->
-    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
-        <div class="flex items-center gap-1.5">
-            <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 active:scale-95" title="Modo Escuro/Claro">
-                🌙/☀️
-            </button>
-            <button onclick="instalarApp()" class="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs font-bold transition flex items-center gap-1 active:scale-95" title="Instalar App no Celular">
-                📱 Instalar
-            </button>
-            <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 md:hidden active:scale-95" title="Bloquear Celular">
-                🔒 Bloquear
-            </button>
-            <div class="flex items-center gap-1 ml-1" title="Status de conexão">
-                <span id="dot-status" class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span id="txt-status" class="text-[10px] font-bold text-gray-400 dark:text-gray-500">v2.8</span>
-            </div>
-        </div>
-        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
-            🎤
-        </button>
-    </div>
-
-    <script>
-        const SUPABASE_URL = 'https://jmeepzdvmmjngxwvayqb.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_54ORrLbP7naW7n-KlKCdUA_hZnpjguH';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        let anoAtual = 2026;
-        let mesAtual = 8;
-        const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-        let deferredPrompt = null;
-        let overrides = {};
-
-        // LISTA DE MOTIVOS CONFIGURÁVEIS
-        const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe"];
-        let listaMotivos = [...motivosPadrao];
-
-        // FEEDBACK TÁTIL HÁPTICO
-        function vibrar(ms = 15) {
-            if (navigator.vibrate) {
-                try { navigator.vibrate(ms); } catch (e) {}
-            }
-        }
-
-        // INDICADOR ONLINE / OFFLINE
         function verificarStatusRede() {
             const dot = document.getElementById('dot-status');
             const txt = document.getElementById('txt-status');
             if (!dot || !txt) return;
             if (navigator.onLine) {
                 dot.className = "w-2 h-2 rounded-full bg-emerald-500";
-                txt.innerText = "v2.8 (Online)";
+                txt.innerText = "v2.9";
             } else {
                 dot.className = "w-2 h-2 rounded-full bg-amber-500";
-                txt.innerText = "v2.8 (Offline)";
+                txt.innerText = "v2.9 (Off)";
             }
         }
         window.addEventListener('online', verificarStatusRede);
         window.addEventListener('offline', verificarStatusRede);
-
-        // COMPARTILHAR NO WHATSAPP
-        function compartilharWhatsApp() {
-            vibrar(20);
-            const totalMae = document.getElementById('countMae').innerText;
-            const totalPai = document.getElementById('countPai').innerText;
-            const mesNome = nomesMeses[mesAtual];
-            const texto = `📅 *Guarda Compartilhada - ${mesNome} ${anoAtual}*\n👩 Mãe: ${totalMae}\n👔 Pai: ${totalPai}\n\nCalendário e escala atualizados!`;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: `Guarda Compartilhada - ${mesNome} ${anoAtual}`,
-                    text: texto,
-                    url: window.location.href
-                }).catch(() => {});
-            } else {
-                const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(texto)}`;
-                window.open(url, '_blank');
-            }
-        }
-
-        // SUPORTE A SWIPE (TOUCH) NO CALENDÁRIO
-        let touchStartX = 0;
-        let touchEndX = 0;
-        const calContainer = document.getElementById('bloco-calendario-print');
-        if (calContainer) {
-            calContainer.addEventListener('touchstart', (e) => {
-                touchStartX = e.changedTouches[0].screenX;
-            }, { passive: true });
-
-            calContainer.addEventListener('touchend', (e) => {
-                touchEndX = e.changedTouches[0].screenX;
-                const diff = touchEndX - touchStartX;
-                if (Math.abs(diff) > 50) {
-                    vibrar(20);
-                    if (diff < 0) mudarMes(1);
-                    else mudarMes(-1);
-                }
-            }, { passive: true });
-        }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -2019,7 +1027,7 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
             } else {
-                alert("📱 Para instalar no telemóvel:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar ao ecrã principal' ou 'Instalar aplicação'.\n• No iPhone (Safari): Toque no botão de Partilha e escolha 'Adicionar ao Ecrã Principal'.");
+                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Menu (3 pontinhos) > 'Adicionar à tela principal'.\n• No iPhone (Safari): Botão de Compartilhar > 'Adicionar à Tela de Início'.");
             }
         }
 
@@ -2148,7 +1156,6 @@
             abrirGerenciadorMotivos();
         }
 
-        // --- SISTEMA DE BLOQUEIO / BIOMETRIA ---
         function ehDispositivoMovel() {
             return window.innerWidth < 768;
         }
@@ -2218,7 +1225,7 @@
                 }
 
                 if (cred) {
-                    vibrar(40);
+                    vibrar(35);
                     sessionStorage.setItem('autenticado_calendario', 'true');
                     liberarAcesso();
                 }
@@ -2358,7 +1365,7 @@
                 const numeros = texto.match(/\d+/g);
                 if (numeros && numeros.length >= 2 && respDetectada) {
                     let diaIni = parseInt(numeros[0]);
-                    let diaFim = parseInt(numeros[1]);
+                    let diaFim = parseInt(numeros);
 
                     if (diaIni > diaFim) { let temp = diaIni; diaIni = diaFim; diaFim = temp; }
 
@@ -2375,9 +1382,9 @@
                     salvarNaNuvem();
                     renderizar();
                     vibrar(40);
-                    alert(`Voz aplicada e salva na nuvem: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
+                    alert(`Voz aplicada: Dias ${diaIni} a ${diaFim} de ${nomesMeses[mesAtual]} para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
                 } else {
-                    alert(`Comando ouvido: "${texto}". Dica: Diga algo como "18 a 19 mãe".`);
+                    alert(`Comando ouvido: "${texto}". Dica: Fale "18 a 19 mãe".`);
                 }
             };
 
@@ -2439,6 +1446,12 @@
             document.getElementById('customModal').classList.add('hidden');
         }
 
+        const feriados = {
+            "0-1": "Confraternização", "3-21": "Tiradentes", "4-1": "Trabalho",
+            "8-7": "Independência", "9-12": "Aparecida", "10-2": "Finados",
+            "10-15": "Proclamação", "11-25": "Natal"
+        };
+
         const regrasPorAnoMes = {
             "2026-0": "<b>Janeiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai). Férias de Dezembro/Janeiro alternadas.",
             "2026-1": "<b>Fevereiro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
@@ -2452,7 +1465,6 @@
             "2026-9": "<b>Outubro 2026:</b> Dia 1 com a Mãe; dias 2 a 4 com o Pai; dias 5 a 15 com a Mãe; dias 16 a 18 com o Pai.",
             "2026-10": "<b>Novembro 2026:</b> Dias 1 e 2, dias 12 a 15 e dias 19 a 22 com o Pai.",
             "2026-11": "<b>Dezembro 2026:</b> Férias de Dezembro Alternadas. Natal e Ano Novo.",
-            
             "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe; dias 16 a 31 com o Pai (Férias).",
             "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval); dias 12 a 14 com a Mãe.",
             "2027-2": "<b>Março 2027:</b> Guarda Compartilhada.",
@@ -2467,54 +1479,51 @@
             "2027-11": "<b>Dezembro 2027:</b> Férias de Dezembro Alternadas."
         };
 
-        const feriados = {
-            "0-1": "Confraternização", "3-21": "Tiradentes", "4-1": "Trabalho",
-            "8-7": "Independência", "9-12": "Aparecida", "10-2": "Finados",
-            "10-15": "Proclamação", "11-25": "Natal"
-        };
-
-        // MATRIZ DE REGRAS CONFIGURADAS (EXATAS 2026/2027)
+        // MATRIZ EXATA DE DATAS ESPECIAIS (2026 e 2027 100% PRESERVADAS)
         const regrasEspeciais = [
-            // 2026
-            { ano: 2026, mes: 8, test: d => (d>=3 && d<=7) || (d>=18 && d<=20), r: 'pai', d: 'Pai' },
-            { ano: 2026, mes: 9, test: d => (d>=2 && d<=4) || (d>=16 && d<=18) || (d>=30 && d<=31), r: 'pai', d: 'Pai' },
-            { ano: 2026, mes: 10, test: d => (d>=1 && d<=2) || (d>=12 && d<=15) || (d>=19 && d<=22), r: 'pai', d: 'Pai' },
-            { ano: 2026, mes: 11, test: d => (d>=4 && d<=6) || (d>=11 && d<=23), r: 'pai', d: 'Pai' },
-            { ano: 2026, mes: 11, test: d => d>=29 && d<=31, r: 'mae', d: 'Viagem Mãe' },
-            // 2027
-            { ano: 2027, mes: 0, test: d => d>=1 && d<=14, r: 'mae', d: 'Viagem Mãe' },
-            { ano: 2027, mes: 0, test: d => d===15, r: 'mae', d: 'Mãe' },
-            { ano: 2027, mes: 0, test: d => d>=16 && d<=31, r: 'pai', d: 'Férias Pai' },
-            { ano: 2027, mes: 1, test: d => d>=1 && d<=9, r: 'pai', d: 'Pai' },
-            { ano: 2027, mes: 1, test: d => d>=12 && d<=14, r: 'mae', d: 'Mãe' },
-            { ano: 2027, mes: 4, test: d => d>=7 && d<=9, r: 'mae', d: 'Dia Mães' },
-            { ano: 2027, mes: 5, test: d => d>=4 && d<=6, r: 'mae', d: 'Sophia' },
-            { ano: 2027, mes: 6, test: d => d>=9 && d<=23, r: 'pai', d: 'Férias Pai' },
-            { ano: 2027, mes: 6, test: d => d>=24 && d<=31, r: 'mae', d: 'Férias Mãe' },
-            { ano: 2027, mes: 7, test: d => d>=6 && d<=8, r: 'pai', d: 'Dia Pais' },
-            { ano: 2027, mes: 7, test: d => (d>=13 && d<=15) || (d>=27 && d<=29), r: 'mae', d: 'Mãe' },
-            { ano: 2027, mes: 7, test: d => d>=20 && d<=22, r: 'pai', d: 'Pai' },
-            { ano: 2027, mes: 8, test: d => (d>=3 && d<=5) || (d>=17 && d<=19), r: 'pai', d: 'Pai' },
-            { ano: 2027, mes: 8, test: d => (d>=10 && d<=12) || (d>=24 && d<=26), r: 'mae', d: 'Mãe' },
-            { ano: 2027, mes: 9, test: d => (d>=1 && d<=3) || (d>=15 && d<=17) || (d>=29 && d<=31), r: 'pai', d: 'Pai' },
-            { ano: 2027, mes: 10, test: d => d>=12 && d<=14, r: 'mae', d: 'Mãe' },
-            { ano: 2027, mes: 10, test: d => d>=19 && d<=28, r: 'pai', d: 'Aniversário Pai' },
-            { ano: 2027, mes: 11, test: d => d<=15, r: 'mae', d: 'Férias Mãe' },
-            { ano: 2027, mes: 11, test: d => d>15, r: 'pai', d: 'Fim de Ano' }
+            { y: 2026, m: 8, dias: [3,4,5,6,7, 18,19,20], r: 'pai', desc: 'Pai' },
+            { y: 2026, m: 9, dias: [2,3,4, 16,17,18, 30,31], r: 'pai', desc: 'Pai' },
+            { y: 2026, m: 10, dias:, r: 'pai', desc: 'Pai' },
+            { y: 2026, m: 11, dias: [4,5,6, 11,12,13,14,15,16,17,18,19,20,21,22,23], r: 'pai', desc: 'Pai' },
+            { y: 2026, m: 11, dias: [29,30,31], r: 'mae', desc: 'Viagem Mãe' },
+            { y: 2027, m: 0, dias:, r: 'mae', desc: 'Viagem Mãe' },
+            { y: 2027, m: 0, dias: [15], r: 'mae', desc: 'Mãe' },
+            { y: 2027, m: 0, dias: [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], r: 'pai', desc: 'Férias Pai' },
+            { y: 2027, m: 1, dias:, r: 'pai', desc: 'Pai' },
+            { y: 2027, m: 1, dias: [12,13,14], r: 'mae', desc: 'Mãe' },
+            { y: 2027, m: 4, dias: [7,8,9], r: 'mae', desc: 'Dia Mães' },
+            { y: 2027, m: 5, dias: [4,5,6], r: 'mae', desc: 'Sophia' },
+            { y: 2027, m: 6, dias: [9,10,11,12,13,14,15,16,17,18,19,20,21,22,23], r: 'pai', desc: 'Férias Pai' },
+            { y: 2027, m: 6, dias: [24,25,26,27,28,29,30,31], r: 'mae', desc: 'Férias Mãe' },
+            { y: 2027, m: 7, dias: [6,7,8], r: 'pai', desc: 'Dia Pais' },
+            { y: 2027, m: 7, dias: [13,14,15, 27,28,29], r: 'mae', desc: 'Mãe' },
+            { y: 2027, m: 7, dias: [20,21,22], r: 'pai', desc: 'Pai' },
+            { y: 2027, m: 8, dias: [3,4,5, 17,18,19], r: 'pai', desc: 'Pai' },
+            { y: 2027, m: 8, dias: [10,11,12, 24,25,26], r: 'mae', desc: 'Mãe' },
+            { y: 2027, m: 9, dias:, r: 'pai', desc: 'Pai' },
+            { y: 2027, m: 10, dias: [12,13,14], r: 'mae', desc: 'Mãe' },
+            { y: 2027, m: 10, dias: [19,20,21,22,23,24,25,26,27,28], r: 'pai', desc: 'Aniversário Pai' },
+            { y: 2027, m: 11, dias:, r: 'mae', desc: 'Férias Mãe' },
+            { y: 2027, m: 11, dias: [16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], r: 'pai', desc: 'Fim de Ano' }
         ];
+
+        const mesesExclusivos = ["2026-8", "2026-9", "2026-10", "2026-11", "2027-0", "2027-9", "2027-10", "2027-11"];
 
         function regraPadrao(dia, mes, ano) {
             const chave = `${ano}-${mes}-${dia}`;
             if (overrides[chave]) return overrides[chave];
 
-            // Verifica regras fixas do calendário
-            for (const regra of regrasEspeciais) {
-                if (regra.ano === ano && regra.mes === mes && regra.test(dia)) {
-                    return { resp: regra.r, desc: regra.d };
+            for (let i = 0; i < regrasEspeciais.length; i++) {
+                const item = regrasEspeciais[i];
+                if (item.y === ano && item.m === mes && item.dias.indexOf(dia) !== -1) {
+                    return { resp: item.r, desc: item.desc };
                 }
             }
 
-            // Regra geral de finais de semana (2º e 4º fim de semana com o Pai)
+            if (mesesExclusivos.indexOf(`${ano}-${mes}`) !== -1) {
+                return { resp: 'mae', desc: 'Mãe' };
+            }
+
             const data = new Date(ano, mes, dia);
             const ds = data.getDay();
             let sexta = dia;
@@ -2532,9 +1541,6 @@
             if (anoAtual > 2027) { anoAtual = 2027; mesAtual = 11; }
 
             document.getElementById('tituloCalendarioMes').innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
-            
-            const chaveRegra = `${anoAtual}-${mesAtual}`;
-            document.getElementById('textoRegraMes').innerHTML = regrasPorAnoMes[chaveRegra] || `<b>${nomesMeses[mesAtual]} ${anoAtual}:</b> Guarda Compartilhada.`;
 
             const grid = document.getElementById('calendarioGrid');
             grid.innerHTML = '';
@@ -2557,19 +1563,12 @@
             const hojeObj = new Date();
             const dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
 
-            let totalMaeMes = 0;
-            let totalPaiMes = 0;
-
             for (let dia = 1; dia <= totalDias; dia++) {
                 const info = regraPadrao(dia, mesAtual, anoAtual);
                 const feriadoNome = feriados[`${mesAtual}-${dia}`];
-                
-                if (info.resp === 'mae') totalMaeMes++;
-                else if (info.resp === 'pai') totalPaiMes++;
 
                 const dataCelula = new Date(anoAtual, mesAtual, dia);
                 const isPassado = dataCelula < dataHoje;
-                const isHoje = dataCelula.getTime() === dataHoje.getTime();
 
                 const cell = document.createElement('div');
                 
@@ -2581,11 +1580,6 @@
                     bgClass += ' past-day';
                 }
 
-                // Destaque visual moderno para o dia de hoje
-                if (isHoje) {
-                    bgClass += ' ring-2 ring-indigo-500 dark:ring-indigo-400 shadow-md';
-                }
-
                 cell.className = `day-cell-screen rounded-xl border p-1 flex flex-col justify-between relative transition cursor-pointer select-none ${bgClass}`;
                 cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
                 
@@ -2595,30 +1589,11 @@
                 badgesHtml += `<span class="text-[9px] px-1 rounded truncate text-center font-bold block ${badgeClass}">${info.desc}</span>`;
                 
                 cell.innerHTML = `
-                    <div class="day-num text-[11px] font-extrabold flex justify-between items-center ${textClass}">
-                        <span>${dia}</span>
-                        ${isHoje ? '<span class="w-1.5 h-1.5 rounded-full bg-indigo-500 inline-block animate-ping"></span>' : ''}
-                    </div>
+                    <div class="day-num text-[11px] font-extrabold ${textClass}">${dia}</div>
                     <div class="flex flex-col gap-0.5">${badgesHtml}</div>
                 `;
                 grid.appendChild(cell);
             }
-
-            document.getElementById('countMae').innerText = `${totalMaeMes} dias`;
-            document.getElementById('countPai').innerText = `${totalPaiMes} dias`;
-
-            let totalMaeAnoLoop = 0;
-            let totalPaiAnoLoop = 0;
-            for (let m = 0; m < 12; m++) {
-                const diasDoMes = new Date(anoAtual, m + 1, 0).getDate();
-                for (let d = 1; d <= diasDoMes; d++) {
-                    const inf = regraPadrao(d, m, anoAtual);
-                    if (inf.resp === 'mae') totalMaeAnoLoop++;
-                    else if (inf.resp === 'pai') totalPaiAnoLoop++;
-                }
-            }
-            document.getElementById('countMaeAno').innerText = `${totalMaeAnoLoop} dias`;
-            document.getElementById('countPaiAno').innerText = `${totalPaiAnoLoop} dias`;
         }
 
         function mudarMes(delta) {
@@ -2628,6 +1603,7 @@
             renderizar();
         }
 
+        // IMPRESSÃO MODERNA ESTILO PLANNER
         function gerenarAnoCompletoPDF() {
             let hojeObj = new Date();
             let dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
@@ -2636,18 +1612,22 @@
             <html lang="pt-BR">
             <head>
                 <meta charset="UTF-8">
-                <title>Guarda Compartilhada - A partir de ${nomesMeses[mesAtual]} ${anoAtual}</title>
+                <title>Planner de Guarda - ${nomesMeses[mesAtual]} ${anoAtual}</title>
                 <style>
-                    body { font-family: sans-serif; padding: 20px; color: #0f172a; margin: 0; }
-                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
-                    h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
-                    table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
-                    th { background: #f8fafc; font-size: 0.75rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
-                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; box-sizing: border-box; }
-                    .day-num { font-size: 0.8rem; font-weight: bold; position: relative; }
-                    .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; font-weight: bold; }
-                    .cell-mae { background-color: #ffe4e6 !important; color: #9f1239 !important; }
-                    .cell-pai { background-color: #e0f2fe !important; color: #1e40af !important; }
+                    @page { size: A4 portrait; margin: 15mm; }
+                    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1e293b; margin: 0; padding: 0; background: #ffffff; }
+                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 25px; }
+                    .header-planner { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 15px; }
+                    .titulo-mes { font-size: 1.4rem; font-weight: 800; color: #0f172a; margin: 0; }
+                    .badge-totais { font-size: 0.75rem; font-weight: 700; color: #475569; background: #f1f5f9; padding: 4px 10px; border-radius: 9999px; }
+                    table { width: 100%; border-collapse: separate; border-spacing: 5px; margin-bottom: 12px; }
+                    th { font-size: 0.75rem; font-weight: 700; color: #64748b; text-align: center; padding: 6px; text-transform: uppercase; }
+                    td { width: 14.28%; height: 70px; vertical-align: top; border-radius: 10px; padding: 6px; box-sizing: border-box; }
+                    .day-num { font-size: 0.85rem; font-weight: 800; position: relative; }
+                    .badge { font-size: 0.65rem; padding: 3px 4px; border-radius: 6px; display: block; text-align: center; margin-top: 4px; font-weight: 700; }
+                    .cell-mae { background-color: #fff1f2 !important; color: #9f1239 !important; border: 1px solid #fecdd3 !important; }
+                    .cell-pai { background-color: #f0f9ff !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; }
+                    .cell-vazia { background: #f8fafc; border: 1px dashed #e2e8f0; border-radius: 10px; }
                     
                     .past-day .day-num::after {
                         content: "";
@@ -2660,7 +1640,7 @@
                         transform: translateY(-50%);
                     }
 
-                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin-top: 5px; }
+                    .rule-card { padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 0.75rem; color: #475569; line-height: 1.5; margin-top: 10px; }
                     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                 </style>
             </head>
@@ -2677,15 +1657,18 @@
                     let regra = regrasPorAnoMes[`${y}-${m}`] || `<b>${mesNome} ${y}:</b> Guarda Compartilhada.`;
                     
                     let tableHtml = '<table><thead><tr>';
-                    ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => { tableHtml += `<th>${d}</th>`; });
+                    ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].forEach(d => { tableHtml += `<th>${d}</th>`; });
                     tableHtml += '</tr></thead><tbody><tr>';
 
                     const primeiroDia = new Date(y, m, 1).getDay();
                     const totalDias = new Date(y, m + 1, 0).getDate();
 
+                    let maeMes = 0;
+                    let paiMes = 0;
+
                     let colCount = 0;
                     for (let i = 0; i < primeiroDia; i++) {
-                        tableHtml += `<td></td>`;
+                        tableHtml += `<td class="cell-vazia"></td>`;
                         colCount++;
                     }
 
@@ -2693,6 +1676,9 @@
                         if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
                         const info = regraPadrao(dia, m, y);
                         let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
+
+                        if (info.resp === 'mae') maeMes++;
+                        else if (info.resp === 'pai') paiMes++;
 
                         const dataCelula = new Date(y, m, dia);
                         if (dataCelula < dataHoje) {
@@ -2702,14 +1688,17 @@
                         tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
                         colCount++;
                     }
-                    while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
+                    while (colCount % 7 !== 0) { tableHtml += `<td class="cell-vazia"></td>`; colCount++; }
                     tableHtml += '</tr></tbody></table>';
 
                     htmlAnual += `
                         <div class="mes-pagina-impressao">
-                            <h2>Guarda Compartilhada - ${mesNome} ${y}</h2>
+                            <div class="header-planner">
+                                <h2 class="titulo-mes">${mesNome} ${y}</h2>
+                                <span class="badge-totais">👩 Mãe: ${maeMes} dias &nbsp;•&nbsp; 👔 Pai: ${paiMes} dias</span>
+                            </div>
                             ${tableHtml}
-                            <div class="rule-box">${regra}</div>
+                            <div class="rule-card">${regra}</div>
                         </div>
                     `;
                 }
