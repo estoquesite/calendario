@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Guarda Compartilhada</title>
     
-    <!-- Meta tags PWA para visual e tela cheia no celular -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#f9fafb" media="(prefers-color-scheme: light)">
@@ -13,12 +12,10 @@
 
     <link rel="icon" href="https://api.iconify.design/solar:calendar-date-bold-duotone.png?width=512&height=512&color=%233b82f6" type="image/png">
     
-    <!-- Tipografia moderna: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { 
@@ -38,7 +35,7 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overscroll-behavior-y: contain; /* Trava o pull-to-refresh acidental */
+            overscroll-behavior-y: contain;
         }
 
         .day-cell-screen {
@@ -88,10 +85,10 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28 select-none font-sans">
 
-    <!-- NOTIFICAÇÃO FLUTUANTE MODERNA (TOAST) -->
+    <!-- TOAST MODERNO -->
     <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-gray-900/95 dark:bg-gray-800/95 text-white text-xs font-semibold px-4 py-2.5 rounded-2xl shadow-xl backdrop-blur-md transition-all duration-300 opacity-0 pointer-events-none -translate-y-2 flex items-center gap-2 border border-gray-700/50"></div>
 
-    <!-- TELA DE LOGIN / CAPA EXCLUSIVA POR BIOMETRIA (MD:HIDDEN) -->
+    <!-- TELA DE LOGIN / BIOMETRIA -->
     <div id="tela-login" class="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-sm hidden flex items-center justify-center p-4 md:hidden">
         <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-5 border border-gray-100 dark:border-gray-700">
             <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
@@ -105,22 +102,29 @@
                 <span>Validar Digital</span>
             </button>
 
-            <p id="erro-senha" class="text-xs text-red-500 hidden font-medium">Leitura não reconhecida. Tente novamente.</p>
+            <p id=\"erro-senha\" class="text-xs text-red-500 hidden font-medium">Leitura não reconhecida. Tente novamente.</p>
         </div>
     </div>
 
     <!-- CONTEÚDO PRINCIPAL -->
     <div id="conteudo-site" class="max-w-lg mx-auto p-2.5 space-y-2.5">
         
-        <!-- TÍTULO PRINCIPAL NO TOPO -->
-        <div class="text-center py-1 flex justify-between items-center px-1">
-            <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
-                📅 Guarda Compartilhada
-            </h1>
-            <button onclick="sincronizarComNuvem().then(() => mostrarToast('🔄 Sincronizado com a Nuvem!'))" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-2.5 py-1 rounded-xl text-[10px] font-bold transition active:scale-95" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
+        <!-- TOPO: TÍTULO, STATUS DA NUVEM E SINCRONIZAR -->
+        <div class="py-1 flex justify-between items-center px-1">
+            <div class="flex items-center gap-2">
+                <h1 class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white flex items-center gap-1.5">
+                    📅 Guarda Compartilhada
+                </h1>
+                <div id="statusNuvem" class="flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50 px-2 py-0.5 rounded-full text-[9px] font-semibold" title="Status da Conexão">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span id="textoStatusNuvem">Nuvem ativa</span>
+                </div>
+            </div>
+            
+            <button onclick="sincronizarComNuvem(true)" class="print-hidden bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 px-2.5 py-1 rounded-xl text-[10px] font-bold transition active:scale-95" title="Sincronizar com Nuvem">🔄 Sincronizar</button>
         </div>
 
-        <!-- PAINEL SUPERIOR COM CAIXAS COMPACTAS E BARRA DE PROPORÇÃO -->
+        <!-- PAINEL SUPERIOR: CONTADORES E BARRA DE PROPORÇÃO -->
         <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2">
             
             <div class="grid grid-cols-2 gap-1.5">
@@ -159,22 +163,39 @@
 
         </div>
 
-        <!-- CALENDÁRIO -->
+        <!-- CALENDÁRIO COM GESTOS SWIPE E BOTÃO HOJE -->
         <div id="bloco-calendario-print" class="bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-2.5">
             <div class="flex justify-between items-center px-1">
                 <button onclick="mudarMes(-1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95">‹ Ant</button>
-                <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                <div class="flex items-center gap-1.5">
+                    <h2 id="tituloCalendarioMes" class="text-base sm:text-lg font-extrabold text-gray-900 dark:text-white">Setembro 2026</h2>
+                    <button onclick="irParaHoje()" class="print-hidden px-2 py-0.5 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900/60 rounded-md text-[10px] font-bold active:scale-95 transition" title="Ir para o Mês Atual">Hoje</button>
+                </div>
                 <button onclick="mudarMes(1)" class="print-hidden px-2.5 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg text-xs font-bold transition hover:bg-gray-200 dark:hover:bg-gray-600 active:scale-95">Próx ›</button>
+            </div>
+
+            <!-- MODO DE SELEÇÃO RÁPIDA DIRETO NO GRID -->
+            <div class="print-hidden flex justify-between items-center px-1 text-[10px] text-gray-500">
+                <span id="avisoSelecaoRapida" class="font-medium text-blue-600 dark:text-blue-400">💡 Toque em um dia para editar</span>
+                <button onclick="alternarModoSelecao()" id="btnModoSelecao" class="px-2 py-0.5 rounded-lg border border-gray-200 dark:border-gray-700 text-[10px] font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    Marcar Período ✏️
+                </button>
             </div>
 
             <div id="calendarioGrid" class="grid grid-cols-7 gap-1 w-full"></div>
             <div id="textoRegraMes" class="print-hidden p-2.5 bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-700 rounded-xl text-[11px] text-gray-700 dark:text-gray-300 leading-relaxed"></div>
+            
+            <!-- LISTA RÁPIDA DE EXCEÇÕES E EVENTOS DO MÊS -->
+            <div id="listaEventosMesContainer" class="print-hidden space-y-1"></div>
         </div>
 
-        <!-- BOTÃO DE IMPRESSÃO -->
-        <div class="print-hidden text-center pb-1">
-            <button onclick="gerenarAnoCompletoPDF()" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-2 active:scale-95">
-                <span>📄</span> Imprimir a partir deste mês
+        <!-- BOTÕES DE EXPORTAÇÃO E WHATSAPP -->
+        <div class="print-hidden grid grid-cols-2 gap-2 pb-1">
+            <button onclick="gerenarAnoCompletoPDF()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95">
+                <span>📄</span> Imprimir PDF
+            </button>
+            <button onclick="compartilharResumoWhatsApp()" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-semibold py-2.5 rounded-xl transition text-xs shadow-md flex items-center justify-center gap-1.5 active:scale-95">
+                <span>💬</span> Copiar WhatsApp
             </button>
         </div>
 
@@ -182,90 +203,131 @@
         <div class="print-hidden bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 space-y-1.5">
             <div class="flex justify-between items-center">
                 <p class="text-[9px] font-bold text-gray-700 dark:text-gray-300 uppercase">✨ Selecionar Período</p>
-                <button onclick="abrirGerenciadorMotivos()" class="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1">
-                    ⚙️ Gerenciar Motivos
-                </button>
+                <div class="flex gap-2">
+                    <button onclick="exportarBackupJSON()" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold hover:underline">
+                        💾 Backup
+                    </button>
+                    <button onclick="document.getElementById('inputImportarBackup').click()" class="text-[10px] text-purple-600 dark:text-purple-400 font-bold hover:underline">
+                        📥 Restaurar
+                    </button>
+                    <input type="file" id="inputImportarBackup" onchange="importarBackupJSON(event)" accept=".json" class="hidden">
+                    <button onclick="abrirGerenciadorMotivos()" class="text-[10px] text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1">
+                        ⚙️ Motivos
+                    </button>
+                </div>
             </div>
             
             <div class="grid grid-cols-12 gap-1 items-center">
                 <div class="col-span-3">
-                    <select id="respPeriodo" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border rounded-xl dark:border-gray-700 dark:text-white font-bold focus:ring-1 focus:ring-blue-500">
-                        <option value="mae">👩 Mãe</option>
-                        <option value="pai">👔 Pai</option>
+                    <input type="date" id="dataInicio" class="w-full text-[10px] p-1 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none">
+                </div>
+                <div class="col-span-3">
+                    <input type="date" id="dataFim" class="w-full text-[10px] p-1 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none">
+                </div>
+                <div class="col-span-2">
+                    <select id="respPeriodo" class="w-full text-[10px] p-1 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none">
+                        <option value="mae">Mãe</option>
+                        <option value="pai">Pai</option>
                     </select>
                 </div>
-                <div class="col-span-4">
-                    <input type="date" id="dataInicio" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border rounded-xl dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-blue-500">
+                <div class="col-span-2">
+                    <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full text-[10px] p-1 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none"></select>
                 </div>
-                <div class="col-span-4">
-                    <input type="date" id="dataFim" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border rounded-xl dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-blue-500">
-                </div>
-                <div class="col-span-1 flex justify-center">
-                    <button onclick="aplicarPeriodo()" class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white px-2 py-1.5 rounded-xl text-[10px] font-bold shadow-sm">Ok</button>
+                <div class="col-span-2">
+                    <button onclick="aplicarPeriodo()" class="w-full bg-blue-600 hover:bg-blue-700 text-white p-1 rounded-lg text-[10px] font-bold active:scale-95 transition">
+                        OK
+                    </button>
                 </div>
             </div>
-
-            <!-- SELEÇÃO DE MOTIVO -->
-            <div class="grid grid-cols-12 gap-1 items-center pt-1">
-                <div class="col-span-6">
-                    <select id="selectMotivo" onchange="verificarMotivoOutros()" class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border rounded-xl dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-blue-500">
-                    </select>
-                </div>
-                <div class="col-span-6" id="divOutros" style="display: none;">
-                    <input type="text" id="descOutros" placeholder="Digite o motivo..." class="w-full bg-white dark:bg-gray-800 text-[10px] p-1.5 border rounded-xl dark:border-gray-700 dark:text-white focus:ring-1 focus:ring-blue-500">
-                </div>
+            
+            <div id="divOutros" class="hidden mt-1">
+                <input type="text" id="descOutros" placeholder="Digite o motivo personalizado..." class="w-full text-[10px] p-1.5 border rounded-lg bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none">
             </div>
         </div>
 
+    </div>
+
+    <!-- BOTÃO FLUTUANTE DE VOZ -->
+    <button id="btn-voz-flutuante" onclick="ouvirVoz()" class="print-hidden fixed bottom-14 right-4 z-40 bg-gradient-to-r from-blue-600 to-indigo-600 text-white w-12 h-12 rounded-full shadow-xl flex items-center justify-center text-xl hover:scale-105 active:scale-95 transition cursor-pointer border-2 border-white dark:border-gray-800" title="Falar comando de voz">
+        🎤
+    </button>
+
+    <!-- BARRA DE NAVEGAÇÃO FIXA INFERIOR -->
+    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-6 py-2 flex justify-around items-center">
+        <button onclick="bloquearNovamente()" class="flex flex-col items-center gap-0.5 text-gray-500 hover:text-gray-900 dark:hover:text-white transition">
+            <span class="text-base">🔒</span>
+            <span class="text-[9px] font-medium">Bloquear</span>
+        </button>
+        <button onclick="alternarDarkMode()" class="flex flex-col items-center gap-0.5 text-gray-500 hover:text-gray-900 dark:hover:text-white transition">
+            <span class="text-base">🌙</span>
+            <span class="text-[9px] font-medium">Tema</span>
+        </button>
+        <button onclick="instalarApp()" class="flex flex-col items-center gap-0.5 text-gray-500 hover:text-gray-900 dark:hover:text-white transition">
+            <span class="text-base">📱</span>
+            <span class="text-[9px] font-medium">Instalar</span>
+        </button>
     </div>
 
     <!-- MODAL DE EDIÇÃO DO DIA -->
-    <div id="customModal" onclick="if(event.target === this) fecharModal()" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-2xl max-w-sm w-full space-y-4 border border-gray-100 dark:border-gray-700 relative"></div>
+    <div id="customModal" onclick="if(event.target === this) fecharModal()" class="print-hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div id="modalBoxContent" class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-xl max-w-xs w-full space-y-3.5 border border-gray-100 dark:border-gray-700">
+            <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                ✏️ Editar Dia
+            </h3>
+            
+            <div class="space-y-2">
+                <div>
+                    <label class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Responsável</label>
+                    <select id="selectResp" class="w-full text-xs p-2 mt-1 border rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100">
+                        <option value="mae">Mãe</option>
+                        <option value="pai">Pai</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Descrição / Motivo</label>
+                    <input type="text" id="inputDesc" placeholder="Ex: Viagem, Médico..." class="w-full text-xs p-2 mt-1 border rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100">
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button onclick="salvarEdicao()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl text-xs transition active:scale-95 shadow-sm">Salvar</button>
+                <button onclick="apagarEdicao()" class="flex-1 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 rounded-xl text-xs transition active:scale-95 shadow-sm">Apagar</button>
+                <button onclick="fecharModal()" class="px-3 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 font-bold py-2 rounded-xl text-xs transition">✕</button>
+            </div>
+        </div>
     </div>
 
-    <!-- MODAL DE GERENCIAR MOTIVOS -->
-    <div id="modalMotivos" onclick="if(event.target === this) fecharModalMotivos()" class="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-2xl max-w-sm w-full space-y-3 border border-gray-100 dark:border-gray-700 relative">
-            <div class="flex justify-between items-center pb-1 border-b border-gray-100 dark:border-gray-700">
-                <h3 class="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-                    ⚙️ Cadastrar e Modificar Motivos
+    <!-- MODAL DE GERENCIAMENTO DE MOTIVOS -->
+    <div id="modalMotivos" onclick="if(event.target === this) fecharModalMotivos()" class="print-hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-xl max-w-xs w-full space-y-3.5 border border-gray-100 dark:border-gray-700">
+            <div class="flex justify-between items-center">
+                <h3 class="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                    ⚙️ Motivos Personalizados
                 </h3>
-                <button onclick="fecharModalMotivos()" class="w-6 h-6 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center font-bold text-xs">✕</button>
+                <button onclick="fecharModalMotivos()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-sm">✕</button>
             </div>
             
             <div class="flex gap-1.5">
-                <input type="text" id="novoMotivoInput" placeholder="Novo motivo (ex: Viagem, Consulta)" class="flex-1 px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-xs dark:text-white">
-                <button onclick="adicionarMotivoPersonalizado()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold active:scale-95">Adicionar</button>
+                <input type="text" id="novoMotivoInput" placeholder="Novo motivo..." class="flex-1 text-xs p-2 border rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100">
+                <button onclick="adicionarMotivoPersonalizado()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs font-bold active:scale-95 transition">+</button>
             </div>
 
-            <div class="space-y-1 max-h-48 overflow-y-auto pr-1" id="listaMotivosGerenciar"></div>
+            <div id="listaMotivosGerenciar" class="max-h-48 overflow-y-auto space-y-1.5 pr-1"></div>
         </div>
-    </div>
-
-    <!-- BARRA INFERIOR -->
-    <div class="print-hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-200 dark:border-gray-800 px-3 py-1.5 flex justify-between items-center max-w-lg mx-auto rounded-t-2xl shadow-lg">
-        <div class="flex items-center gap-1.5">
-            <button onclick="alternarDarkMode()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 active:scale-95" title="Modo Escuro/Claro">
-                🌙/☀️
-            </button>
-            <button onclick="instalarApp()" class="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs font-bold transition flex items-center gap-1 active:scale-95" title="Instalar App no Celular">
-                📱 Instalar
-            </button>
-            <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 md:hidden active:scale-95" title="Bloquear Celular">
-                🔒 Bloquear
-            </button>
-            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.8</span>
-        </div>
-        <button onclick="ouvirVoz()" id="btn-voz-flutuante" class="bg-red-600 hover:bg-red-700 text-white w-9 h-9 rounded-full shadow-md flex items-center justify-center text-base transition transform hover:scale-105 active:scale-95 flex-shrink-0" title="Falar Comando">
-            🎤
-        </button>
     </div>
 
     <script>
         const SUPABASE_URL = 'https://jmeepzdvmmjngxwvayqb.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_54ORrLbP7naW7n-KlKCdUA_hZnpjguH';
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let supabaseClient = null;
+        try {
+            if (window.supabase && typeof window.supabase.createClient === 'function') {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch(e) {
+            console.warn("Supabase aviso:", e);
+        }
 
         let anoAtual = 2026;
         let mesAtual = 8;
@@ -273,17 +335,19 @@
         let deferredPrompt = null;
         let overrides = {};
 
-        const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe"];
+        const motivosPadrao = ["Férias", "Final de Ano", "Aniversário Pai", "Aniversário Mãe", "Aniversário Sophia", "Passeio", "Médico", "Outros"];
         let listaMotivos = [...motivosPadrao];
 
-        // FEEDBACK TÁTIL (HAPTIC)
+        // Estado da seleção rápida por toque no grid
+        let modoSelecaoAtivo = false;
+        let diaInicioSelecao = null;
+
         function vibrar(ms = 15) {
             if (navigator.vibrate) {
                 try { navigator.vibrate(ms); } catch (e) {}
             }
         }
 
-        // AVISOS FLUTUANTES (TOAST)
         function mostrarToast(mensagem) {
             const toast = document.getElementById('toast');
             if (!toast) return;
@@ -297,10 +361,19 @@
             }, 2600);
         }
 
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
+        function setStatusNuvem(conectado, texto = null) {
+            const el = document.getElementById('statusNuvem');
+            const txt = document.getElementById('textoStatusNuvem');
+            if (!el || !txt) return;
+
+            if (conectado) {
+                el.className = "flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-900/50 px-2 py-0.5 rounded-full text-[9px] font-semibold";
+                txt.innerText = texto || "Nuvem ativa";
+            } else {
+                el.className = "flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/50 px-2 py-0.5 rounded-full text-[9px] font-semibold";
+                txt.innerText = texto || "Offline (Local)";
+            }
+        }
 
         function instalarApp() {
             vibrar();
@@ -308,59 +381,124 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
             } else {
-                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontinhos do canto superior direito e selecione 'Adicionar à tela inicial'.\n• No iPhone (Safari): Toque no botão de Compartilhar e selecione 'Adicionar à Tela de Início'.");
+                alert("📱 Para instalar no celular:\n\n• No Android (Chrome): Toque nos 3 pontos e em 'Instalar aplicativo'\n• No iPhone (Safari): Toque no ícone Compartilhar e em 'Adicionar à Tela de Início'");
             }
         }
 
-        async function sincronizarComNuvem() {
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        // CARREGAMENTO INSTANTÂNEO DO CACHE (0ms)
+        function carregarCacheLocal() {
             try {
-                let { data } = await supabaseClient
+                let salvo = localStorage.getItem('sophia_overrides_all');
+                if (salvo) overrides = JSON.parse(salvo);
+                let motivosSalvos = localStorage.getItem('sophia_motivos_list');
+                if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
+            } catch(e) {}
+        }
+
+        // SINCRONIZAÇÃO EM SEGUNDO PLANO SEM TRAVAR A TELA
+        async function sincronizarComNuvem(comFeedback = false) {
+            if (!supabaseClient) {
+                setStatusNuvem(false, 'Offline (Local)');
+                return;
+            }
+            try {
+                let { data, error } = await supabaseClient
                     .from('app_dados_guarda')
                     .select('conteudo')
                     .eq('id', '1')
                     .single();
 
-                if (data && data.conteudo) {
+                if (!error && data && data.conteudo) {
                     if (data.conteudo.overrides) {
                         overrides = data.conteudo.overrides;
-                        listaMotivos = data.conteudo.motivos || [...motivosPadrao];
-                    } else {
-                        overrides = data.conteudo;
+                        localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
                     }
-                    localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
-                    localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
+                    if (data.conteudo.motivos) {
+                        listaMotivos = data.conteudo.motivos;
+                        localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
+                        atualizarSelectMotivos();
+                    }
+                    setStatusNuvem(true, 'Nuvem sincronizada');
+                    renderizar();
+                    if (comFeedback) mostrarToast("✅ Dados sincronizados da Nuvem!");
                 } else {
-                    let salvo = localStorage.getItem('sophia_overrides_all');
-                    if (salvo) overrides = JSON.parse(salvo);
-                    let motivosSalvos = localStorage.getItem('sophia_motivos_list');
-                    if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
+                    setStatusNuvem(true, 'Nuvem ativa');
                 }
             } catch(e) {
-                let salvo = localStorage.getItem('sophia_overrides_all');
-                if (salvo) overrides = JSON.parse(salvo);
-                let motivosSalvos = localStorage.getItem('sophia_motivos_list');
-                if (motivosSalvos) listaMotivos = JSON.parse(motivosSalvos);
+                setStatusNuvem(false, 'Offline (Local)');
             }
-            atualizarSelectMotivos();
-            renderizar();
         }
 
         async function salvarNaNuvem() {
             localStorage.setItem('sophia_overrides_all', JSON.stringify(overrides));
             localStorage.setItem('sophia_motivos_list', JSON.stringify(listaMotivos));
+
+            if (!supabaseClient) return;
+
             try {
                 await supabaseClient
                     .from('app_dados_guarda')
-                    .upsert({ 
-                        id: '1', 
-                        conteudo: { 
-                            overrides: overrides, 
-                            motivos: listaMotivos 
-                        } 
+                    .upsert({
+                        id: '1',
+                        conteudo: {
+                            overrides: overrides,
+                            motivos: listaMotivos,
+                            atualizadoEm: new Date().toISOString()
+                        }
                     });
-            } catch (err) {
-                console.error("Erro ao sincronizar com nuvem:", err);
+                setStatusNuvem(true, 'Nuvem sincronizada');
+            } catch(e) {
+                setStatusNuvem(false, 'Salvo Localmente');
             }
+        }
+
+        // BACKUP E RESTAURAÇÃO EM JSON
+        function exportarBackupJSON() {
+            vibrar();
+            const dadosBackup = {
+                overrides: overrides,
+                listaMotivos: listaMotivos,
+                versao: "3.5",
+                data: new Date().toISOString()
+            };
+            const jsonStr = JSON.stringify(dadosBackup, null, 2);
+            const blob = new Blob([jsonStr], { type: "application/json" });
+            const dlAnchor = document.createElement('a');
+            dlAnchor.setAttribute("href", URL.createObjectURL(blob));
+            dlAnchor.setAttribute("download", `guarda_backup_${anoAtual}_${mesAtual + 1}.json`);
+            dlAnchor.click();
+            mostrarToast("💾 Backup exportado com sucesso!");
+        }
+
+        function importarBackupJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const dados = JSON.parse(e.target.result);
+                    if (dados && dados.overrides) {
+                        overrides = dados.overrides;
+                        if (dados.listaMotivos) listaMotivos = dados.listaMotivos;
+                        salvarNaNuvem();
+                        atualizarSelectMotivos();
+                        renderizar();
+                        mostrarToast("📥 Backup restaurado com sucesso!");
+                    } else {
+                        alert("Arquivo de backup inválido.");
+                    }
+                } catch(err) {
+                    alert("Erro ao ler arquivo JSON.");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = "";
         }
 
         function atualizarSelectMotivos() {
@@ -368,23 +506,24 @@
             if (!select) return;
             const valorAtual = select.value;
             select.innerHTML = '';
-            
-            listaMotivos.forEach(motivo => {
+
+            listaMotivos.forEach(m => {
+                if (m === "Outros") return;
                 const opt = document.createElement('option');
-                opt.value = motivo;
-                opt.innerText = motivo;
+                opt.value = m;
+                opt.innerText = m;
                 select.appendChild(opt);
             });
 
             const optOutros = document.createElement('option');
-            optOutros.value = 'Outros';
-            optOutros.innerText = 'Outros...';
+            optOutros.value = "Outros";
+            optOutros.innerText = "Outros...";
             select.appendChild(optOutros);
 
-            if (listaMotivos.includes(valorAtual) || valorAtual === 'Outros') {
+            if (listaMotivos.includes(valorAtual)) {
                 select.value = valorAtual;
             } else {
-                select.value = listaMotivos[0] || 'Outros';
+                select.value = listaMotivos[0] || 'Férias';
             }
             verificarMotivoOutros();
         }
@@ -393,14 +532,18 @@
             vibrar();
             const modal = document.getElementById('modalMotivos');
             const listaContainer = document.getElementById('listaMotivosGerenciar');
-            listaContainer.innerHTML = '';
+            if (!modal || !listaContainer) return;
 
-            listaMotivos.forEach((motivo, index) => {
+            listaContainer.innerHTML = '';
+            listaMotivos.forEach((m, idx) => {
+                if (m === "Outros") return;
                 const item = document.createElement('div');
-                item.className = 'flex justify-between items-center bg-gray-50 dark:bg-gray-900/60 px-3 py-1.5 rounded-xl text-xs border border-gray-100 dark:border-gray-700';
+                item.className = "flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-2 rounded-xl text-xs";
                 item.innerHTML = `
-                    <span class="font-medium text-gray-800 dark:text-gray-200">${motivo}</span>
-                    <button onclick="removerMotivo(${index})" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded">✕</button>
+                    <span class="text-gray-800 dark:text-gray-200 font-medium">${m}</span>
+                    ${!motivosPadrao.includes(m) ? `
+                        <button onclick="removerMotivo(${idx})" class="text-rose-500 hover:text-rose-700 font-bold px-1.5 py-0.5 rounded">✕</button>
+                    ` : '<span class="text-[10px] text-gray-400">padrão</span>'}
                 `;
                 listaContainer.appendChild(item);
             });
@@ -416,61 +559,57 @@
             const input = document.getElementById('novoMotivoInput');
             const novo = input.value.trim();
             if (!novo) return;
-            if (listaMotivos.includes(novo) || novo.toLowerCase() === 'outros') {
-                mostrarToast('⚠️ Esse motivo já existe!');
-                return;
+
+            if (!listaMotivos.includes(novo)) {
+                listaMotivos.splice(listaMotivos.length - 1, 0, novo);
+                salvarNaNuvem();
+                atualizarSelectMotivos();
+                abrirGerenciadorMotivos();
+                mostrarToast("✨ Motivo adicionado!");
             }
-            listaMotivos.push(novo);
-            input.value = '';
+            input.value = "";
+        }
+
+        function removerMotivo(idx) {
+            listaMotivos.splice(idx, 1);
             salvarNaNuvem();
             atualizarSelectMotivos();
             abrirGerenciadorMotivos();
-            mostrarToast('✅ Motivo cadastrado!');
+            mostrarToast("Motivo removido");
         }
 
-        function removerMotivo(index) {
-            vibrar();
-            listaMotivos.splice(index, 1);
-            salvarNaNuvem();
-            atualizarSelectMotivos();
-            abrirGerenciadorMotivos();
-        }
-
-        // BIOMETRIA E BLOQUEIO
         function ehDispositivoMovel() {
-            return window.innerWidth < 768;
+            return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth < 768;
         }
 
         function bloquearNovamente() {
-            if (!ehDispositivoMovel()) return;
-            sessionStorage.removeItem('autenticado_calendario');
-            document.getElementById('conteudo-site').classList.add('hidden');
+            vibrar();
+            sessionStorage.removeItem('auth_unlocked');
             const telaLogin = document.getElementById('tela-login');
-            telaLogin.classList.remove('hidden');
-            document.getElementById('erro-senha').classList.add('hidden');
+            if (telaLogin && ehDispositivoMovel()) {
+                telaLogin.classList.remove('hidden');
+            }
+            mostrarToast("🔒 Aplicativo bloqueado.");
         }
 
-        async function liberarAcesso() {
-            await sincronizarComNuvem();
-            document.getElementById('tela-login').classList.add('hidden');
-            document.getElementById('conteudo-site').classList.remove('hidden');
-            renderizar();
+        function liberarAcesso() {
+            sessionStorage.setItem('auth_unlocked', 'true');
+            const telaLogin = document.getElementById('tela-login');
+            if (telaLogin) telaLogin.classList.add('hidden');
+            mostrarToast("🔓 Acesso liberado!");
         }
 
         async function entrarComBiometria() {
+            vibrar(20);
             const erroEl = document.getElementById('erro-senha');
-            erroEl.classList.add('hidden');
+            if (erroEl) erroEl.classList.add('hidden');
 
-            if (!window.PublicKeyCredential) {
-                erroEl.innerText = "Biometria indisponível neste navegador.";
-                erroEl.classList.remove('hidden');
-                return;
-            }
             try {
-                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                const available = window.PublicKeyCredential &&
+                    await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+
                 if (!available) {
-                    erroEl.innerText = "Nenhuma biometria ativa configurada no aparelho.";
-                    erroEl.classList.remove('hidden');
+                    liberarAcesso();
                     return;
                 }
 
@@ -479,89 +618,101 @@
                 const userId = new Uint8Array(16);
                 window.crypto.getRandomValues(userId);
 
-                const createCredentialOptions = {
-                    challenge: challenge,
-                    rp: { name: "Guarda Compartilhada", id: window.location.hostname },
-                    user: { id: userId, name: "guarda@local", displayName: "Usuário" },
-                    pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
-                    authenticatorSelection: { authenticatorAttachment: "platform", userVerification: "required", residentKey: "preferred" },
-                    timeout: 60000
-                };
-
-                let cred;
-                const credentialIdStr = localStorage.getItem('biometria_cred_id_cal');
+                const credentialIdStr = localStorage.getItem('biometria_credential_id');
 
                 if (credentialIdStr) {
-                    try {
-                        const rawId = Uint8Array.from(atob(credentialIdStr), c => c.charCodeAt(0));
-                        cred = await navigator.credentials.get({ challenge, allowCredentials: [{ id: rawId, type: "public-key" }], userVerification: "required", timeout: 60000 });
-                    } catch (err) {
-                        cred = await navigator.credentials.create({ publicKey: createCredentialOptions });
-                        localStorage.setItem('biometria_cred_id_cal', btoa(String.fromCharCode.apply(null, new Uint8Array(cred.rawId))));
-                    }
+                    const rawId = Uint8Array.from(atob(credentialIdStr), c => c.charCodeAt(0));
+                    await navigator.credentials.get({
+                        publicKey: {
+                            challenge: challenge,
+                            allowCredentials: [{ type: 'public-key', id: rawId }],
+                            userVerification: 'preferred',
+                            timeout: 60000
+                        }
+                    });
                 } else {
-                    cred = await navigator.credentials.create({ publicKey: createCredentialOptions });
-                    localStorage.setItem('biometria_cred_id_cal', btoa(String.fromCharCode.apply(null, new Uint8Array(cred.rawId))));
+                    const createCredentialOptions = {
+                        publicKey: {
+                            challenge: challenge,
+                            rp: { name: 'Guarda Sophia', id: window.location.hostname },
+                            user: { id: userId, name: 'pais@guarda.app', displayName: 'Pais da Sophia' },
+                            pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
+                            authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'preferred' },
+                            timeout: 60000,
+                            attestation: 'none'
+                        }
+                    };
+                    const cred = await navigator.credentials.create(createCredentialOptions);
+                    if (cred && cred.rawId) {
+                        localStorage.setItem('biometria_credential_id', btoa(String.fromCharCode(...new Uint8Array(cred.rawId))));
+                    }
                 }
-
-                if (cred) {
-                    vibrar(25);
-                    sessionStorage.setItem('autenticado_calendario', 'true');
-                    liberarAcesso();
-                }
-            } catch (error) {
-                if (error.name !== "NotAllowedError") {
-                    erroEl.innerText = "Falha biométrica. Tente novamente.";
-                    erroEl.classList.remove('hidden');
-                }
+                liberarAcesso();
+            } catch(err) {
+                if (erroEl) erroEl.classList.remove('hidden');
             }
         }
 
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden) {
-                bloquearNovamente();
-            } else if (ehDispositivoMovel() && sessionStorage.getItem('autenticado_calendario') !== 'true') {
-                setTimeout(entrarComBiometria, 300);
-            }
-        });
+        // GESTOS DE ARRASTAR / SWIPE PARA TROCA DE MÊS
+        function configurarGestosSwipe() {
+            const container = document.getElementById('bloco-calendario-print');
+            if (!container) return;
 
-        window.addEventListener('blur', () => {
-            bloquearNovamente();
-        });
+            let touchStartX = 0;
+            let touchStartY = 0;
 
-        window.addEventListener('DOMContentLoaded', async () => {
-            if (localStorage.getItem('dark_mode') === 'true') {
-                document.documentElement.classList.add('dark');
-            }
+            container.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
 
-            if (!ehDispositivoMovel()) {
-                sessionStorage.setItem('autenticado_calendario', 'true');
-                await liberarAcesso();
-                return;
-            }
+            container.addEventListener('touchend', (e) => {
+                let diffX = e.changedTouches[0].clientX - touchStartX;
+                let diffY = e.changedTouches[0].clientY - touchStartY;
 
-            if (sessionStorage.getItem('autenticado_calendario') === 'true') {
-                await liberarAcesso();
-            } else {
-                bloquearNovamente();
-                setTimeout(entrarComBiometria, 400);
-            }
-        });
+                if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+                    if (diffX < 0) mudarMes(1);
+                    else mudarMes(-1);
+                }
+            }, { passive: true });
+        }
 
         function alternarDarkMode() {
             vibrar();
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('dark_mode', isDark);
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            mostrarToast(isDark ? "🌙 Tema Escuro ativado" : "☀️ Tema Claro ativado");
         }
 
         function verificarMotivoOutros() {
             const val = document.getElementById('selectMotivo').value;
             const divOutros = document.getElementById('divOutros');
-            if (val === 'Outros') {
-                divOutros.style.display = 'block';
+            if (divOutros) {
+                if (val === 'Outros') divOutros.classList.remove('hidden');
+                else divOutros.classList.add('hidden');
+            }
+        }
+
+        // MODO DE SELEÇÃO RÁPIDA DIRETO NO GRID
+        function alternarModoSelecao() {
+            vibrar();
+            modoSelecaoAtivo = !modoSelecaoAtivo;
+            diaInicioSelecao = null;
+
+            const btn = document.getElementById('btnModoSelecao');
+            const aviso = document.getElementById('avisoSelecaoRapida');
+
+            if (modoSelecaoAtivo) {
+                btn.innerText = "Cancelar ✕";
+                btn.className = "px-2 py-0.5 rounded-lg border border-rose-300 bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 text-[10px] font-bold";
+                aviso.innerText = "👉 Toque no DIA INICIAL";
+                aviso.className = "font-bold text-amber-600 dark:text-amber-400 animate-pulse";
             } else {
-                divOutros.style.display = 'none';
+                btn.innerText = "Marcar Período ✏️";
+                btn.className = "px-2 py-0.5 rounded-lg border border-gray-200 dark:border-gray-700 text-[10px] font-bold hover:bg-gray-100 dark:hover:bg-gray-700 transition";
+                aviso.innerText = "💡 Toque em um dia para editar";
+                aviso.className = "font-medium text-blue-600 dark:text-blue-400";
+                renderizar();
             }
         }
 
@@ -569,29 +720,28 @@
             vibrar();
             const inicioStr = document.getElementById('dataInicio').value;
             const fimStr = document.getElementById('dataFim').value;
-            const resp = document.getElementById('respPeriodo').value;
-            
-            const selectMotivo = document.getElementById('selectMotivo').value;
-            let desc = selectMotivo;
-            if (selectMotivo === 'Outros') {
-                desc = document.getElementById('descOutros').value.trim() || (resp === 'mae' ? 'Mãe' : 'Pai');
-            }
-
             if (!inicioStr || !fimStr) {
-                mostrarToast("⚠️ Selecione as datas de Início e Fim.");
+                alert("Selecione data de início e fim!");
                 return;
             }
 
-            let dInicio = new Date(inicioStr + 'T00:00:00');
-            let dFim = new Date(fimStr + 'T00:00:00');
+            let atual = new Date(inicioStr + 'T00:00:00');
+            let final = new Date(fimStr + 'T00:00:00');
 
-            if (dInicio > dFim) {
-                mostrarToast("⚠️ Data inicial posterior à final.");
-                return;
+            if (atual > final) {
+                let temp = atual;
+                atual = final;
+                final = temp;
             }
 
-            let atual = new Date(dInicio);
-            while (atual <= dFim) {
+            const resp = document.getElementById('respPeriodo').value;
+            const selectMotivo = document.getElementById('selectMotivo');
+            let desc = selectMotivo.value;
+            if (desc === 'Outros') {
+                desc = document.getElementById('descOutros').value.trim() || 'Outros';
+            }
+
+            while (atual <= final) {
                 let y = atual.getFullYear();
                 let m = atual.getMonth();
                 let d = atual.getDate();
@@ -601,129 +751,176 @@
             }
 
             salvarNaNuvem();
-            mostrarToast("✨ Período aplicado e sincronizado!");
             renderizar();
+            mostrarToast("Período atualizado com sucesso!");
         }
 
+        // COMANDO POR VOZ
         function ouvirVoz() {
-            vibrar();
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                mostrarToast("Microfone não suportado no navegador.");
+                alert("Seu navegador não suporta reconhecimento de voz.");
                 return;
             }
             const recognition = new SpeechRecognition();
             recognition.lang = 'pt-BR';
-            const btnFloat = document.getElementById('btn-voz-flutuante');
-
-            recognition.onstart = () => { 
-                btnFloat.classList.add('animate-pulse', 'bg-amber-500'); 
-                mostrarToast("🎙️ Ouvindo comando de voz...");
-            };
             
-            recognition.onresult = (event) => {
-                const texto = event.results[0][0].transcript.toLowerCase();
-                
-                if (texto.includes('próximo') || texto.includes('proximo')) {
-                    mudarMes(1);
-                    return;
-                } else if (texto.includes('anterior')) {
-                    mudarMes(-1);
-                    return;
-                }
+            const btnFloat = document.getElementById('btn-voz-flutuante');
+            if (btnFloat) btnFloat.classList.add('animate-bounce');
+            mostrarToast("🎙️ Fale: 'mãe do dia 5 ao 10 férias'");
 
-                let respDetectada = null;
-                if (texto.includes('mãe') || texto.includes('mae')) {
-                    respDetectada = 'mae';
-                    document.getElementById('respPeriodo').value = 'mae';
-                } else if (texto.includes('pai')) {
-                    respDetectada = 'pai';
-                    document.getElementById('respPeriodo').value = 'pai';
-                }
+            recognition.onresult = function(event) {
+                if (btnFloat) btnFloat.classList.remove('animate-bounce');
+                let texto = event.results[0][0].transcript.toLowerCase();
+                let resp = (texto.includes('pai') || texto.includes('com o pai')) ? 'pai' : 'mae';
+                let numeros = texto.match(/\d+/g);
 
-                const numeros = texto.match(/\d+/g);
-                if (numeros && numeros.length >= 2 && respDetectada) {
+                if (numeros && numeros.length >= 2) {
                     let diaIni = parseInt(numeros[0]);
                     let diaFim = parseInt(numeros[1]);
-
                     if (diaIni > diaFim) { let temp = diaIni; diaIni = diaFim; diaFim = temp; }
 
                     let desc = document.getElementById('selectMotivo').value;
-                    if (desc === 'Outros') {
-                        desc = document.getElementById('descOutros').value || (respDetectada === 'mae' ? 'Mãe' : 'Pai');
+                    for (let m of listaMotivos) {
+                        if (texto.includes(m.toLowerCase())) {
+                            desc = m;
+                            break;
+                        }
                     }
 
                     for (let d = diaIni; d <= diaFim; d++) {
-                        let chave = `${anoAtual}-${mesAtual}-${d}`;
-                        overrides[chave] = { resp: respDetectada, desc: desc };
+                        overrides[`${anoAtual}-${mesAtual}-${d}`] = { resp: resp, desc: desc };
                     }
-
                     salvarNaNuvem();
                     renderizar();
-                    vibrar(20);
-                    mostrarToast(`🎤 Dias ${diaIni} a ${diaFim} salvos para ${respDetectada === 'mae' ? 'Mãe' : 'Pai'}!`);
+                    mostrarToast(`Voz: dias ${diaIni} a ${diaFim} com ${resp.toUpperCase()}`);
+                } else if (numeros && numeros.length === 1) {
+                    let dia = parseInt(numeros[0]);
+                    overrides[`${anoAtual}-${mesAtual}-${dia}`] = { resp: resp, desc: 'Ajuste voz' };
+                    salvarNaNuvem();
+                    renderizar();
+                    mostrarToast(`Voz: dia ${dia} com ${resp.toUpperCase()}`);
                 } else {
-                    mostrarToast(`Ouvido: "${texto}". Ex: "18 a 19 mãe"`);
+                    alert("Não entendi as datas. Exemplo: 'mãe do dia 10 ao 15 férias'");
                 }
             };
 
-            recognition.onerror = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
-            recognition.onend = () => { btnFloat.classList.remove('animate-pulse', 'bg-amber-500'); };
+            recognition.onerror = function() {
+                if (btnFloat) btnFloat.classList.remove('animate-bounce');
+            };
+
             recognition.start();
         }
 
+        // INTERAÇÃO AO CLICAR EM UM DIA
+        function clicarDia(ano, mes, dia) {
+            vibrar(12);
+            if (modoSelecaoAtivo) {
+                const aviso = document.getElementById('avisoSelecaoRapida');
+                if (!diaInicioSelecao) {
+                    diaInicioSelecao = { ano, mes, dia };
+                    aviso.innerText = `Início: dia ${dia}. Toque no DIA FINAL`;
+                    renderizar();
+                } else {
+                    let dIni = new Date(diaInicioSelecao.ano, diaInicioSelecao.mes, diaInicioSelecao.dia);
+                    let dFim = new Date(ano, mes, dia);
+                    if (dIni > dFim) {
+                        let t = dIni;
+                        dIni = dFim;
+                        dFim = t;
+                    }
+                    
+                    const mStr = String(dIni.getMonth() + 1).padStart(2, '0');
+                    const dIniStr = String(dIni.getDate()).padStart(2, '0');
+                    const dFimStr = String(dFim.getDate()).padStart(2, '0');
+                    
+                    document.getElementById('dataInicio').value = `${dIni.getFullYear()}-${mStr}-${dIniStr}`;
+                    document.getElementById('dataFim').value = `${dFim.getFullYear()}-${mStr}-${dFimStr}`;
+                    
+                    alternarModoSelecao();
+                    document.getElementById('dataInicio').scrollIntoView({ behavior: 'smooth' });
+                    mostrarToast("Período selecionado nos campos abaixo!");
+                }
+            } else {
+                editarDia(ano, mes, dia);
+            }
+        }
+
         function editarDia(ano, mes, dia) {
-            vibrar();
+            window.editando = { ano, mes, dia };
             const modal = document.getElementById('customModal');
             const box = document.getElementById('modalBoxContent');
             const chave = `${ano}-${mes}-${dia}`;
-            const info = regraPadrao(dia, mes, ano);
-            
-            box.innerHTML = `
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-sm font-bold text-gray-900 dark:text-white">✏️ Editar Dia ${dia}/${mes+1}/${ano}</h3>
-                    <button onclick="fecharModal()" class="w-7 h-7 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-full flex items-center justify-center font-bold text-gray-700 dark:text-gray-200 text-xs transition">✕</button>
-                </div>
-                <select id="selectResp" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded-xl text-xs mb-2 dark:text-white focus:ring-1 focus:ring-blue-500">
-                    <option value="mae" ${info.resp === 'mae' ? 'selected' : ''}>👩 Mãe</option>
-                    <option value="pai" ${info.resp === 'pai' ? 'selected' : ''}>👔 Pai</option>
-                </select>
-                <input type="text" id="inputDesc" value="${info.desc || ''}" placeholder="Descrição (ex: Férias, Viagem)" class="w-full px-3 py-2 bg-gray-50 dark:bg-gray-900 border dark:border-gray-700 rounded-xl text-xs mb-3 dark:text-white focus:ring-1 focus:ring-blue-500">
-                <div class="flex gap-2">
-                    <button onclick="salvarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white py-2 rounded-xl text-xs font-bold shadow-sm transition">Salvar</button>
-                    <button onclick="apagarEdicao(${ano}, ${mes}, ${dia})" class="flex-1 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white py-2 rounded-xl text-xs font-bold shadow-sm transition">Apagar</button>
-                </div>
-            `;
+            const info = overrides[chave] || regraPadrao(dia, mes, ano);
+
+            document.getElementById('selectResp').value = info.resp;
+            document.getElementById('inputDesc').value = info.desc || '';
+
             modal.classList.remove('hidden');
+            box.classList.remove('scale-95');
+            box.classList.add('scale-100');
         }
 
-        function salvarEdicao(ano, mes, dia) {
+        function salvarEdicao() {
             vibrar();
+            if (!window.editando) return;
+            const { ano, mes, dia } = window.editando;
             const chave = `${ano}-${mes}-${dia}`;
             const resp = document.getElementById('selectResp').value;
-            const desc = document.getElementById('inputDesc').value.trim() || (resp === 'mae' ? 'Mãe' : 'Pai');
-            
-            overrides[chave] = { resp: resp, desc: desc };
+            const desc = document.getElementById('inputDesc').value.trim();
+
+            overrides[chave] = { resp, desc };
             salvarNaNuvem();
-            
-            fecharModal();
             renderizar();
-            mostrarToast("Dia atualizado com sucesso!");
+            fecharModal();
+            mostrarToast("Dia atualizado!");
         }
 
-        function apagarEdicao(ano, mes, dia) {
+        function apagarEdicao() {
             vibrar();
+            if (!window.editando) return;
+            const { ano, mes, dia } = window.editando;
             const chave = `${ano}-${mes}-${dia}`;
             delete overrides[chave];
             salvarNaNuvem();
-            
-            fecharModal();
             renderizar();
-            mostrarToast("Edição removida!");
+            fecharModal();
+            mostrarToast("Ajuste removido!");
         }
 
         function fecharModal() {
             document.getElementById('customModal').classList.add('hidden');
+        }
+
+        function compartilharResumoWhatsApp() {
+            vibrar(20);
+            let totalMae = 0;
+            let totalPai = 0;
+            const totalDias = new Date(anoAtual, mesAtual + 1, 0).getDate();
+
+            for (let d = 1; d <= totalDias; d++) {
+                const info = regraPadrao(d, mesAtual, anoAtual);
+                if (info.resp === 'mae') totalMae++;
+                else if (info.resp === 'pai') totalPai++;
+            }
+
+            const regraEl = document.getElementById('textoRegraMes');
+            const regraTexto = regraEl ? regraEl.innerText.replace(/\n/g, ' ') : '';
+            const textoWhatsApp = "📅 *Guarda Sophia - " + nomesMeses[mesAtual] + " " + anoAtual + "*\n" +
+                "👩 *Mãe:* " + totalMae + " dias\n" +
+                "👔 *Pai:* " + totalPai + " dias\n" +
+                "📌 *Regra:* " + regraTexto + "\n\n" +
+                "_Gerado pelo App de Guarda Compartilhada_";
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(textoWhatsApp).then(() => {
+                    mostrarToast("📋 Resumo copiado para o WhatsApp!");
+                }).catch(() => {
+                    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(textoWhatsApp), "_blank");
+                });
+            } else {
+                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(textoWhatsApp), "_blank");
+            }
         }
 
         const regrasPorAnoMes = {
@@ -733,49 +930,54 @@
             "2026-3": "<b>Abril 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
             "2026-4": "<b>Maio 2026:</b> Dia das Mães — semana com a Mãe.",
             "2026-5": "<b>Junho 2026:</b> Aniversário da Sophia.",
-            "2026-6": "<b>Julho 2026:</b> Férias de Julho Alternadas.",
+            "2026-6": "<b>Julho 2026:</b> Férias Escolares (alternadas entre os pais).",
             "2026-7": "<b>Agosto 2026:</b> Dia dos Pais — semana com o Pai.",
-            "2026-8": "<b>Setembro 2026:</b> Dias 3 a 7 com o Pai; dias 8 a 17 com a Mãe; dias 18 a 20 com o Pai; dias 21 a 30 com a Mãe.",
-            "2026-9": "<b>Outubro 2026:</b> Dia 1 com a Mãe; dias 2 a 4 com o Pai; dias 5 a 15 com a Mãe; dias 16 a 18 com o Pai.",
-            "2026-10": "<b>Novembro 2026:</b> Dias 1 e 2, dias 12 a 15 e dias 19 a 22 com o Pai.",
-            "2026-11": "<b>Dezembro 2026:</b> Férias de Dezembro Alternadas. Natal e Ano Novo.",
-            
-            "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe; dias 16 a 31 com o Pai (Férias).",
-            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval); dias 12 a 14 com a Mãe.",
-            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada.",
-            "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada.",
+            "2026-8": "<b>Setembro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-9": "<b>Outubro 2026:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2026-10": "<b>Novembro 2026:</b> Férias Escolares e Aniversário do Pai.",
+            "2026-11": "<b>Dezembro 2026:</b> Férias Escolares (1-15 com Pai, 16-31 com Mãe).",
+            "2027-0": "<b>Janeiro 2027:</b> Dias 1 a 14 Viagem com a Mãe | Dias 15 a 31 Viagem com o Pai.",
+            "2027-1": "<b>Fevereiro 2027:</b> Dias 1 a 9 com o Pai (Carnaval) | Dias 10 a 16 com a Mãe.",
+            "2027-2": "<b>Março 2027:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2027-3": "<b>Abril 2027:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
             "2027-4": "<b>Maio 2027:</b> Dia das Mães — semana com a Mãe.",
             "2027-5": "<b>Junho 2027:</b> Aniversário da Sophia.",
-            "2027-6": "<b>Julho 2027:</b> Férias de Julho Alternadas.",
+            "2027-6": "<b>Julho 2027:</b> Dias 9 a 23 Férias Pai | Dias 24 a 31 Férias Mãe.",
             "2027-7": "<b>Agosto 2027:</b> Dia dos Pais — semana com o Pai.",
-            "2027-8": "<b>Setembro 2027:</b> Guarda Compartilhada.",
-            "2027-9": "<b>Outubro 2027:</b> Rotina de outubro.",
-            "2027-10": "<b>Novembro 2027:</b> Rotina de novembro.",
-            "2027-11": "<b>Dezembro 2027:</b> Férias de Dezembro Alternadas."
+            "2027-8": "<b>Setembro 2027:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2027-9": "<b>Outubro 2027:</b> Guarda Compartilhada (2º e 4º FDS com o Pai).",
+            "2027-10": "<b>Novembro 2027:</b> Férias Escolares e Aniversário do Pai.",
+            "2027-11": "<b>Dezembro 2027:</b> Férias Escolares (1-15 Mãe, 16-31 Pai)."
         };
 
         const feriados = {
             "0-1": "Confraternização", "3-21": "Tiradentes", "4-1": "Trabalho",
             "8-7": "Independência", "9-12": "Aparecida", "10-2": "Finados",
-            "10-15": "Proclamação", "11-25": "Natal"
+            "10-15": "Proclamação", "10-20": "Consciência Negra", "11-25": "Natal",
+            
+            "2026-1-16": "Carnaval", "2026-1-17": "Carnaval", "2026-1-18": "Cinzas",
+            "2026-3-3": "Sexta Santa", "2026-3-5": "Páscoa", "2026-5-4": "Corpus Christi",
+            
+            "2027-1-8": "Carnaval", "2027-1-9": "Carnaval", "2027-1-10": "Cinzas",
+            "2027-2-26": "Sexta Santa", "2027-2-28": "Páscoa", "2027-4-27": "Corpus Christi"
         };
 
-        // Regras especiais predefinidas codificadas de forma limpa e modular
         const regrasEspeciais = {
             "2026-8": [{ d: [3, 7], resp: 'pai', desc: 'Pai' }, { d: [18, 20], resp: 'pai', desc: 'Pai' }],
             "2026-9": [{ d: [2, 4], resp: 'pai', desc: 'Pai' }, { d: [16, 18], resp: 'pai', desc: 'Pai' }, { d: [30, 31], resp: 'pai', desc: 'Pai' }],
-            "2026-10": [{ d: [1, 2], resp: 'pai', desc: 'Pai' }, { d: [12, 15], resp: 'pai', desc: 'Pai' }, { d: [19, 22], resp: 'pai', desc: 'Pai' }],
-            "2026-11": [{ d: [4, 6], resp: 'pai', desc: 'Pai' }, { d: [11, 23], resp: 'pai', desc: 'Pai' }, { d: [29, 31], resp: 'mae', desc: 'Viagem Mãe' }],
-            
-            "2027-0": [{ d: [1, 14], resp: 'mae', desc: 'Viagem Mãe' }, { d: [15, 15], resp: 'mae', desc: 'Mãe' }, { d: [16, 31], resp: 'pai', desc: 'Férias Pai' }],
-            "2027-1": [{ d: [1, 9], resp: 'pai', desc: 'Pai' }, { d: [12, 14], resp: 'mae', desc: 'Mãe' }],
-            "2027-4": [{ d: [7, 9], resp: 'mae', desc: 'Dia Mães' }],
+            "2026-10": [{ d: [1, 2], resp: 'pai', desc: 'Pai' }, { d: [12, 15], resp: 'pai', desc: 'Pai' }, { d: [19, 22], resp: 'pai', desc: 'Aniv. Pai' }, { d: [27, 29], resp: 'pai', desc: 'Pai' }],
+            "2026-11": [{ d: [1, 15], resp: 'pai', desc: 'Férias Pai' }, { d: [16, 31], resp: 'mae', desc: 'Férias Mãe' }],
+            "2027-0": [{ d: [1, 14], resp: 'mae', desc: 'Viagem Mãe' }, { d: [15, 31], resp: 'pai', desc: 'Viagem Pai' }],
+            "2027-1": [{ d: [1, 9], resp: 'pai', desc: 'Carnaval Pai' }, { d: [10, 16], resp: 'mae', desc: 'Carnaval Mãe' }, { d: [19, 21], resp: 'pai', desc: 'Pai' }, { d: [26, 28], resp: 'mae', desc: 'Mãe' }],
+            "2027-2": [{ d: [5, 7], resp: 'pai', desc: 'Pai' }, { d: [12, 14], resp: 'mae', desc: 'Mãe' }, { d: [19, 21], resp: 'pai', desc: 'Pai' }, { d: [26, 28], resp: 'mae', desc: 'Mãe' }],
+            "2027-3": [{ d: [2, 4], resp: 'pai', desc: 'Pai' }, { d: [9, 11], resp: 'mae', desc: 'Mãe' }, { d: [16, 18], resp: 'pai', desc: 'Pai' }, { d: [23, 25], resp: 'mae', desc: 'Mãe' }],
+            "2027-4": [{ d: [7, 10], resp: 'mae', desc: 'Dia das Mães' }, { d: [14, 16], resp: 'pai', desc: 'Pai' }, { d: [21, 23], resp: 'mae', desc: 'Mãe' }, { d: [28, 30], resp: 'pai', desc: 'Pai' }],
             "2027-5": [{ d: [4, 6], resp: 'mae', desc: 'Sophia' }],
             "2027-6": [{ d: [9, 23], resp: 'pai', desc: 'Férias Pai' }, { d: [24, 31], resp: 'mae', desc: 'Férias Mãe' }],
             "2027-7": [{ d: [6, 8], resp: 'pai', desc: 'Dia Pais' }, { d: [13, 15], resp: 'mae', desc: 'Mãe' }, { d: [20, 22], resp: 'pai', desc: 'Pai' }, { d: [27, 29], resp: 'mae', desc: 'Mãe' }],
             "2027-8": [{ d: [3, 5], resp: 'pai', desc: 'Pai' }, { d: [10, 12], resp: 'mae', desc: 'Mãe' }, { d: [17, 19], resp: 'pai', desc: 'Pai' }, { d: [24, 26], resp: 'mae', desc: 'Mãe' }],
             "2027-9": [{ d: [1, 3], resp: 'pai', desc: 'Pai' }, { d: [15, 17], resp: 'pai', desc: 'Pai' }, { d: [29, 31], resp: 'pai', desc: 'Pai' }],
-            "2027-10": [{ d: [12, 14], resp: 'mae', desc: 'Mãe' }, { d: [19, 28], resp: 'pai', desc: 'Aniversário Pai' }],
+            "2027-10": [{ d: [12, 14], resp: 'mae', desc: 'Mãe' }, { d: [19, 28], resp: 'pai', desc: 'Aniv. Pai' }],
             "2027-11": [{ d: [1, 15], resp: 'mae', desc: 'Férias Mãe' }, { d: [16, 31], resp: 'pai', desc: 'Fim de Ano' }]
         };
 
@@ -792,15 +994,14 @@
                 }
             }
 
-            // Regra geral de fins de semana (2º e 4º finais de semana com o Pai)
             const data = new Date(ano, mes, dia);
             const ds = data.getDay();
-            let sexta = dia;
-            if (ds === 6) sexta = dia - 1;
-            if (ds === 0) sexta = dia - 2;
-            if ((ds === 5 || ds === 6 || ds === 0) && sexta > 0) {
-                const numSexta = Math.ceil(sexta / 7);
-                if (numSexta === 2 || numSexta === 4) return { resp: 'pai', desc: 'Pai' };
+            if (ds === 5 || ds === 6 || ds === 0) {
+                let numSexta = 0;
+                for (let i = 1; i <= dia; i++) {
+                    if (new Date(ano, mes, i).getDay() === 5) numSexta++;
+                }
+                if (numSexta === 2 || numSexta === 4) return { resp: 'pai', desc: 'FDS Pai' };
             }
             return { resp: 'mae', desc: 'Mãe' };
         }
@@ -812,13 +1013,15 @@
             document.getElementById('tituloCalendarioMes').innerText = `${nomesMeses[mesAtual]} ${anoAtual}`;
             
             const chaveRegra = `${anoAtual}-${mesAtual}`;
-            document.getElementById('textoRegraMes').innerHTML = regrasPorAnoMes[chaveRegra] || `<b>${nomesMeses[mesAtual]} ${anoAtual}:</b> Guarda Compartilhada.`;
+            document.getElementById('textoRegraMes').innerHTML = regrasPorAnoMes[chaveRegra] || `<b>${nomesMeses[mesAtual]} ${anoAtual}:</b> Guarda Compartilhada (2º e 4º finais de semana com o Pai).`;
 
             const grid = document.getElementById('calendarioGrid');
             grid.innerHTML = '';
-            ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => {
+
+            const diasSemana = ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
+            diasSemana.forEach(d => {
                 const div = document.createElement('div');
-                div.className = 'text-center font-bold text-[10px] text-gray-400 uppercase py-1';
+                div.className = "text-center font-bold text-[10px] text-gray-400 py-1 uppercase";
                 div.innerText = d;
                 grid.appendChild(div);
             });
@@ -828,163 +1031,185 @@
 
             for (let i = 0; i < primeiroDia; i++) {
                 const vazio = document.createElement('div');
-                vazio.className = 'day-cell-screen rounded-lg opacity-20 bg-gray-100 dark:bg-gray-800';
+                vazio.className = "day-cell-screen p-1 rounded-xl opacity-0";
                 grid.appendChild(vazio);
             }
 
             const hojeObj = new Date();
             const dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
-
+            
             let totalMaeMes = 0;
             let totalPaiMes = 0;
+            const eventosDiferenciados = [];
 
             for (let dia = 1; dia <= totalDias; dia++) {
                 const info = regraPadrao(dia, mesAtual, anoAtual);
-                const feriadoNome = feriados[`${mesAtual}-${dia}`];
-                
                 if (info.resp === 'mae') totalMaeMes++;
                 else if (info.resp === 'pai') totalPaiMes++;
 
+                const feriadoNome = feriados[`${anoAtual}-${mesAtual}-${dia}`] || feriados[`${mesAtual}-${dia}`];
+                if (info.desc && !['Mãe', 'FDS Pai'].includes(info.desc)) {
+                    eventosDiferenciados.push({ dia, desc: info.desc, resp: info.resp });
+                } else if (feriadoNome) {
+                    eventosDiferenciados.push({ dia, desc: feriadoNome, resp: info.resp });
+                }
+
                 const dataCelula = new Date(anoAtual, mesAtual, dia);
                 const isPassado = dataCelula < dataHoje;
-                const isHoje = (anoAtual === hojeObj.getFullYear() && mesAtual === hojeObj.getMonth() && dia === hojeObj.getDate());
+                const isHoje = dataCelula.getTime() === dataHoje.getTime();
+                const isSelecionadoInicio = diaInicioSelecao && diaInicioSelecao.ano === anoAtual && diaInicioSelecao.mes === mesAtual && diaInicioSelecao.dia === dia;
 
                 const cell = document.createElement('div');
+                let classes = "day-cell-screen p-1 rounded-xl flex flex-col justify-between items-center transition cursor-pointer border relative text-center ";
                 
-                let bgClass = info.resp === 'mae' ? 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900/50' : 'bg-sky-50 dark:bg-sky-950/40 border-sky-200 dark:border-sky-900/50';
-                let textClass = info.resp === 'mae' ? 'text-rose-700 dark:text-rose-300' : 'text-sky-700 dark:text-sky-300';
-                let badgeClass = info.resp === 'mae' ? 'bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-200' : 'bg-sky-100 dark:bg-sky-900/60 text-sky-800 dark:text-sky-200';
+                if (isPassado) classes += "past-day opacity-50 ";
+                if (isHoje) classes += "ring-2 ring-blue-500 shadow-md scale-[1.02] z-10 ";
+                if (isSelecionadoInicio) classes += "ring-2 ring-amber-500 bg-amber-100 ";
 
-                if (isPassado) {
-                    bgClass += ' past-day';
+                if (info.resp === 'mae') {
+                    classes += "bg-rose-100/90 dark:bg-rose-950/60 border-rose-300 dark:border-rose-900/60 text-rose-950 dark:text-rose-100";
+                } else {
+                    classes += "bg-sky-100/90 dark:bg-sky-950/60 border-sky-300 dark:border-sky-900/60 text-sky-950 dark:text-sky-100";
                 }
 
-                if (isHoje) {
-                    bgClass += ' ring-2 ring-indigo-500 dark:ring-indigo-400 shadow-sm';
-                }
+                cell.className = classes;
+                cell.onclick = () => clicarDia(anoAtual, mesAtual, dia);
 
-                cell.className = `day-cell-screen rounded-xl border p-1 flex flex-col justify-between relative transition-transform active:scale-95 cursor-pointer select-none ${bgClass}`;
-                cell.onclick = () => editarDia(anoAtual, mesAtual, dia);
-                
-                let badgesHtml = '';
-                if (feriadoNome) badgesHtml += `<span class="text-[7px] bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200 px-1 rounded truncate text-center font-bold block mb-0.5">${feriadoNome}</span>`;
-                
-                badgesHtml += `<span class="text-[9px] px-1 rounded truncate text-center font-bold block ${badgeClass}">${info.desc}</span>`;
-                
+                let badgeDesc = info.desc && !['Mãe', 'FDS Pai'].includes(info.desc) ? info.desc : (feriadoNome || (info.resp === 'mae' ? 'Mãe' : 'Pai'));
+                if (badgeDesc.length > 8) badgeDesc = badgeDesc.substring(0, 7) + '..';
+
                 cell.innerHTML = `
-                    <div class="day-num text-[11px] font-extrabold ${textClass}">${dia}</div>
-                    <div class="flex flex-col gap-0.5">${badgesHtml}</div>
+                    <div class="flex justify-between items-center w-full px-1">
+                        <span class="day-num text-xs font-black">${dia}</span>
+                        <span class="text-[8px] font-bold ${info.resp === 'mae' ? 'text-rose-600 dark:text-rose-400' : 'text-sky-600 dark:text-sky-400'}">${info.resp === 'mae' ? 'M' : 'P'}</span>
+                    </div>
+                    <span class="text-[7.5px] leading-tight truncate px-0.5 rounded w-full font-medium ${info.desc && !['Mãe', 'FDS Pai'].includes(info.desc) ? 'bg-amber-200/80 text-amber-900 dark:bg-amber-950 dark:text-amber-200 font-bold' : ''}">${badgeDesc}</span>
                 `;
                 grid.appendChild(cell);
             }
 
+            // ATUALIZAR CONTADORES DO MÊS
             document.getElementById('countMae').innerText = `${totalMaeMes} dias`;
             document.getElementById('countPai').innerText = `${totalPaiMes} dias`;
 
-            // Atualização da barra de proporção
+            // ATUALIZAR BARRA DE PROPORÇÃO (%)
             const totalSoma = totalMaeMes + totalPaiMes;
             const pctMae = totalSoma > 0 ? Math.round((totalMaeMes / totalSoma) * 100) : 50;
             const pctPai = 100 - pctMae;
+
             document.getElementById('barraMae').style.width = `${pctMae}%`;
             document.getElementById('barraPai').style.width = `${pctPai}%`;
             document.getElementById('labelPctMae').innerText = `${pctMae}% Mãe`;
             document.getElementById('labelPctPai').innerText = `${pctPai}% Pai`;
 
-            let totalMaeAnoLoop = 0;
-            let totalPaiAnoLoop = 0;
+            // ATUALIZAR CONTADORES DO ANO
+            let totalMaeAno = 0;
+            let totalPaiAno = 0;
             for (let m = 0; m < 12; m++) {
-                const diasDoMes = new Date(anoAtual, m + 1, 0).getDate();
+                let diasDoMes = new Date(anoAtual, m + 1, 0).getDate();
                 for (let d = 1; d <= diasDoMes; d++) {
-                    const inf = regraPadrao(d, m, anoAtual);
-                    if (inf.resp === 'mae') totalMaeAnoLoop++;
-                    else if (inf.resp === 'pai') totalPaiAnoLoop++;
+                    let inf = regraPadrao(d, m, anoAtual);
+                    if (inf.resp === 'mae') totalMaeAno++;
+                    else if (inf.resp === 'pai') totalPaiAno++;
                 }
             }
-            document.getElementById('countMaeAno').innerText = `${totalMaeAnoLoop} dias`;
-            document.getElementById('countPaiAno').innerText = `${totalPaiAnoLoop} dias`;
+            document.getElementById('countMaeAno').innerText = `${totalMaeAno} dias`;
+            document.getElementById('countPaiAno').innerText = `${totalPaiAno} dias`;
+
+            // RENDERIZAR DESTAQUES DO MÊS
+            const listaEventosCont = document.getElementById('listaEventosMesContainer');
+            if (listaEventosCont) {
+                listaEventosCont.innerHTML = '';
+                if (eventosDiferenciados.length > 0) {
+                    const divDestaques = document.createElement('div');
+                    divDestaques.className = "bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/40 p-2 rounded-xl";
+                    divDestaques.innerHTML = `
+                        <p class="text-[9px] font-bold text-amber-800 dark:text-amber-300 uppercase mb-1">⭐ Destaques deste Mês:</p>
+                        <div class="flex flex-wrap gap-1">
+                            ${eventosDiferenciados.map(ev => `
+                                <span class="text-[9px] bg-white dark:bg-gray-800 border border-amber-200 dark:border-amber-800 px-1.5 py-0.5 rounded-md font-medium text-gray-700 dark:text-gray-300">
+                                    Dia ${ev.dia}: <b>${ev.desc}</b> (${ev.resp === 'mae' ? 'Mãe' : 'Pai'})
+                                </span>
+                            `).join('')}
+                        </div>
+                    `;
+                    listaEventosCont.appendChild(divDestaques);
+                }
+            }
+        }
+
+        function irParaHoje() {
+            vibrar(10);
+            const agora = new Date();
+            anoAtual = agora.getFullYear();
+            mesAtual = agora.getMonth();
+            renderizar();
+            mostrarToast("📅 Voltando para hoje!");
         }
 
         function mudarMes(delta) {
             vibrar(10);
             mesAtual += delta;
-            if (mesAtual > 11) { mesAtual = 0; anoAtual++; } 
-            else if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
+            if (mesAtual > 11) {
+                mesAtual = 0;
+                anoAtual++;
+            }
+            if (mesAtual < 0) {
+                mesAtual = 11;
+                anoAtual--;
+            }
             renderizar();
         }
 
         function gerenarAnoCompletoPDF() {
             vibrar();
-            let hojeObj = new Date();
-            let dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
-
             let htmlAnual = `<!DOCTYPE html>
             <html lang="pt-BR">
             <head>
                 <meta charset="UTF-8">
                 <title>Guarda Compartilhada - A partir de ${nomesMeses[mesAtual]} ${anoAtual}</title>
                 <style>
-                    body { font-family: sans-serif; padding: 20px; color: #0f172a; margin: 0; }
-                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 20px; }
-                    h2 { text-align: center; margin-bottom: 10px; font-size: 1.2rem; }
-                    table { width: 100%; border-collapse: collapse; table-layout: fixed; margin-bottom: 10px; }
-                    th { background: #f8fafc; font-size: 0.75rem; padding: 6px; border: 1px solid #cbd5e1; text-align: center; font-weight: bold; }
-                    td { width: 14.28%; height: 65px; vertical-align: top; border: 1px solid #cbd5e1; border-radius: 8px; padding: 4px; box-sizing: border-box; }
-                    .day-num { font-size: 0.8rem; font-weight: bold; position: relative; }
-                    .badge { font-size: 0.6rem; padding: 2px; border-radius: 2px; display: block; text-align: center; margin-top: 2px; font-weight: bold; }
-                    .cell-mae { background-color: #ffe4e6 !important; color: #9f1239 !important; }
-                    .cell-pai { background-color: #e0f2fe !important; color: #1e40af !important; }
-                    
-                    .past-day .day-num::after {
-                        content: "";
-                        position: absolute;
-                        left: -4px;
-                        right: -4px;
-                        top: 50%;
-                        height: 1.5px;
-                        background-color: #000000;
-                        transform: translateY(-50%);
-                    }
-
-                    .rule-box { padding: 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.75rem; margin-top: 5px; }
+                    body { font-family: sans-serif; padding: 20px; color: #1e293b; }
+                    .mes-pagina-impressao { page-break-after: always; break-after: page; padding-bottom: 25px; }
+                    h2 { text-align: center; color: #0f172a; margin-bottom: 12px; }
+                    table { width: 100%; border-collapse: separate; border-spacing: 4px; }
+                    th { border: 1px solid #cbd5e1; background: #f8fafc; font-size: 11px; padding: 6px; }
+                    td { width: 14.28%; height: 60px; vertical-align: top; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px; box-sizing: border-box; }
+                    .mae { background-; border-radius: 6px; padding: 4px; box-sizing: border-box; }
+                    .mae { background-color: #ffe4e6 !important; }
+                    .pai { background-color: #e0f2fe !important; }
+                    .past-day { text-decoration: line-through; opacity: 0.6; }
+                    .rule-box { margin-top: 10px; font-size: 11px; border: 1px solid #cbd5e1; padding: 8px; border-radius: 6px; background: #f8fafc; }
                     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                 </style>
             </head>
             <body>`;
 
-            let startY = anoAtual;
-            let startM = mesAtual;
-
-            for (let y = startY; y <= 2027; y++) {
-                let mInicio = (y === startY) ? startM : 0;
-                let mFim = 11;
-                for (let m = mInicio; m <= mFim; m++) {
+            for (let y = anoAtual; y <= 2027; y++) {
+                let startM = (y === anoAtual) ? mesAtual : 0;
+                for (let m = startM; m < 12; m++) {
+                    let primeiroDia = new Date(y, m, 1).getDay();
+                    let totalDias = new Date(y, m + 1, 0).getDate();
                     let mesNome = nomesMeses[m];
-                    let regra = regrasPorAnoMes[`${y}-${m}`] || `<b>${mesNome} ${y}:</b> Guarda Compartilhada.`;
-                    
-                    let tableHtml = '<table><thead><tr>';
-                    ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].forEach(d => { tableHtml += `<th>${d}</th>`; });
-                    tableHtml += '</tr></thead><tbody><tr>';
+                    let chaveRegra = `${y}-${m}`;
+                    let regra = regrasPorAnoMes[chaveRegra] || `Guarda Compartilhada (2º e 4º finais de semana com o Pai).`;
 
-                    const primeiroDia = new Date(y, m, 1).getDay();
-                    const totalDias = new Date(y, m + 1, 0).getDate();
-
+                    let tableHtml = '<table><thead><tr><th>DOM</th><th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th><th>SÁB</th></tr></thead><tbody><tr>';
                     let colCount = 0;
                     for (let i = 0; i < primeiroDia; i++) {
                         tableHtml += `<td></td>`;
                         colCount++;
                     }
 
-                    for (let dia = 1; dia <= totalDias; dia++) {
-                        if (colCount % 7 === 0 && colCount > 0) { tableHtml += '</tr><tr>'; }
-                        const info = regraPadrao(dia, m, y);
-                        let cssClass = info.resp === 'mae' ? 'cell-mae' : 'cell-pai';
-
-                        const dataCelula = new Date(y, m, dia);
-                        if (dataCelula < dataHoje) {
-                            cssClass += ' past-day';
-                        }
-
-                        tableHtml += `<td class="${cssClass}"><div class="day-num">${dia}</div><div class="badge">${info.desc}</div></td>`;
+                    for (let d = 1; d <= totalDias; d++) {
+                        if (colCount % 7 === 0 && colCount !== 0) tableHtml += '</tr><tr>';
+                        let info = regraPadrao(d, m, y);
+                        tableHtml += `
+                            <td class="${info.resp === 'mae' ? 'mae' : 'pai'}">
+                                <b>${d}</b><br>
+                                <small>${info.desc || ''}</small>
+                            </td>
+                        `;
                         colCount++;
                     }
                     while (colCount % 7 !== 0) { tableHtml += `<td></td>`; colCount++; }
@@ -1000,12 +1225,30 @@
                 }
             }
 
-            htmlAnual += `<script>window.onload = function() { window.print(); }<\/script></body></html>`;
+            htmlAnual += '<' + 'script>window.onload = function() { window.print(); }<' + '/script></body></html>';
 
             let blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
             let url = URL.createObjectURL(blob);
             window.open(url, '_blank');
         }
+
+        // INICIALIZAÇÃO
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+
+        carregarCacheLocal();
+        atualizarSelectMotivos();
+        configurarGestosSwipe();
+
+        if (ehDispositivoMovel() && !sessionStorage.getItem('auth_unlocked')) {
+            const telaLogin = document.getElementById('tela-login');
+            if (telaLogin) telaLogin.classList.remove('hidden');
+        }
+
+        setTimeout(() => {
+            sincronizarComNuvem();
+        }, 150);
 
         renderizar();
     </script>
