@@ -67,35 +67,27 @@
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28 select-none">
 
-    <!-- TELA DE LOGIN / CAPA COM PIN 1510 E BIOMETRIA -->
-    <div id="tela-login" class="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center space-y-4 border border-gray-100 dark:border-gray-700">
+    <!-- TELA DE LOGIN / CAPA EXCLUSIVA POR BIOMETRIA (SOMENTE CELULAR: md:hidden) -->
+    <div id="tela-login" class="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-sm hidden flex items-center justify-center p-4 md:hidden">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl shadow-2xl max-w-xs w-full text-center space-y-5 border border-gray-100 dark:border-gray-700">
             <div class="w-16 h-16 bg-blue-50 dark:bg-blue-950/50 rounded-2xl mx-auto flex items-center justify-center text-3xl">👧</div>
             <div>
-                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Acesso Restrito</h2>
-                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Guarda Compartilhada (Nuvem)</p>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Acesso por Digital</h2>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Valide sua biometria para abrir</p>
             </div>
-            
-            <form onsubmit="verificarLogin(event)" class="space-y-3 text-left">
-                <div>
-                    <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase mb-1">Senha (PIN)</label>
-                    <input type="password" id="input-senha" required placeholder="••••" class="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white">
-                </div>
-                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition text-sm shadow-sm">
-                    Entrar com Senha PIN
-                </button>
-            </form>
 
-            <button type="button" onclick="entrarComBiometria()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-3 rounded-xl transition text-sm shadow-sm flex items-center justify-center gap-2">
-                <span>🔐</span> Entrar com Biometria
+            <!-- BOTÃO ÚNICO DE BIOMETRIA / DIGITAL -->
+            <button type="button" onclick="entrarComBiometria()" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3.5 rounded-2xl transition text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer">
+                <span class="text-lg">👆</span>
+                <span>Validar Digital</span>
             </button>
 
-            <p id="erro-senha" class="text-xs text-red-500 hidden font-medium">Senha incorreta! A senha correta é 1510.</p>
+            <p id="erro-senha" class="text-xs text-red-500 hidden font-medium">Leitura não reconhecida. Tente novamente.</p>
         </div>
     </div>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <div id="conteudo-site" class="hidden max-w-lg mx-auto p-2.5 space-y-2.5">
+    <div id="conteudo-site" class="max-w-lg mx-auto p-2.5 space-y-2.5">
         
         <!-- TÍTULO PRINCIPAL NO TOPO -->
         <div class="text-center py-1 flex justify-between items-center px-1">
@@ -225,8 +217,8 @@
             <button onclick="instalarApp()" class="px-2.5 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-xs font-bold transition flex items-center gap-1" title="Instalar App no Celular">
                 📱 Instalar
             </button>
-            <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1" title="Sair">
-                🔒 Sair
+            <button onclick="bloquearNovamente()" class="px-2.5 py-1.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 text-xs font-medium transition flex items-center gap-1 md:hidden" title="Bloquear Celular">
+                🔒 Bloquear
             </button>
             <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 ml-1">v2.7 (Nuvem)</span>
         </div>
@@ -240,7 +232,6 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_54ORrLbP7naW7n-KlKCdUA_hZnpjguH';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        const SENHA_MESTRA = "1510";
         let anoAtual = 2026;
         let mesAtual = 8;
         const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
@@ -385,41 +376,41 @@
             abrirGerenciadorMotivos();
         }
 
-        window.addEventListener('DOMContentLoaded', async () => {
+        // --- SISTEMA DE BLOQUEIO / BIOMETRIA ---
+        function ehDispositivoMovel() {
+            return window.innerWidth < 768;
+        }
+
+        function bloquearNovamente() {
+            if (!ehDispositivoMovel()) return; // PC nunca bloqueia
+            sessionStorage.removeItem('autenticado_calendario');
+            document.getElementById('conteudo-site').classList.add('hidden');
+            const telaLogin = document.getElementById('tela-login');
+            telaLogin.classList.remove('hidden');
+            document.getElementById('erro-senha').classList.add('hidden');
+        }
+
+        async function liberarAcesso() {
             await sincronizarComNuvem();
-
-            if (sessionStorage.getItem('autenticado_calendario') === 'true') {
-                liberarAcesso();
-            }
-            if (localStorage.getItem('dark_mode') === 'true') {
-                document.documentElement.classList.add('dark');
-            }
-        });
-
-        function verificarLogin(e) {
-            e.preventDefault();
-            const senhaDigitada = document.getElementById('input-senha').value;
-            const erroEl = document.getElementById('erro-senha');
-
-            if (senhaDigitada === SENHA_MESTRA) {
-                sessionStorage.setItem('autenticado_calendario', 'true');
-                liberarAcesso();
-            } else {
-                erroEl.classList.remove('hidden');
-                document.getElementById('input-senha').value = '';
-                document.getElementById('input-senha').focus();
-            }
+            document.getElementById('tela-login').classList.add('hidden');
+            document.getElementById('conteudo-site').classList.remove('hidden');
+            renderizar();
         }
 
         async function entrarComBiometria() {
+            const erroEl = document.getElementById('erro-senha');
+            erroEl.classList.add('hidden');
+
             if (!window.PublicKeyCredential) {
-                alert("O seu navegador não suporta autenticação biométrica.");
+                erroEl.innerText = "Biometria indisponível neste navegador.";
+                erroEl.classList.remove('hidden');
                 return;
             }
             try {
                 const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
                 if (!available) {
-                    alert("Nenhum leitor biométrico encontrado neste aparelho.");
+                    erroEl.innerText = "Nenhuma biometria ativa configurada no aparelho.";
+                    erroEl.classList.remove('hidden');
                     return;
                 }
 
@@ -458,24 +449,46 @@
                     liberarAcesso();
                 }
             } catch (error) {
-                alert("Biometria cancelada ou não configurada. Podes usar a senha PIN (1510).");
+                if (error.name !== "NotAllowedError") {
+                    erroEl.innerText = "Falha biométrica. Tente novamente.";
+                    erroEl.classList.remove('hidden');
+                }
             }
         }
 
-        async function liberarAcesso() {
-            await sincronizarComNuvem();
-            document.getElementById('tela-login').classList.add('hidden');
-            document.getElementById('conteudo-site').classList.remove('hidden');
-            renderizar();
-        }
+        // Auto-Lock ao minimizar ou desligar a tela no celular
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                bloquearNovamente();
+            } else if (ehDispositivoMovel() && sessionStorage.getItem('autenticado_calendario') !== 'true') {
+                setTimeout(entrarComBiometria, 300);
+            }
+        });
 
-        function bloquearNovamente() {
-            sessionStorage.removeItem('autenticado_calendario');
-            document.getElementById('conteudo-site').classList.add('hidden');
-            document.getElementById('tela-login').classList.remove('hidden');
-            document.getElementById('input-senha').value = '';
-            document.getElementById('erro-senha').classList.add('hidden');
-        }
+        window.addEventListener('blur', () => {
+            bloquearNovamente();
+        });
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            if (localStorage.getItem('dark_mode') === 'true') {
+                document.documentElement.classList.add('dark');
+            }
+
+            // No computador: entra direto
+            if (!ehDispositivoMovel()) {
+                sessionStorage.setItem('autenticado_calendario', 'true');
+                await liberarAcesso();
+                return;
+            }
+
+            // No celular: verifica sessão ou dispara biometria
+            if (sessionStorage.getItem('autenticado_calendario') === 'true') {
+                await liberarAcesso();
+            } else {
+                bloquearNovamente();
+                setTimeout(entrarComBiometria, 400);
+            }
+        });
 
         function alternarDarkMode() {
             document.documentElement.classList.toggle('dark');
