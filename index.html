@@ -2216,5 +2216,126 @@
 })();
 </script>
 
+
+<!-- ============================================================
+     V3 — PACOTE DE MELHORIAS ADITIVAS
+     Este bloco é somente adicional. Não altera as regras/dias originais.
+     ============================================================ -->
+<style>
+  #v3HojeCard{margin:0 0 10px;border:1px solid #dbeafe;border-radius:20px;padding:15px;background:linear-gradient(135deg,#eff6ff,#eef2ff);box-shadow:0 8px 24px rgba(37,99,235,.08)}
+  .dark #v3HojeCard{background:linear-gradient(135deg,#172554,#1e1b4b);border-color:#374151}
+  .v3-hoje-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .v3-hoje-title{font-size:13px;font-weight:800;opacity:.75}.v3-hoje-resp{font-size:24px;font-weight:950;margin-top:2px}.v3-hoje-date{font-size:12px;opacity:.7;margin-top:2px}
+  .v3-next{margin-top:11px;padding-top:11px;border-top:1px solid rgba(100,116,139,.2);display:flex;justify-content:space-between;gap:10px;align-items:center}
+  .v3-next strong{font-size:14px}.v3-countdown{font-size:12px;font-weight:900;padding:7px 10px;border-radius:999px;background:#fff;color:#4338ca;white-space:nowrap}.dark .v3-countdown{background:#0f172a;color:#c7d2fe}
+  #v3HojeBtn{border:0;border-radius:12px;padding:9px 11px;font-weight:900;background:#4f46e5;color:#fff;cursor:pointer}
+  #v3FabHoje{position:fixed;right:16px;bottom:148px;z-index:79;border:0;border-radius:999px;padding:11px 14px;font-weight:900;box-shadow:0 10px 28px rgba(0,0,0,.18);cursor:pointer;background:#0f766e;color:#fff}
+  #v3Modal{position:fixed;inset:0;z-index:110;display:none;background:rgba(2,6,23,.66);backdrop-filter:blur(6px);padding:14px;overflow:auto}
+  #v3Modal.open{display:block}.v3-box{max-width:820px;margin:10px auto 30px;background:#fff;color:#111827;border-radius:24px;overflow:hidden;box-shadow:0 25px 70px rgba(0,0,0,.32)}.dark .v3-box{background:#111827;color:#f9fafb}
+  .v3-head{padding:18px 20px;background:linear-gradient(135deg,#ecfeff,#eef2ff);display:flex;justify-content:space-between;align-items:center;gap:10px}.dark .v3-head{background:linear-gradient(135deg,#042f2e,#1e1b4b)}
+  .v3-head h2{margin:0;font-size:20px}.v3-close{border:0;border-radius:12px;padding:8px 11px;background:rgba(255,255,255,.72);cursor:pointer;font-size:18px}
+  .v3-body{padding:16px}.v3-tabs{display:flex;gap:8px;overflow:auto;margin-bottom:14px}.v3-tab{border:0;border-radius:12px;padding:9px 12px;font-weight:850;cursor:pointer;background:#f3f4f6;color:#374151;white-space:nowrap}.dark .v3-tab{background:#1f2937;color:#e5e7eb}.v3-tab.active{background:#4f46e5;color:#fff}
+  .v3-sec{display:none}.v3-sec.active{display:block}.v3-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v3-card{border:1px solid #e5e7eb;border-radius:18px;padding:14px;background:#fff}.dark .v3-card{border-color:#374151;background:#0f172a}.v3-card h3{margin:0 0 7px;font-size:14px}.v3-big{font-size:22px;font-weight:950}.v3-muted{font-size:12px;color:#6b7280}.dark .v3-muted{color:#9ca3af}
+  .v3-bar{height:12px;border-radius:999px;background:#e5e7eb;overflow:hidden;display:flex;margin-top:9px}.dark .v3-bar{background:#374151}.v3-bar-mae{background:#ec4899}.v3-bar-pai{background:#3b82f6}.v3-legend{display:flex;justify-content:space-between;font-size:12px;margin-top:6px}
+  .v3-event{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #e5e7eb}.dark .v3-event{border-color:#374151}.v3-event:last-child{border-bottom:0}.v3-event-icon{font-size:20px}
+  .v3-share-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.v3-action{border:0;border-radius:13px;padding:11px;font-weight:850;cursor:pointer;background:#eef2ff;color:#3730a3}.dark .v3-action{background:#1e1b4b;color:#c7d2fe}.v3-action.secondary{background:#ecfdf5;color:#047857}.dark .v3-action.secondary{background:#052e2b;color:#a7f3d0}
+  .v3-search{width:100%;box-sizing:border-box;padding:12px;border:1px solid #d1d5db;border-radius:14px;background:transparent;color:inherit;margin-bottom:10px}.v3-filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px}.v3-filter{border:1px solid #d1d5db;background:transparent;color:inherit;border-radius:999px;padding:7px 10px;cursor:pointer;font-size:12px;font-weight:800}.v3-filter.active{background:#4f46e5;color:#fff;border-color:#4f46e5}.v3-result{padding:11px;border:1px solid #e5e7eb;border-radius:14px;margin-bottom:8px}.dark .v3-result{border-color:#374151}
+  .v3-annual{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.v3-month{border:1px solid #e5e7eb;border-radius:16px;padding:11px}.dark .v3-month{border-color:#374151}.v3-month b{display:block;margin-bottom:5px}.v3-mini{font-size:12px;line-height:1.65}.v3-progress{height:7px;border-radius:99px;background:#e5e7eb;overflow:hidden;margin-top:6px}.dark .v3-progress{background:#374151}.v3-progress>span{display:block;height:100%;background:#6366f1}
+  .v3-history-item{padding:10px 0;border-bottom:1px solid #e5e7eb}.dark .v3-history-item{border-color:#374151}.v3-history-item:last-child{border-bottom:0}
+  .v3-status{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:900;background:#ecfdf5;color:#047857}.v3-status.off{background:#fef2f2;color:#b91c1c}.dark .v3-status{background:#052e2b;color:#a7f3d0}.dark .v3-status.off{background:#450a0a;color:#fecaca}
+  @media(max-width:600px){#v3FabHoje{bottom:145px;right:14px}.v3-grid{grid-template-columns:1fr}.v3-annual{grid-template-columns:repeat(2,minmax(0,1fr))}.v3-share-row{grid-template-columns:1fr}.v3-box{margin-top:0}}
+</style>
+
+<button id="v3FabHoje" type="button">☀️ Hoje</button>
+
+<div id="v3Modal" aria-hidden="true">
+  <div class="v3-box">
+    <div class="v3-head"><div><h2>🚀 Central V3 da Sophia</h2><div class="v3-muted">Novos recursos — programação original preservada</div></div><button class="v3-close" id="v3Close" type="button">✕</button></div>
+    <div class="v3-body">
+      <div class="v3-tabs">
+        <button class="v3-tab active" data-v3-tab="hoje">☀️ Hoje</button>
+        <button class="v3-tab" data-v3-tab="resumo">📊 Estatísticas</button>
+        <button class="v3-tab" data-v3-tab="ano">🗓️ Ano</button>
+        <button class="v3-tab" data-v3-tab="eventos">📌 Eventos</button>
+        <button class="v3-tab" data-v3-tab="busca">🔎 Busca</button>
+        <button class="v3-tab" data-v3-tab="historico">🕘 Histórico</button>
+      </div>
+
+      <section class="v3-sec active" id="v3-hoje">
+        <div id="v3HojeGrid" class="v3-grid"></div>
+        <div class="v3-card" style="margin-top:12px"><h3>📲 Compartilhar</h3><div class="v3-share-row"><button class="v3-action" id="v3ShareHoje">📲 Hoje</button><button class="v3-action secondary" id="v3ShareMes">📆 Este mês</button><button class="v3-action" id="v3ShareTrocas">🔄 Próximas trocas</button><button class="v3-action secondary" id="v3ShareEventos">📌 Próximos eventos</button></div></div>
+      </section>
+
+      <section class="v3-sec" id="v3-resumo"><div id="v3ResumoGrid" class="v3-grid"></div></section>
+      <section class="v3-sec" id="v3-ano"><div class="v3-card"><h3 id="v3AnoTitulo">🗓️ 2026</h3><div id="v3AnoGrid" class="v3-annual"></div></div></section>
+      <section class="v3-sec" id="v3-eventos"><div class="v3-card"><h3>📌 Próximos acontecimentos</h3><div id="v3EventosLista"></div></div></section>
+      <section class="v3-sec" id="v3-busca"><input id="v3Search" class="v3-search" type="search" placeholder="Ex.: Natal, Pai, Mãe, férias, 25/12..."><div class="v3-filters"><button class="v3-filter active" data-filter="todos">Todos</button><button class="v3-filter" data-filter="mae">👩 Mãe</button><button class="v3-filter" data-filter="pai">👨 Pai</button><button class="v3-filter" data-filter="feriado">🎉 Feriados</button><button class="v3-filter" data-filter="evento">📌 Eventos</button></div><div id="v3Resultados"></div></section>
+      <section class="v3-sec" id="v3-historico"><div class="v3-card"><h3>🕘 Atividade recente</h3><div id="v3HistoricoLista"></div><button class="v3-action" id="v3LimparHistorico" style="margin-top:10px">🧹 Limpar histórico local</button></div></section>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const modal=document.getElementById('v3Modal'), close=document.getElementById('v3Close'), fab=document.getElementById('v3FabHoje');
+  if(!modal||!fab) return;
+  const histKey='guarda_v3_historico';
+  let filtro='todos';
+  const nomes=()=>window.nomesMeses||['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  function hoje(){const d=new Date();d.setHours(0,0,0,0);return d}
+  function fmt(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear()}
+  function info(y,m,d){try{return (typeof regraPadrao==='function'?regraPadrao(d,m,y):{})||{}}catch(e){return {}}}
+  function fer(y,m,d){try{return (window.feriados&& (feriados[y+'-'+m+'-'+d]||feriados[m+'-'+d]))||''}catch(e){return ''}}
+  function resp(r){return r==='mae'?'👩 Mãe':r==='pai'?'👨 Pai':'—'}
+  function dias(y,m){const n=new Date(y,m+1,0).getDate(),a=[];for(let d=1;d<=n;d++)a.push({y,m,d,info:info(y,m,d),fer:fer(y,m,d)});return a}
+  function cont(y,m){const a=dias(y,m);return {total:a.length,mae:a.filter(x=>x.info.resp==='mae').length,pai:a.filter(x=>x.info.resp==='pai').length}}
+  function proximaTroca(){const h=hoje();for(let i=0;i<370;i++){const d=new Date(h);d.setDate(h.getDate()+i);const a=info(d.getFullYear(),d.getMonth(),d.getDate());const n=new Date(d);n.setDate(d.getDate()+1);const b=info(n.getFullYear(),n.getMonth(),n.getDate());if(a.resp&&b.resp&&a.resp!==b.resp)return {data:n,resp:b.resp,de:d};}return null}
+  function eventos(){const h=hoje(),out=[];for(let i=0;i<180&&out.length<10;i++){const d=new Date(h);d.setDate(h.getDate()+i);const y=d.getFullYear(),m=d.getMonth(),day=d.getDate(),x=info(y,m,day),f=fer(y,m,day);if(f)out.push({d,icon:'🎉',title:f,kind:'feriado',resp:x.resp});if(x.emenda||x.grampinho)out.push({d,icon:'🔗',title:'Emenda de feriado',kind:'evento',resp:x.resp});if(x.desc&& !['Mãe','FDS Pai','Pai'].includes(x.desc))out.push({d,icon:'📌',title:x.desc,kind:'evento',resp:x.resp});}return out.slice(0,10)}
+  function diffText(n){if(n===0)return 'Hoje';if(n===1)return 'Amanhã';return 'Em '+n+' dias'}
+  function renderHoje(){const el=document.getElementById('v3HojeGrid');if(!el)return;const h=hoje(),x=info(h.getFullYear(),h.getMonth(),h.getDate()),t=proximaTroca(),c=cont(typeof anoAtual==='number'?anoAtual:h.getFullYear(),typeof mesAtual==='number'?mesAtual:h.getMonth());let next='<div class="v3-muted">Nenhuma troca encontrada</div>';if(t){const n=Math.round((t.data-h)/86400000);next='<div class="v3-big">'+resp(t.resp)+'</div><div class="v3-muted">'+fmt(t.data)+' • '+diffText(n)+'</div>'}
+    const f=fer(h.getFullYear(),h.getMonth(),h.getDate());
+    const online=navigator.onLine;
+    el.innerHTML='<div class="v3-card"><h3>👧 Sophia está com</h3><div class="v3-big">'+resp(x.resp)+'</div><div class="v3-muted">'+fmt(h)+(x.desc?' • '+x.desc:'')+'</div></div><div class="v3-card"><h3>🔄 Próxima troca</h3>'+next+'</div><div class="v3-card"><h3>🎉 Hoje</h3><div class="v3-big">'+(f||'Sem feriado')+'</div><div class="v3-muted">'+(f?'Feriado cadastrado':'Nenhum feriado cadastrado')+'</div></div><div class="v3-card"><h3>☁️ Conexão</h3><div><span class="v3-status '+(online?'':'off')+'">'+(online?'🟢 Online':'🔴 Offline')+'</span></div><div class="v3-muted" style="margin-top:7px">O app pode continuar usando os dados locais.</div></div><div class="v3-card"><h3>📊 '+nomes()[typeof mesAtual==='number'?mesAtual:h.getMonth()]+' '+(typeof anoAtual==='number'?anoAtual:h.getFullYear())+'</h3><div class="v3-big">'+c.mae+' × '+c.pai+'</div><div class="v3-muted">Mãe × Pai</div></div><div class="v3-card"><h3>📌 Próximo evento</h3><div class="v3-big">'+(eventos()[0]?eventos()[0].icon:'—')+'</div><div class="v3-muted">'+(eventos()[0]?fmt(eventos()[0].d)+' • '+eventos()[0].title:'Nenhum encontrado')+'</div></div>';
+  }
+  function renderResumo(){const el=document.getElementById('v3ResumoGrid');if(!el)return;const y=typeof anoAtual==='number'?anoAtual:hoje().getFullYear(),m=typeof mesAtual==='number'?mesAtual:hoje().getMonth(),c=cont(y,m),pm=c.total?c.mae/c.total*100:0,pp=c.total?c.pai/c.total*100:0;let am=0,ap=0,at=0;for(let i=0;i<12;i++){const q=cont(y,i);am+=q.mae;ap+=q.pai;at+=q.total}el.innerHTML='<div class="v3-card"><h3>👩 Mãe — '+nomes()[m]+'</h3><div class="v3-big">'+c.mae+' dias</div><div class="v3-muted">'+pm.toFixed(1)+'%</div></div><div class="v3-card"><h3>👨 Pai — '+nomes()[m]+'</h3><div class="v3-big">'+c.pai+' dias</div><div class="v3-muted">'+pp.toFixed(1)+'%</div></div><div class="v3-card"><h3>⚖️ Distribuição do mês</h3><div class="v3-bar"><span class="v3-bar-mae" style="width:'+pm+'%"></span><span class="v3-bar-pai" style="width:'+pp+'%"></span></div><div class="v3-legend"><span>👩 '+pm.toFixed(0)+'%</span><span>👨 '+pp.toFixed(0)+'%</span></div></div><div class="v3-card"><h3>🗓️ Acumulado anual</h3><div class="v3-big">'+at+' dias</div><div class="v3-muted">👩 '+am+' • 👨 '+ap+'</div></div><div class="v3-card"><h3>🎉 Feriados no ano</h3><div class="v3-big">'+dias(y,0).concat(...Array.from({length:11},(_,i)=>dias(y,i+1))).filter(x=>x.fer).length+'</div><div class="v3-muted">Conforme feriados cadastrados no app</div></div><div class="v3-card"><h3>📌 Eventos no ano</h3><div class="v3-big">'+eventosDoAno(y).length+'</div><div class="v3-muted">Emendas e períodos com descrição</div></div>'}
+  function eventosDoAno(y){const out=[];for(let m=0;m<12;m++)for(const x of dias(y,m))if(x.fer||x.info.emenda||x.info.grampinho||(x.info.desc&&!['Mãe','FDS Pai','Pai'].includes(x.info.desc)))out.push(x);return out}
+  function renderAno(){const el=document.getElementById('v3AnoGrid'),t=document.getElementById('v3AnoTitulo');if(!el)return;const y=typeof anoAtual==='number'?anoAtual:hoje().getFullYear();t.textContent='🗓️ Visão anual — '+y;el.innerHTML=Array.from({length:12},(_,m)=>{const c=cont(y,m),p=c.total?c.mae/c.total*100:0;return '<div class="v3-month"><b>'+nomes()[m]+'</b><div class="v3-mini">👩 '+c.mae+' • 👨 '+c.pai+' • 📅 '+c.total+'</div><div class="v3-progress"><span style="width:'+p+'%"></span></div><div class="v3-muted" style="margin-top:5px">Mãe '+p.toFixed(0)+'% • Pai '+(100-p).toFixed(0)+'%</div></div>'}).join('')}
+  function renderEventos(){const el=document.getElementById('v3EventosLista');if(!el)return;const ev=eventos();el.innerHTML=ev.length?ev.map(x=>'<div class="v3-event"><div class="v3-event-icon">'+x.icon+'</div><div><b>'+fmt(x.d)+'</b><br>'+x.title+' <span class="v3-muted">'+resp(x.resp)+'</span></div></div>').join(''):'<div class="v3-muted">Nenhum evento encontrado.</div>'}
+  function renderBusca(){const input=document.getElementById('v3Search'),out=document.getElementById('v3Resultados');if(!input||!out)return;const q=(input.value||'').trim().toLowerCase();if(!q){out.innerHTML='<div class="v3-muted">Digite uma data, motivo, feriado ou responsável.</div>';return}const y0=2026,y1=Math.max(y0,typeof anoAtual==='number'?anoAtual:y0),arr=[];for(let y=y0;y<=y1;y++)for(let m=0;m<12;m++)for(const x of dias(y,m)){const pessoa=x.info.resp||'',texto=(fmt(new Date(y,m,x.d))+' '+pessoa+' '+(x.info.desc||'')+' '+(x.fer||'')).toLowerCase();const okFilter=filtro==='todos'||(filtro==='mae'&&pessoa==='mae')||(filtro==='pai'&&pessoa==='pai')||(filtro==='feriado'&&x.fer)||(filtro==='evento'&&(x.info.emenda||x.info.grampinho||x.info.desc&&!['Mãe','FDS Pai','Pai'].includes(x.info.desc)));if(okFilter&&texto.includes(q))arr.push(x);if(arr.length>=60)break}out.innerHTML=arr.length?arr.map(x=>'<div class="v3-result"><b>'+fmt(new Date(x.y,x.m,x.d))+'</b> — '+resp(x.info.resp)+'<br><span class="v3-muted">'+(x.fer||x.info.desc||'Dia da guarda')+'</span></div>').join(''):'<div class="v3-muted">Nada encontrado.</div>'}
+  function getHist(){try{return JSON.parse(localStorage.getItem(histKey)||'[]')}catch(e){return []}}
+  function addHist(tipo,det){const a=getHist();a.unshift({t:new Date().toLocaleString('pt-BR'),tipo,det});localStorage.setItem(histKey,JSON.stringify(a.slice(0,30)));renderHistorico()}
+  function renderHistorico(){const el=document.getElementById('v3HistoricoLista');if(!el)return;const a=getHist();el.innerHTML=a.length?a.map(x=>'<div class="v3-history-item"><b>'+x.tipo+'</b><br><span class="v3-muted">'+x.t+' — '+x.det+'</span></div>').join(''):'<div class="v3-muted">Ainda não há atividades registradas nesta versão.</div>'}
+  function resumoHoje(){const h=hoje(),x=info(h.getFullYear(),h.getMonth(),h.getDate()),t=proximaTroca();return '👧 Sophia — Hoje\n📅 '+fmt(h)+'\n'+resp(x.resp)+(x.desc?' — '+x.desc:'')+'\n'+(t?'🔄 Próxima troca: '+fmt(t.data)+' — '+resp(t.resp):'🔄 Próxima troca: não encontrada')}
+  function resumoMes(){const y=typeof anoAtual==='number'?anoAtual:hoje().getFullYear(),m=typeof mesAtual==='number'?mesAtual:hoje().getMonth(),c=cont(y,m),pm=c.total?c.mae/c.total*100:0,pp=c.total?c.pai/c.total*100:0;return '👧 Sophia — '+nomes()[m]+' '+y+'\n👩 Mãe: '+c.mae+' dias ('+pm.toFixed(1)+'%)\n👨 Pai: '+c.pai+' dias ('+pp.toFixed(1)+'%)\n📅 Total: '+c.total+' dias'}
+  function resumoTrocas(){const h=hoje(),a=[];let cur=info(h.getFullYear(),h.getMonth(),h.getDate()).resp;for(let i=1;i<90&&a.length<6;i++){const d=new Date(h);d.setDate(h.getDate()+i);const x=info(d.getFullYear(),d.getMonth(),d.getDate()).resp;if(x&&cur&&x!==cur){a.push(fmt(d)+' — '+resp(x));cur=x}}return '🔄 Próximas trocas\n'+(a.length?a.join('\n'):'Nenhuma encontrada')}
+  function resumoEventos(){const ev=eventos();return '📌 Próximos eventos\n'+(ev.length?ev.map(x=>fmt(x.d)+' — '+x.title+' '+resp(x.resp)).join('\n'):'Nenhum encontrado')}
+  async function compartilhar(texto){try{await navigator.clipboard.writeText(texto);if(typeof mostrarToast==='function')mostrarToast('📋 Copiado para compartilhar');else alert('Copiado!')}catch(e){window.prompt('Copie o texto:',texto)}}
+  function abrir(){modal.classList.add('open');modal.setAttribute('aria-hidden','false');renderTudo();addHist('Acesso','Central V3 aberta')}
+  function fechar(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true')}
+  function renderTudo(){renderHoje();renderResumo();renderAno();renderEventos();renderBusca();renderHistorico()}
+  fab.addEventListener('click',abrir);close.addEventListener('click',fechar);modal.addEventListener('click',e=>{if(e.target===modal)fechar()});document.addEventListener('keydown',e=>{if(e.key==='Escape')fechar()});
+  document.querySelectorAll('.v3-tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.v3-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.v3-sec').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('v3-'+b.dataset.v3Tab).classList.add('active');renderTudo()}));
+  document.querySelectorAll('.v3-filter').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.v3-filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');filtro=b.dataset.filter;renderBusca()}));
+  document.getElementById('v3Search').addEventListener('input',renderBusca);
+  document.getElementById('v3ShareHoje').addEventListener('click',()=>compartilhar(resumoHoje()));
+  document.getElementById('v3ShareMes').addEventListener('click',()=>compartilhar(resumoMes()));
+  document.getElementById('v3ShareTrocas').addEventListener('click',()=>compartilhar(resumoTrocas()));
+  document.getElementById('v3ShareEventos').addEventListener('click',()=>compartilhar(resumoEventos()));
+  document.getElementById('v3LimparHistorico').addEventListener('click',()=>{localStorage.removeItem(histKey);renderHistorico();});
+  window.addEventListener('online',renderTudo);window.addEventListener('offline',renderTudo);window.addEventListener('guarda:extras-atualizar',renderTudo);
+
+  // Cartão "Modo Hoje" inserido na tela principal, sem substituir nenhum elemento original.
+  function inserirCardHoje(){if(document.getElementById('v3HojeCard'))return;const cal=document.getElementById('calendarioGrid');if(!cal||!cal.parentElement)return;const card=document.createElement('div');card.id='v3HojeCard';cal.parentElement.insertBefore(card,cal);atualizarCardHoje();}
+  function atualizarCardHoje(){const card=document.getElementById('v3HojeCard');if(!card)return;const h=hoje(),x=info(h.getFullYear(),h.getMonth(),h.getDate()),t=proximaTroca();let n='—',dt='';if(t){n=resp(t.resp);dt=fmt(t.data);const dif=Math.round((t.data-h)/86400000);dt+=' • '+diffText(dif)}card.innerHTML='<div class="v3-hoje-top"><div><div class="v3-hoje-title">☀️ MODO HOJE</div><div class="v3-hoje-resp">'+resp(x.resp)+'</div><div class="v3-hoje-date">'+fmt(h)+(x.desc?' • '+x.desc:'')+'</div></div><button id="v3HojeBtn" type="button">Ver central</button></div><div class="v3-next"><div><div class="v3-hoje-title">🔄 Próxima troca</div><strong>'+n+'</strong><div class="v3-hoje-date">'+dt+'</div></div><div class="v3-countdown">'+(t?diffText(Math.round((t.data-h)/86400000)):'—')+'</div></div>';
+    document.getElementById('v3HojeBtn')?.addEventListener('click',abrir);
+  }
+  // Registro aditivo de ações relevantes. A função original continua sendo executada integralmente.
+  function envolver(nome,rotulo){try{const original=window[nome];if(typeof original!=='function'||original.__v3wrapped)return;const wrap=function(){const r=original.apply(this,arguments);try{addHist(rotulo,'Ação executada no aplicativo')}catch(e){}return r};wrap.__v3wrapped=true;window[nome]=wrap}catch(e){}}
+  function iniciar(){inserirCardHoje();envolver('aplicarPeriodo','Período');envolver('salvarEdicao','Edição');envolver('apagarEdicao','Exclusão');setInterval(()=>{atualizarCardHoje();if(modal.classList.contains('open'))renderTudo()},60000)}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',iniciar);else iniciar();
+})();
+</script>
+
 </body>
 </html>
