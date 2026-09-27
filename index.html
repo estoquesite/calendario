@@ -1676,9 +1676,6 @@
 
         function gerenarAnoCompletoPDF(anoIni, mesIni, anoFim, mesFim) {
             vibrar();
-            const dataEmissao = new Date().toLocaleDateString('pt-BR');
-            const hojeObj = new Date();
-            const dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
 
             anoIni = anoIni ?? anoAtual;
             mesIni = mesIni ?? mesAtual;
@@ -1689,190 +1686,181 @@
             <html lang="pt-BR">
             <head>
                 <meta charset="UTF-8">
-                <title>Guarda Compartilhada - Sophia</title>
+                <title>Guarda Compartilhada — Sophia</title>
                 <link rel="preconnect" href="https://fonts.googleapis.com">
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
                 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
                 <style>
                     @page {
                         size: A4 portrait;
-                        margin: 8mm 10mm 8mm 10mm;
+                        margin: 8mm 10mm;
                     }
                     * {
                         box-sizing: border-box;
                         -webkit-print-color-adjust: exact !important;
                         print-color-adjust: exact !important;
                     }
-                    body {
-                        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-                        color: #0f172a;
+                    html, body {
                         margin: 0;
                         padding: 0;
-                        background: #ffffff;
+                        background: #fff;
+                    }
+                    body {
+                        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+                        color: #1f2937;
                     }
                     .mes-pagina-impressao {
-                        page-break-inside: avoid !important;
-                        break-inside: avoid !important;
+                        width: 100%;
+                        min-height: 281mm;
+                        height: 281mm;
                         page-break-after: always;
                         break-after: page;
-                        box-sizing: border-box;
+                        display: flex;
+                        flex-direction: column;
                         padding: 0;
                     }
                     .mes-pagina-impressao:last-child {
-                        page-break-after: auto !important;
-                        break-after: auto !important;
+                        page-break-after: auto;
+                        break-after: auto;
                     }
-                    .cabecalho-mes {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        border-bottom: 2px solid #e2e8f0;
-                        padding-bottom: 5px;
-                        margin-bottom: 6px;
+                    .titulo-impressao {
+                        text-align: center;
+                        padding: 2mm 0 5mm;
                     }
-                    .titulo-bloco h1 {
-                        font-size: 16px;
-                        font-weight: 800;
+                    .titulo-impressao h1 {
                         margin: 0;
-                        color: #0f172a;
-                        display: flex;
-                        align-items: center;
-                        gap: 5px;
+                        font-size: 17pt;
+                        line-height: 1.15;
+                        font-weight: 800;
+                        color: #111827;
                     }
-                    .titulo-bloco p {
-                        font-size: 9.5px;
-                        color: #64748b;
-                        margin: 1px 0 0 0;
-                        font-weight: 600;
-                    }
-                    .resumo-dias {
-                        display: flex;
-                        gap: 6px;
-                        align-items: center;
-                    }
-                    .tag-resumo {
-                        font-size: 9.5px;
+                    .titulo-impressao .mes {
+                        margin-top: 2mm;
+                        font-size: 13pt;
+                        line-height: 1.2;
                         font-weight: 700;
-                        padding: 3px 8px;
-                        border-radius: 6px;
-                        display: flex;
-                        align-items: center;
-                        gap: 3px;
+                        color: #475569;
                     }
-                    .tag-mae { background: #ffe4e6; color: #be123c; border: 1px solid #fecdd3; }
-                    .tag-pai { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-
-                    table {
+                    .calendario-impressao {
                         width: 100%;
                         border-collapse: separate;
-                        border-spacing: 4px;
+                        border-spacing: 2.2mm;
                         table-layout: fixed;
                     }
-                    th {
+                    .calendario-impressao th {
+                        height: 8mm;
+                        padding: 0 0 1mm;
                         text-align: center;
-                        font-size: 9.5px;
+                        font-size: 8.5pt;
                         font-weight: 800;
                         color: #64748b;
                         text-transform: uppercase;
-                        letter-spacing: 0.5px;
-                        padding-bottom: 2px;
                     }
-                    td {
-                        width: 14.28%;
-                        height: 52px;
-                        max-height: 52px;
+                    .calendario-impressao td {
+                        height: 31mm;
                         vertical-align: top;
-                        border-radius: 6px;
-                        padding: 4px 5px;
-                        border: 1px solid transparent;
+                        padding: 3mm;
+                        border: 1px solid #e5e7eb;
+                        border-radius: 4mm;
                         overflow: hidden;
+                        background: #fff;
                     }
-                    td.vazio {
-                        background: #f8fafc;
-                        border: 1px dashed #e2e8f0;
-                        opacity: 0.35;
+                    .calendario-impressao td.vazio {
+                        border-color: #f1f5f9;
+                        background: #fafafa;
                     }
-                    td.mae {
-                        background-color: #fff1f2 !important;
-                        border-color: #fecdd3 !important;
+                    .calendario-impressao td.mae {
+                        background: #fff6f7 !important;
+                        border-color: #fbcfe8 !important;
                     }
-                    td.pai {
-                        background-color: #f0f9ff !important;
-                        border-color: #bae6fd !important;
+                    .calendario-impressao td.pai {
+                        background: #f5faff !important;
+                        border-color: #cfe8f8 !important;
                     }
-                    td.past-day {
-                        opacity: 0.5;
-                    }
-                    td.past-day .num-dia {
-                        position: relative;
-                        color: #64748b;
-                    }
-                    td.past-day .num-dia::after {
-                        content: "";
-                        position: absolute;
-                        left: -2px;
-                        right: -2px;
-                        top: 50%;
-                        height: 1.5px;
-                        background-color: #475569;
-                        transform: translateY(-50%);
-                    }
-
-                    .dia-topo {
+                    .dia-topo-impressao {
                         display: flex;
-                        justify-content: space-between;
                         align-items: center;
-                        margin-bottom: 2px;
+                        justify-content: space-between;
+                        gap: 2mm;
                     }
-                    .num-dia {
-                        font-size: 11px;
+                    .num-dia-impressao {
+                        font-size: 12pt;
                         font-weight: 800;
-                        color: #0f172a;
+                        color: #111827;
                     }
-                    .sigla-resp {
-                        font-size: 7.5px;
+                    .sigla-impressao {
+                        font-size: 7pt;
                         font-weight: 800;
-                        padding: 1px 3px;
-                        border-radius: 3px;
+                        padding: 1mm 2mm;
+                        border-radius: 2mm;
                     }
-                    .sigla-m { color: #e11d48; background: #ffe4e6; }
-                    .sigla-p { color: #0284c7; background: #e0f2fe; }
-
-                    .desc-evento {
-                        font-size: 7.5px;
-                        font-weight: 700;
-                        line-height: 1.1;
-                        color: #334155;
-                        background: rgba(255, 255, 255, 0.9);
-                        padding: 1.5px 3.5px;
-                        border-radius: 3px;
-                        display: block;
-                        border: 1px solid rgba(0,0,0,0.06);
-                        margin-top: 2px;
-                        white-space: nowrap;
+                    .sigla-m-impressao {
+                        color: #be123c;
+                        background: #ffe4e6;
+                    }
+                    .sigla-p-impressao {
+                        color: #0369a1;
+                        background: #e0f2fe;
+                    }
+                    .evento-impressao {
+                        margin-top: 3mm;
+                        padding: 1.5mm 2mm;
+                        border-radius: 2mm;
+                        background: rgba(255,255,255,.8);
+                        border: 1px solid rgba(148,163,184,.18);
+                        font-size: 7.5pt;
+                        line-height: 1.25;
+                        font-weight: 600;
+                        color: #475569;
                         overflow: hidden;
                         text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
-
-                    .caixa-regra {
-                        background: #f8fafc;
-                        border: 1px solid #e2e8f0;
-                        border-radius: 6px;
-                        padding: 6px 10px;
-                        font-size: 9.5px;
-                        line-height: 1.35;
-                        color: #334155;
-                        margin-top: 6px;
+                    .marcadores-impressao {
+                        display: inline-flex;
+                        gap: 1.5mm;
+                        margin-left: 2mm;
+                        vertical-align: middle;
                     }
-                    .rodape-documento {
+                    .marcador {
+                        width: 2.3mm;
+                        height: 2.3mm;
+                        border-radius: 50%;
+                        display: inline-block;
+                    }
+                    .marcador-verde { background: #10b981; }
+                    .marcador-vermelho { background: #ef4444; }
+                    .marcador-azul { background: #3b82f6; }
+                    .legenda-impressao {
                         display: flex;
-                        justify-content: space-between;
+                        justify-content: center;
                         align-items: center;
-                        font-size: 8px;
-                        color: #94a3b8;
-                        border-top: 1px solid #f1f5f9;
-                        padding-top: 4px;
-                        margin-top: 4px;
+                        gap: 7mm;
+                        padding: 4mm 0 3mm;
+                        font-size: 7.5pt;
+                        font-weight: 600;
+                        color: #64748b;
+                    }
+                    .item-legenda {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 1.5mm;
+                    }
+                    .regra-impressao {
+                        margin-top: auto;
+                        padding: 3mm 4mm;
+                        border-top: 1px solid #e5e7eb;
+                        font-size: 8pt;
+                        line-height: 1.35;
+                        color: #64748b;
+                        text-align: center;
+                    }
+                    .regra-impressao strong {
+                        color: #475569;
+                    }
+                    @media print {
+                        html, body { width: 210mm; }
+                        .mes-pagina-impressao { height: 281mm; min-height: 281mm; }
                     }
                 </style>
             </head>
@@ -1881,90 +1869,85 @@
             for (let y = anoIni; y <= anoFim; y++) {
                 let startM = (y === anoIni) ? mesIni : 0;
                 let endM = (y === anoFim) ? mesFim : 11;
+
                 for (let m = startM; m <= endM; m++) {
                     let primeiroDia = new Date(y, m, 1).getDay();
                     let totalDias = new Date(y, m + 1, 0).getDate();
                     let mesNome = nomesMeses[m];
                     let chaveRegra = `${y}-${m}`;
-                    let regra = regrasPorAnoMes[chaveRegra] || `Guarda Compartilhada (2º e 4º finais de semana com o Pai).`;
+                    let regra = (regrasPorAnoMes && regrasPorAnoMes[chaveRegra]) ? regrasPorAnoMes[chaveRegra] : '';
 
-                    let contMae = 0;
-                    let contPai = 0;
-                    for (let d = 1; d <= totalDias; d++) {
-                        let inf = regraPadrao(d, m, y);
-                        if (inf.resp === 'mae') contMae++;
-                        else contPai++;
-                    }
-
-                    let tableHtml = '<table><thead><tr><th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th></tr></thead><tbody><tr>';
+                    let tableHtml = '<table class="calendario-impressao"><thead><tr><th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th></tr></thead><tbody><tr>';
                     let colCount = 0;
+                    const hojeObj = new Date();
+                    const dataHoje = new Date(hojeObj.getFullYear(), hojeObj.getMonth(), hojeObj.getDate());
 
                     for (let i = 0; i < primeiroDia; i++) {
-                        tableHtml += `<td class="vazio"></td>`;
+                        tableHtml += '<td class="vazio"></td>';
                         colCount++;
                     }
 
                     for (let d = 1; d <= totalDias; d++) {
                         if (colCount % 7 === 0 && colCount !== 0) tableHtml += '</tr><tr>';
+
                         let info = regraPadrao(d, m, y);
                         let feriadoNome = feriados[`${y}-${m}-${d}`] || feriados[`${m}-${d}`];
                         let temEmenda = !!(info.emenda || info.grampinho);
-                        let temDescDiferente = info.desc && !['Mãe', 'FDS Pai'].includes(info.desc);
-
                         let dataCelula = new Date(y, m, d);
-                        let isPassado = dataCelula < dataHoje;
                         let isHojeCell = dataCelula.getTime() === dataHoje.getTime();
 
-                        let pontosPdf = '';
-                        if (feriadoNome) pontosPdf += '<span style="color:#10b981;font-size:10px;margin-left:2px;">●</span>';
-                        if (temEmenda) pontosPdf += '<span style="color:#ef4444;font-size:10px;margin-left:2px;">●</span>';
-                        if (isHojeCell) pontosPdf += '<span style="color:#3b82f6;font-size:10px;margin-left:2px;">●</span>';
+                        let marcadores = '';
+                        if (feriadoNome) marcadores += '<span class="marcador marcador-verde"></span>';
+                        if (temEmenda) marcadores += '<span class="marcador marcador-vermelho"></span>';
+                        if (isHojeCell) marcadores += '<span class="marcador marcador-azul"></span>';
+
+                        let temDescDiferente = info.desc && !['Mãe', 'FDS Pai'].includes(info.desc);
 
                         tableHtml += `
-                            <td class="${info.resp === 'mae' ? 'mae' : 'pai'} ${isPassado ? 'past-day' : ''}">
-                                <div class="dia-topo">
-                                    <span class="num-dia">${d}${pontosPdf}</span>
-                                    <span class="sigla-resp ${info.resp === 'mae' ? 'sigla-m' : 'sigla-p'}">${info.resp === 'mae' ? 'MÃE' : 'PAI'}</span>
+                            <td class="${info.resp === 'mae' ? 'mae' : 'pai'}">
+                                <div class="dia-topo-impressao">
+                                    <span class="num-dia-impressao">${d}${marcadores ? `<span class="marcadores-impressao">${marcadores}</span>` : ''}</span>
+                                    <span class="sigla-impressao ${info.resp === 'mae' ? 'sigla-m-impressao' : 'sigla-p-impressao'}">${info.resp === 'mae' ? 'MÃE' : 'PAI'}</span>
                                 </div>
-                                ${temDescDiferente ? `<div class="desc-evento">${info.desc}</div>` : ''}
+                                ${temDescDiferente ? `<div class="evento-impressao">${info.desc}</div>` : ''}
                             </td>
                         `;
                         colCount++;
                     }
+
                     while (colCount % 7 !== 0) {
-                        tableHtml += `<td class="vazio"></td>`;
+                        tableHtml += '<td class="vazio"></td>';
                         colCount++;
                     }
+
                     tableHtml += '</tr></tbody></table>';
 
+                    let regraHtml = regra
+                        ? `<div class="regra-impressao"><strong>Regra do mês:</strong> ${regra}</div>`
+                        : '';
+
                     htmlAnual += `
-                        <div class="mes-pagina-impressao">
-                            <div class="cabecalho-mes">
-                                <div class="titulo-bloco">
-                                    <h1>📅 ${mesNome} ${y}</h1>
-                                    <p>Guarda Compartilhada — Sophia</p>
-                                </div>
-                                <div class="resumo-dias">
-                                    <span class="tag-resumo tag-mae">👩 Mãe: ${contMae} dias</span>
-                                    <span class="tag-resumo tag-pai">👔 Pai: ${contPai} dias</span>
-                                </div>
+                        <section class="mes-pagina-impressao">
+                            <div class="titulo-impressao">
+                                <h1>Guarda Compartilhada — Sophia</h1>
+                                <div class="mes">${mesNome} ${y}</div>
                             </div>
-                            
+
                             ${tableHtml}
-                            
-                            <div class="caixa-regra">
-                                <b>Regra do Mês:</b> ${regra}
+
+                            <div class="legenda-impressao">
+                                <span class="item-legenda"><span class="marcador marcador-verde"></span>Feriado</span>
+                                <span class="item-legenda"><span class="marcador marcador-vermelho"></span>Emenda</span>
+                                <span class="item-legenda"><span class="marcador marcador-azul"></span>Hoje</span>
                             </div>
-                            <div class="rodape-documento">
-                                <span>Gerado pelo Aplicativo Guarda Compartilhada</span>
-                                <span>Emissão: ${dataEmissao}</span>
-                            </div>
-                        </div>
+
+                            ${regraHtml}
+                        </section>
                     `;
                 }
             }
 
-            htmlAnual += '<' + 'script>window.onload = function() { window.print(); }<' + '/script></body></html>';
+            htmlAnual += '<' + 'script>window.onload = function(){ setTimeout(function(){ window.print(); }, 150); }<' + '/script></body></html>';
 
             let blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
             let url = URL.createObjectURL(blob);
@@ -2240,7 +2223,7 @@
   .dark .v3-pai-badge{background:#172033;color:#93c5fd;border-color:#334155}
   @media(max-width:430px){#v3StatusRow{gap:8px}.v3-pai-title{font-size:8px}.v3-pai-text{font-size:11.5px}.v3-pai-badge{font-size:9.5px;padding:7px 9px}.v3-pai-icon{width:30px;height:30px;font-size:16px}.v3-pai-left{gap:8px}}
   @media(max-width:430px){#v3StatusRow{gap:7px}.v3-pai-title{font-size:8.5px}.v3-pai-text{font-size:12.5px}.v3-pai-date{font-size:9.5px}.v3-pai-badge{font-size:9px;padding:5px 7px}.v3-pai-icon{width:30px;height:30px;font-size:15px}}
-  #v3FabHoje{position:fixed;right:16px;bottom:86px;z-index:95;border:0;border-radius:999px;padding:12px 17px;font-weight:900;font-size:14px;letter-spacing:.01em;box-shadow:0 10px 28px rgba(0,0,0,.18);cursor:pointer;background:linear-gradient(135deg,#0f8b7f,#4f46e5);color:#fff;white-space:nowrap;display:flex;align-items:center;gap:7px}
+  #v3FabHoje{position:fixed;right:16px;bottom:86px;z-index:95;border:0;border-radius:999px;padding:11px 18px;font-weight:900;font-size:14px;letter-spacing:.01em;box-shadow:0 10px 26px rgba(0,0,0,.16);cursor:pointer;background:linear-gradient(135deg,#6d3df2,#4657e8);color:#fff;white-space:nowrap;display:flex;align-items:center;justify-content:center;gap:6px}
   #v3FabHoje:hover{filter:brightness(1.03)}
   #v3FabHoje:active{transform:scale(.98)}
   #v3Modal{position:fixed;inset:0;z-index:110;display:none;background:rgba(2,6,23,.66);backdrop-filter:blur(6px);padding:14px;overflow:auto}
@@ -2256,10 +2239,10 @@
   .v3-annual{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.v3-month{border:1px solid #e5e7eb;border-radius:16px;padding:11px}.dark .v3-month{border-color:#374151}.v3-month b{display:block;margin-bottom:5px}.v3-mini{font-size:12px;line-height:1.65}.v3-progress{height:7px;border-radius:99px;background:#e5e7eb;overflow:hidden;margin-top:6px}.dark .v3-progress{background:#374151}.v3-progress>span{display:block;height:100%;background:#6366f1}
   .v3-history-item{padding:10px 0;border-bottom:1px solid #e5e7eb}.dark .v3-history-item{border-color:#374151}.v3-history-item:last-child{border-bottom:0}
   .v3-status{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:12px;font-weight:900;background:#ecfdf5;color:#047857}.v3-status.off{background:#fef2f2;color:#b91c1c}.dark .v3-status{background:#052e2b;color:#a7f3d0}.dark .v3-status.off{background:#450a0a;color:#fecaca}
-  @media(max-width:600px){#v3FabHoje{bottom:82px;right:14px}#v3StatusRow{grid-template-columns:1fr;gap:8px}.v3-grid{grid-template-columns:1fr}.v3-annual{grid-template-columns:repeat(2,minmax(0,1fr))}.v3-share-row{grid-template-columns:1fr}.v3-box{margin-top:0}}
+  @media(max-width:600px){#v3FabHoje{bottom:82px;right:14px;padding:10px 16px;font-size:13px}#v3StatusRow{grid-template-columns:1fr;gap:8px}.v3-grid{grid-template-columns:1fr}.v3-annual{grid-template-columns:repeat(2,minmax(0,1fr))}.v3-share-row{grid-template-columns:1fr}.v3-box{margin-top:0}}
 </style>
 
-<button id="v3FabHoje" type="button" aria-label="Abrir Hoje e Extras">☀️ Hoje <span style="opacity:.72">•</span> ✨ Extras</button>
+<button id="v3FabHoje" type="button" aria-label="Abrir Extras">✨ Extras</button>
 
 <div id="v3Modal" aria-hidden="true">
   <div class="v3-box">
