@@ -1964,8 +1964,46 @@
                 }
             }
 
-            htmlAnual += '<' + 'script>window.onload = function() { window.print(); }<' + '/script>
+            htmlAnual += '<' + 'script>window.onload = function() { window.print(); }<' + '/script></body></html>';
 
+            let blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
+            let url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+        }
+
+        // INICIALIZAÇÃO
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+
+        carregarCacheLocal();
+        atualizarSelectMotivos();
+        configurarGestosSwipe();
+        configurarArrastoCalendario();
+
+        const campoDataIni = document.getElementById('dataInicio');
+        if (campoDataIni) {
+            campoDataIni.addEventListener('change', function() {
+                const fimInput = document.getElementById('dataFim');
+                if (!fimInput.value || fimInput.value < this.value) {
+                    fimInput.value = this.value;
+                }
+            });
+        }
+
+        sincronizarCamposPeriodoComMes(true);
+
+        if (ehDispositivoMovel() && !sessionStorage.getItem('auth_unlocked')) {
+            const telaLogin = document.getElementById('tela-login');
+            if (telaLogin) telaLogin.classList.remove('hidden');
+        }
+
+        setTimeout(() => {
+            sincronizarComNuvem();
+        }, 150);
+
+        renderizar();
+    </script>
 <!-- ============================================================
      V2 — ACRÉSCIMOS APENAS
      Nada acima deste bloco foi alterado.
@@ -2178,45 +2216,5 @@
 })();
 </script>
 
-</body></html>';
-
-            let blob = new Blob([htmlAnual], { type: 'text/html;charset=utf-8' });
-            let url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
-        }
-
-        // INICIALIZAÇÃO
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.classList.add('dark');
-        }
-
-        carregarCacheLocal();
-        atualizarSelectMotivos();
-        configurarGestosSwipe();
-        configurarArrastoCalendario();
-
-        const campoDataIni = document.getElementById('dataInicio');
-        if (campoDataIni) {
-            campoDataIni.addEventListener('change', function() {
-                const fimInput = document.getElementById('dataFim');
-                if (!fimInput.value || fimInput.value < this.value) {
-                    fimInput.value = this.value;
-                }
-            });
-        }
-
-        sincronizarCamposPeriodoComMes(true);
-
-        if (ehDispositivoMovel() && !sessionStorage.getItem('auth_unlocked')) {
-            const telaLogin = document.getElementById('tela-login');
-            if (telaLogin) telaLogin.classList.remove('hidden');
-        }
-
-        setTimeout(() => {
-            sincronizarComNuvem();
-        }, 150);
-
-        renderizar();
-    </script>
 </body>
 </html>
