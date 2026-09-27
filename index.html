@@ -1,3 +1,7 @@
+
+guarda_compartilhada_sophia_v3_refinado.html
+
+100%
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -256,129 +260,413 @@
         #v3FabHoje:hover { filter: brightness(1.05); transform: translateY(-1px); }
         #v3FabHoje:active { transform: scale(.98); }
 
-        /* MODAL EXTRAS (CENTRAL DA SOPHIA) */
+        /* MODAL EXTRAS (CENTRAL DA SOPHIA) - REFINADO */
         #v3Modal {
             position: fixed;
             inset: 0;
             z-index: 110;
             display: none;
-            background: rgba(2, 6, 23, .66);
-            backdrop-filter: blur(6px);
-            padding: 14px;
-            overflow: auto;
+            background: rgba(2, 6, 23, 0.68);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            padding: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: all 0.25s ease;
         }
-        #v3Modal.open { display: block; }
+        #v3Modal.open {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        @media (min-width: 640px) {
+            #v3Modal.open {
+                align-items: center;
+                padding: 18px;
+            }
+        }
         .v3-box {
-            max-width: 820px;
-            margin: 10px auto 30px;
-            background: #fff;
-            color: #111827;
-            border-radius: 24px;
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            background: #ffffff;
+            color: #0f172a;
+            border-top-left-radius: 32px;
+            border-top-right-radius: 32px;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
             overflow: hidden;
-            box-shadow: 0 25px 70px rgba(0, 0, 0, .32);
+            box-shadow: 0 -10px 45px rgba(0, 0, 0, 0.25);
+            max-height: 92vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .dark .v3-box { background: #111827; color: #f9fafb; }
+        @media (min-width: 640px) {
+            .v3-box {
+                border-radius: 28px;
+                box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+                max-height: 86vh;
+            }
+        }
+        @keyframes slideUpModal {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .dark .v3-box {
+            background: #0f172a;
+            color: #f8fafc;
+            border: 1px solid rgba(51, 65, 85, 0.7);
+        }
+        .v3-drag-handle {
+            width: 44px;
+            height: 5px;
+            border-radius: 999px;
+            background: #cbd5e1;
+            margin: 10px auto 4px;
+        }
+        .dark .v3-drag-handle { background: #334155; }
         .v3-head {
-            padding: 18px 20px;
-            background: linear-gradient(135deg, #ecfeff, #eef2ff);
+            padding: 12px 18px 14px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 10px;
         }
-        .dark .v3-head { background: linear-gradient(135deg, #042f2e, #1e1b4b); }
-        .v3-head h2 { margin: 0; font-size: 20px; font-weight: 800; }
-        .v3-close {
-            border: 0;
-            border-radius: 12px;
-            padding: 8px 11px;
-            background: rgba(255, 255, 255, .72);
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
+        .dark .v3-head {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-bottom-color: #334155;
         }
-        .dark .v3-close { background: rgba(31, 41, 55, .8); color: #fff; }
-        .v3-body { padding: 16px; }
+        .v3-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+        .v3-close:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .v3-close:active { transform: scale(0.92); }
+        .dark .v3-close {
+            background: #1e293b;
+            border-color: #475569;
+            color: #94a3b8;
+        }
+        .v3-body {
+            padding: 14px 16px 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+        }
         .v3-tabs {
             display: flex;
-            gap: 8px;
-            overflow: auto;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
             margin-bottom: 14px;
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
         .v3-tabs::-webkit-scrollbar { display: none; }
         .v3-tab {
-            border: 0;
-            border-radius: 12px;
-            padding: 9px 12px;
-            font-weight: 850;
+            flex: 0 0 auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 13px;
+            padding: 7px 12px;
+            font-size: 11.5px;
+            font-weight: 800;
             cursor: pointer;
-            background: #f3f4f6;
-            color: #374151;
-            white-space: nowrap;
-            transition: all 0.15s ease;
+            background: #f8fafc;
+            color: #475569;
+            transition: all 0.18s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            user-select: none;
         }
-        .dark .v3-tab { background: #1f2937; color: #e5e7eb; }
-        .v3-tab.active { background: #4f46e5; color: #fff; }
+        .dark .v3-tab {
+            background: #1e293b;
+            border-color: #334155;
+            color: #94a3b8;
+        }
+        .v3-tab.active {
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #ffffff;
+            border-color: #4f46e5;
+            box-shadow: 0 3px 10px rgba(79, 70, 229, 0.25);
+            transform: translateY(-1px);
+        }
+        .dark .v3-tab.active {
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            color: #0f172a;
+            border-color: #818cf8;
+        }
         .v3-sec { display: none; }
         .v3-sec.active { display: block; }
-        .v3-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-        .v3-card { border: 1px solid #e5e7eb; border-radius: 18px; padding: 14px; background: #fff; }
-        .dark .v3-card { border-color: #374151; background: #0f172a; }
-        .v3-card h3 { margin: 0 0 7px; font-size: 13px; font-weight: 800; color: #4b5563; }
-        .dark .v3-card h3 { color: #9ca3af; }
-        .v3-big { font-size: 20px; font-weight: 950; }
-        .v3-muted { font-size: 12px; color: #6b7280; }
-        .dark .v3-muted { color: #9ca3af; }
-        .v3-bar { height: 12px; border-radius: 999px; background: #e5e7eb; overflow: hidden; display: flex; margin-top: 9px; }
-        .dark .v3-bar { background: #374151; }
-        .v3-bar-mae { background: #ec4899; }
-        .v3-bar-pai { background: #3b82f6; }
-        .v3-legend { display: flex; justify-content: space-between; font-size: 12px; margin-top: 6px; font-weight: 700; }
-        .v3-event { display: flex; gap: 10px; padding: 11px 0; border-bottom: 1px solid #e5e7eb; align-items: flex-start; }
-        .dark .v3-event { border-color: #374151; }
-        .v3-event:last-child { border-bottom: 0; }
-        .v3-event-icon { font-size: 20px; }
-        .v3-share-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+
+        /* GRID REFINADO 2 COLUNAS */
+        .v3-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        @media (max-width: 480px) {
+            .v3-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+        }
+        .v3-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 12px 13px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-width: 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .dark .v3-card {
+            border-color: #334155;
+            background: #1e293b;
+            box-shadow: none;
+        }
+        .v3-card h3 {
+            margin: 0 0 5px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .dark .v3-card h3 { color: #94a3b8; }
+        .v3-big {
+            font-size: 17px;
+            line-height: 1.2;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.01em;
+        }
+        .dark .v3-big { color: #f8fafc; }
+        .v3-muted {
+            font-size: 11px;
+            line-height: 1.35;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        .dark .v3-muted { color: #94a3b8; }
+
+        /* HERO CARD HOJE */
+        .v3-card-hero {
+            grid-column: span 2 / span 2;
+            padding: 15px 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .v3-card-hero.mae-hero {
+            background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 50%, #fdf2f8 100%);
+            border: 1.5px solid #fecdd3;
+        }
+        .dark .v3-card-hero.mae-hero {
+            background: linear-gradient(135deg, rgba(136, 19, 55, 0.35) 0%, rgba(80, 7, 36, 0.45) 100%);
+            border-color: rgba(244, 63, 94, 0.4);
+        }
+        .v3-card-hero.pai-hero {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #eef2ff 100%);
+            border: 1.5px solid #bae6fd;
+        }
+        .dark .v3-card-hero.pai-hero {
+            background: linear-gradient(135deg, rgba(12, 74, 110, 0.35) 0%, rgba(30, 27, 75, 0.45) 100%);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        /* MINI PROGRESS BAR */
+        .v3-bar {
+            height: 9px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            overflow: hidden;
+            display: flex;
+            margin-top: 8px;
+        }
+        .dark .v3-bar { background: #334155; }
+        .v3-bar-mae { background: linear-gradient(90deg, #f43f5e, #ec4899); }
+        .v3-bar-pai { background: linear-gradient(90deg, #0ea5e9, #3b82f6); }
+        .v3-legend {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-top: 5px;
+            font-weight: 800;
+        }
+
+        /* WHATSAPP CONTAINER */
+        .v3-share-box {
+            margin-top: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 13px 14px;
+        }
+        .dark .v3-share-box {
+            background: #111827;
+            border-color: #334155;
+        }
+        .v3-share-row {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 9px;
+        }
         .v3-action {
-            border: 0; border-radius: 13px; padding: 11px; font-weight: 850; cursor: pointer;
-            background: #eef2ff; color: #3730a3; transition: all 0.15s ease;
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            padding: 9px 10px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            background: #eef2ff;
+            color: #3730a3;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-align: center;
         }
         .v3-action:hover { filter: brightness(0.97); }
-        .v3-action:active { transform: scale(0.98); }
-        .dark .v3-action { background: #1e1b4b; color: #c7d2fe; }
-        .v3-action.secondary { background: #ecfdf5; color: #047857; }
-        .dark .v3-action.secondary { background: #052e2b; color: #a7f3d0; }
-        .v3-search { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #d1d5db; border-radius: 14px; background: transparent; color: inherit; margin-bottom: 10px; }
-        .dark .v3-search { border-color: #374151; }
-        .v3-filters { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 10px; }
-        .v3-filter { border: 1px solid #d1d5db; background: transparent; color: inherit; border-radius: 999px; padding: 7px 10px; cursor: pointer; font-size: 12px; font-weight: 800; }
-        .dark .v3-filter { border-color: #374151; }
+        .v3-action:active { transform: scale(0.96); }
+        .dark .v3-action {
+            background: #1e1b4b;
+            color: #c7d2fe;
+            border-color: #3730a3;
+        }
+        .v3-action.secondary {
+            background: #ecfdf5;
+            color: #047857;
+            border-color: #a7f3d0;
+        }
+        .dark .v3-action.secondary {
+            background: #064e3b;
+            color: #a7f3d0;
+            border-color: #059669;
+        }
+
+        .v3-search {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 14px;
+            background: #f8fafc;
+            color: inherit;
+            margin-bottom: 10px;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .v3-search:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+        .dark .v3-search {
+            border-color: #334155;
+            background: #1e293b;
+        }
+        .v3-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+        .v3-filter {
+            border: 1px solid #cbd5e1;
+            background: transparent;
+            color: inherit;
+            border-radius: 999px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 800;
+            transition: all 0.15s ease;
+        }
+        .dark .v3-filter { border-color: #334155; }
         .v3-filter.active { background: #4f46e5; color: #fff; border-color: #4f46e5; }
-        .v3-result { padding: 11px; border: 1px solid #e5e7eb; border-radius: 14px; margin-bottom: 8px; background: #fff; }
-        .dark .v3-result { border-color: #374151; background: #1e293b; }
-        .v3-annual { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-        .v3-month { border: 1px solid #e5e7eb; border-radius: 16px; padding: 11px; background: #fff; }
-        .dark .v3-month { border-color: #374151; background: #0f172a; }
-        .v3-month b { display: block; margin-bottom: 5px; font-size: 13px; }
-        .v3-mini { font-size: 12px; line-height: 1.65; }
-        .v3-progress { height: 7px; border-radius: 99px; background: #e5e7eb; overflow: hidden; margin-top: 6px; }
-        .dark .v3-progress { background: #374151; }
+        .v3-result {
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            margin-bottom: 7px;
+            background: #fff;
+            font-size: 12px;
+        }
+        .dark .v3-result { border-color: #334155; background: #1e293b; }
+
+        .v3-annual { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+        @media(max-width:520px){ .v3-annual { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        .v3-month {
+            border: 1px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 10px;
+            background: #fff;
+        }
+        .dark .v3-month { border-color: #334155; background: #1e293b; }
+        .v3-month b { display: block; margin-bottom: 4px; font-size: 12px; }
+        .v3-mini { font-size: 11px; line-height: 1.5; color: #64748b; }
+        .dark .v3-mini { color: #94a3b8; }
+        .v3-progress { height: 6px; border-radius: 99px; background: #e2e8f0; overflow: hidden; margin-top: 6px; }
+        .dark .v3-progress { background: #334155; }
         .v3-progress > span { display: block; height: 100%; background: #6366f1; }
-        .v3-history-item { padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
-        .dark .v3-history-item { border-color: #374151; }
+
+        .v3-event {
+            display: flex;
+            gap: 10px;
+            padding: 9px 0;
+            border-bottom: 1px solid #f1f5f9;
+            align-items: flex-start;
+            font-size: 12px;
+        }
+        .dark .v3-event { border-color: #334155; }
+        .v3-event:last-child { border-bottom: 0; }
+        .v3-event-icon { font-size: 18px; line-height: 1; margin-top: 2px; }
+
+        .v3-history-item { padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
+        .dark .v3-history-item { border-color: #334155; }
         .v3-history-item:last-child { border-bottom: 0; }
-        .v3-status { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 999px; font-size: 12px; font-weight: 900; background: #ecfdf5; color: #047857; }
-        .v3-status.off { background: #fef2f2; color: #b91c1c; }
-        .dark .v3-status { background: #052e2b; color: #a7f3d0; }
-        .dark .v3-status.off { background: #450a0a; color: #fecaca; }
+
+        .v3-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 800;
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #a7f3d0;
+        }
+        .v3-status.off { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+        .dark .v3-status { background: #064e3b; color: #a7f3d0; border-color: #059669; }
+        .dark .v3-status.off { background: #450a0a; color: #fecaca; border-color: #991b1b; }
 
         @media(max-width:600px) {
             #v3FabHoje { bottom: 82px; right: 14px; padding: 10px 16px; font-size: 13px; }
             #v3StatusRow { grid-template-columns: 1fr; gap: 8px; }
-            .v3-grid { grid-template-columns: 1fr; }
-            .v3-annual { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .v3-share-row { grid-template-columns: 1fr; }
             .v3-box { margin-top: 0; }
         }
     </style>
@@ -794,15 +1082,22 @@
         </div>
     </div>
 
-    <!-- MODAL V3 EXTRAS: CENTRAL DA SOPHIA -->
+    <!-- MODAL V3 EXTRAS: CENTRAL DA SOPHIA (REFINADO) -->
     <div id="v3Modal" aria-hidden="true" class="print-hidden">
         <div class="v3-box">
+            <div class="v3-drag-handle sm:hidden"></div>
             <div class="v3-head">
-                <div>
-                    <h2>✨ Central da Sophia</h2>
-                    <div class="v3-muted">Informações em tempo real, estatísticas e busca</div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">✨</span>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-base sm:text-lg font-black tracking-tight text-gray-900 dark:text-white">Central da Sophia</h2>
+                            <span id="v3HeaderStatus" class="v3-status">🟢 Online</span>
+                        </div>
+                        <div class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Painel em tempo real & Estatísticas</div>
+                    </div>
                 </div>
-                <button class="v3-close" id="v3Close" type="button">✕</button>
+                <button class="v3-close" id="v3Close" type="button" title="Fechar Central">✕</button>
             </div>
             <div class="v3-body">
                 <div class="v3-tabs">
@@ -814,16 +1109,21 @@
                     <button class="v3-tab" data-v3-tab="historico">🕘 Histórico</button>
                 </div>
 
-                <!-- SEÇÃO HOJE -->
+                <!-- SEÇÃO HOJE REFINADA -->
                 <section class="v3-sec active" id="v3-hoje">
                     <div id="v3HojeGrid" class="v3-grid"></div>
-                    <div class="v3-card" style="margin-top:12px">
-                        <h3>📲 Compartilhar Resumos no WhatsApp</h3>
+                    <div class="v3-share-box">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-gray-800 dark:text-gray-200 uppercase tracking-wide flex items-center gap-1.5">
+                                <span>💬</span> Compartilhar no WhatsApp
+                            </span>
+                            <span class="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">Copia em 1 toque</span>
+                        </div>
                         <div class="v3-share-row">
-                            <button class="v3-action" id="v3ShareHoje">📲 Hoje</button>
-                            <button class="v3-action secondary" id="v3ShareMes">📆 Este mês</button>
-                            <button class="v3-action" id="v3ShareTrocas">🔄 Próximas trocas</button>
-                            <button class="v3-action secondary" id="v3ShareEventos">📌 Próximos eventos</button>
+                            <button class="v3-action" id="v3ShareHoje"><span>👧</span> Status de Hoje</button>
+                            <button class="v3-action secondary" id="v3ShareMes"><span>📆</span> Resumo do Mês</button>
+                            <button class="v3-action" id="v3ShareTrocas"><span>🔄</span> Próximas Trocas</button>
+                            <button class="v3-action secondary" id="v3ShareEventos"><span>📌</span> Próximos Eventos</button>
                         </div>
                     </div>
                 </section>
@@ -2392,51 +2692,170 @@
         return 'Em ' + n + ' dias';
       }
 
+      function proximoFeriadoInfo(){
+        const h = hoje();
+        for(let i=1; i<=365; i++){
+          const d = new Date(h); d.setDate(h.getDate() + i);
+          const f = fer(d.getFullYear(), d.getMonth(), d.getDate());
+          if(f){
+            return {
+              data: d,
+              nome: f,
+              diff: i,
+              dataStr: String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0')
+            };
+          }
+        }
+        return null;
+      }
+
       function renderHoje(){
         const el = document.getElementById('v3HojeGrid');
+        const headerStatus = document.getElementById('v3HeaderStatus');
         if(!el) return;
+
         const h = hoje();
+        const y = typeof anoAtual === 'number' ? anoAtual : h.getFullYear();
+        const m = typeof mesAtual === 'number' ? mesAtual : h.getMonth();
         const x = info(h.getFullYear(), h.getMonth(), h.getDate());
         const t = proximaTroca();
-        const c = cont(typeof anoAtual==='number'?anoAtual:h.getFullYear(), typeof mesAtual==='number'?mesAtual:h.getMonth());
-        
-        let next = '<div class="v3-muted">Nenhuma troca encontrada</div>';
-        if(t){
-          const n = Math.round((t.data - h)/86400000);
-          next = '<div class="v3-big">' + resp(t.resp) + '</div><div class="v3-muted">' + fmt(t.data) + ' • ' + diffText(n) + '</div>';
-        }
+        const c = cont(y, m);
         const f = fer(h.getFullYear(), h.getMonth(), h.getDate());
+        const proxFer = proximoFeriadoInfo();
+        const evLista = eventos();
+        const proxEv = evLista.length ? evLista[0] : null;
         const online = navigator.onLine;
 
+        if(headerStatus){
+          headerStatus.className = `v3-status ${online ? '' : 'off'}`;
+          headerStatus.innerText = online ? '🟢 Online' : '🔴 Offline';
+        }
+
+        const isMae = x.resp === 'mae';
+        const respTexto = isMae ? 'Mãe' : 'Pai';
+        const respEmoji = isMae ? '👩' : '👨';
+        const heroClasse = isMae ? 'mae-hero' : 'pai-hero';
+        const heroBadgeCor = isMae ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/70 dark:text-rose-300' : 'bg-sky-100 text-sky-700 dark:bg-sky-950/70 dark:text-sky-300';
+        const descTexto = (x.desc && !['Mãe','Pai','FDS Pai'].includes(x.desc)) ? x.desc : 'Rotina regular da guarda';
+
+        let trocaHtml = '';
+        if(t){
+          const n = Math.round((t.data - h)/86400000);
+          const tEmoji = t.resp === 'mae' ? '👩' : '👨';
+          const tNome = t.resp === 'mae' ? 'Mãe' : 'Pai';
+          trocaHtml = `
+            <div class="v3-big text-sky-950 dark:text-sky-100 flex items-center gap-1.5 mt-0.5">
+              <span>${tEmoji}</span> <span>${tNome}</span>
+            </div>
+            <div class="v3-muted">
+              <span class="inline-block px-2 py-0.5 rounded-md bg-sky-100 dark:bg-sky-900/60 font-bold text-sky-800 dark:text-sky-300 text-[10px]">
+                ${fmt(t.data)} • ${diffText(n)}
+              </span>
+            </div>
+          `;
+        } else {
+          trocaHtml = '<div class="v3-big">—</div><div class="v3-muted">Nenhuma troca agendada</div>';
+        }
+
+        let feriadoHtml = '';
+        if(f){
+          feriadoHtml = `
+            <div class="v3-big text-emerald-700 dark:text-emerald-300 flex items-center gap-1 mt-0.5">
+              <span>🎉</span> <span class="truncate text-sm font-black">${f}</span>
+            </div>
+            <div class="v3-muted text-[10px] text-emerald-600 font-semibold">Feriado hoje! Aproveite o dia.</div>
+          `;
+        } else if(proxFer){
+          feriadoHtml = `
+            <div class="v3-big text-slate-800 dark:text-slate-100 text-sm font-extrabold truncate mt-0.5">
+              Normal
+            </div>
+            <div class="v3-muted text-[10px] truncate" title="${proxFer.nome}">
+              Próx: <b>${proxFer.dataStr}</b> (${proxFer.nome})
+            </div>
+          `;
+        } else {
+          feriadoHtml = '<div class="v3-big">Normal</div><div class="v3-muted">Dia regular</div>';
+        }
+
+        const totalSoma = c.mae + c.pai;
+        const pctMae = totalSoma > 0 ? Math.round((c.mae / totalSoma) * 100) : 50;
+        const pctPai = 100 - pctMae;
+
+        let eventoHtml = '';
+        if(proxEv){
+          const difEv = Math.round((proxEv.d - h)/86400000);
+          eventoHtml = `
+            <div class="v3-big flex items-center gap-1.5 mt-0.5 truncate text-sm">
+              <span>${proxEv.icon}</span> <span class="truncate font-black">${proxEv.title}</span>
+            </div>
+            <div class="v3-muted text-[10px]">
+              <span class="inline-block px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/50 font-bold text-amber-800 dark:text-amber-200">
+                ${fmt(proxEv.d)} • ${diffText(difEv)}
+              </span>
+            </div>
+          `;
+        } else {
+          eventoHtml = '<div class="v3-big text-sm text-slate-400">—</div><div class="v3-muted text-[10px]">Sem eventos próximos</div>';
+        }
+
         el.innerHTML = `
-          <div class="v3-card">
-            <h3>👧 Sophia está com</h3>
-            <div class="v3-big">${resp(x.resp)}</div>
-            <div class="v3-muted">${fmt(h)}${x.desc ? ' • ' + x.desc : ''}</div>
+          <!-- HERO CARD HOJE -->
+          <div class="v3-card v3-card-hero ${heroClasse}">
+            <div class="flex justify-between items-center w-full">
+              <span class="text-[9px] font-black uppercase tracking-wider ${heroBadgeCor} px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                <span class="w-1.5 h-1.5 rounded-full ${isMae ? 'bg-rose-500' : 'bg-sky-500'} animate-pulse"></span>
+                Sophia está com
+              </span>
+              <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400">Hoje • ${fmt(h)}</span>
+            </div>
+            <div class="flex items-center gap-3 my-2">
+              <div class="text-3xl">${respEmoji}</div>
+              <div>
+                <div class="text-xl sm:text-2xl font-black ${isMae ? 'text-rose-950 dark:text-rose-100' : 'text-sky-950 dark:text-sky-100'} leading-none">
+                  Com a ${respTexto}
+                </div>
+                <div class="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-1 flex items-center gap-1">
+                  <span>📌</span> <span>${descTexto}</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="v3-card">
-            <h3>🔄 Próxima troca</h3>
-            ${next}
+
+          <!-- WIDGET: PRÓXIMA TROCA -->
+          <div class="v3-card bg-gradient-to-br from-sky-50/80 to-blue-50/50 dark:from-sky-950/30 dark:to-blue-950/20 border-sky-200/80 dark:border-sky-800/40">
+            <h3><span>🔄</span> Próxima Troca</h3>
+            ${trocaHtml}
           </div>
-          <div class="v3-card">
-            <h3>🎉 Feriado Hoje</h3>
-            <div class="v3-big">${f || 'Sem feriado'}</div>
-            <div class="v3-muted">${f ? 'Feriado cadastrado' : 'Dia normal de rotina'}</div>
+
+          <!-- WIDGET: FERIADOS -->
+          <div class="v3-card bg-gradient-to-br from-emerald-50/80 to-teal-50/50 dark:from-emerald-950/30 dark:to-teal-950/20 border-emerald-200/80 dark:border-emerald-800/40">
+            <h3><span>🎉</span> Feriados</h3>
+            ${feriadoHtml}
           </div>
-          <div class="v3-card">
-            <h3>☁️ Status Conexão</h3>
-            <div><span class="v3-status ${online ? '' : 'off'}">${online ? '🟢 Online' : '🔴 Offline'}</span></div>
-            <div class="v3-muted" style="margin-top:7px">Os dados locais sincronizam ao reconectar.</div>
+
+          <!-- WIDGET: EQUILÍBRIO DO MÊS -->
+          <div class="v3-card bg-gradient-to-br from-purple-50/80 to-indigo-50/50 dark:from-purple-950/30 dark:to-indigo-950/20 border-purple-200/80 dark:border-purple-800/40">
+            <h3><span>📊</span> ${nomes()[m]} ${y}</h3>
+            <div class="v3-big text-sm sm:text-base font-black text-indigo-950 dark:text-indigo-100 mt-0.5">
+              ${c.mae}d Mãe × ${c.pai}d Pai
+            </div>
+            <div class="space-y-1 mt-1">
+              <div class="v3-bar">
+                <span class="v3-bar-mae" style="width: ${pctMae}%;"></span>
+                <span class="v3-bar-pai" style="width: ${pctPai}%;"></span>
+              </div>
+              <div class="flex justify-between text-[9px] font-bold text-slate-500 dark:text-slate-400">
+                <span>${pctMae}% Mãe</span>
+                <span>${pctPai}% Pai</span>
+              </div>
+            </div>
           </div>
-          <div class="v3-card">
-            <h3>📊 ${nomes()[typeof mesAtual==='number'?mesAtual:h.getMonth()]} ${typeof anoAtual==='number'?anoAtual:h.getFullYear()}</h3>
-            <div class="v3-big">${c.mae} × ${c.pai}</div>
-            <div class="v3-muted">Mãe × Pai (Dias)</div>
-          </div>
-          <div class="v3-card">
-            <h3>📌 Próximo evento</h3>
-            <div class="v3-big">${eventos()[0] ? eventos()[0].icon : '—'}</div>
-            <div class="v3-muted">${eventos()[0] ? fmt(eventos()[0].d) + ' • ' + eventos()[0].title : 'Nenhum próximo'}</div>
+
+          <!-- WIDGET: PRÓXIMO EVENTO -->
+          <div class="v3-card bg-gradient-to-br from-amber-50/80 to-orange-50/50 dark:from-amber-950/30 dark:to-orange-950/20 border-amber-200/80 dark:border-amber-800/40">
+            <h3><span>📌</span> Próximo Evento</h3>
+            ${eventoHtml}
           </div>
         `;
       }
@@ -2741,3 +3160,4 @@
     </script>
 </body>
 </html>
+Exibindo guarda_compartilhada_sophia_v3_refinado.html…
