@@ -682,6 +682,228 @@
             .v3-box { margin-top: 0; }
         }
     </style>
+
+<!--TEMA-NEON-INICIO v2 — cole antes de </head>. Não altera nenhuma linha do app.-->
+<script>
+(function(){
+  var d = document.documentElement, L;
+  try { L = window.localStorage; if (!L.getItem('theme')) L.setItem('theme', 'dark'); } catch (e) {}
+  var padrao = { fundo: 'aurora', borda: 'glow', cor: 'neon' };
+  for (var k in padrao) {
+    var v = padrao[k];
+    try { v = L.getItem('sx_' + k) || v; } catch (e) {}
+    d.setAttribute('data-' + k, v);
+  }
+})();
+</script>
+<style id="tema-neon">
+@media screen {
+  /* ===== PADRÃO: cores neon + borda com brilho ===== */
+  :root {
+    --mae:#ff2d95; --mae-claro:#ff7ac0; --pai:#2f9bff; --pai-claro:#7cc0ff;
+    --cell-mae:linear-gradient(160deg,rgba(255,45,149,.34),rgba(255,45,149,.10));
+    --cell-pai:linear-gradient(160deg,rgba(47,155,255,.34),rgba(47,155,255,.10));
+    --cfg-mae:#ffe6f3; --cfg-pai:#e3f1ff;
+    --chip-mae:rgba(255,45,149,.14); --chip-pai:rgba(47,155,255,.14);
+    --bar-mae:linear-gradient(90deg,#ff2d95,#ff7ac0); --bar-pai:linear-gradient(90deg,#2f9bff,#7cc0ff);
+    --btn:linear-gradient(135deg,#ff2d95,#8b5cf6 55%,#2f9bff); --btn-sh:0 6px 22px rgba(255,45,149,.35);
+    --cbw:1px; --cb-mae:rgba(255,45,149,.75); --cb-pai:rgba(47,155,255,.75);
+    --sh-mae:0 0 12px rgba(255,45,149,.28); --sh-pai:0 0 12px rgba(47,155,255,.28);
+    --pbw:1px; --pb:rgba(255,255,255,.09); --psh:0 8px 30px rgba(0,0,0,.35);
+    --navb:rgba(255,45,149,.35);
+    --painel:rgba(255,255,255,.045);
+    --fundo:#07050f;
+  }
+
+  /* ===== COR: sólidas ===== */
+  html[data-cor="solido"] {
+    --mae:#ec4899; --mae-claro:#f9a8d4; --pai:#3b82f6; --pai-claro:#93c5fd;
+    --cell-mae:#ec4899; --cell-pai:#3b82f6; --cfg-mae:#fff; --cfg-pai:#fff;
+    --chip-mae:#be185d; --chip-pai:#1d4ed8;
+    --bar-mae:#ec4899; --bar-pai:#3b82f6;
+    --btn:#7c3aed; --btn-sh:none;
+    --navb:rgba(255,255,255,.18);
+  }
+
+  /* ===== BORDA ===== */
+  html[data-borda="solida"] {
+    --cbw:2px; --cb-mae:var(--mae); --cb-pai:var(--pai); --sh-mae:none; --sh-pai:none;
+    --pbw:2px; --pb:rgba(255,255,255,.32); --psh:none;
+  }
+  html[data-borda="fina"] {
+    --cbw:1px; --cb-mae:rgba(255,255,255,.16); --cb-pai:rgba(255,255,255,.16); --sh-mae:none; --sh-pai:none;
+    --pbw:1px; --pb:rgba(255,255,255,.12); --psh:none;
+  }
+  html[data-borda="nenhuma"] {
+    --cbw:0px; --cb-mae:transparent; --cb-pai:transparent; --sh-mae:none; --sh-pai:none;
+    --pbw:0px; --pb:transparent; --psh:none;
+  }
+
+  /* ===== FUNDO ===== */
+  body { background: var(--fundo) !important; color:#f5f3ff; }
+  html[data-fundo="grafite"] { --fundo:#14121f; --painel:#1e1b2e; }
+  html[data-fundo="preto"]   { --fundo:#000000; --painel:#0e0e13; }
+
+  html[data-fundo="aurora"] body::before,
+  html[data-fundo="degrade"] body::before {
+    content:""; position:fixed; z-index:-1; pointer-events:none;
+  }
+  html[data-fundo="aurora"] body::before {
+    inset:-20%;
+    background:
+      radial-gradient(40% 40% at 20% 20%, rgba(255,45,149,.38), transparent 70%),
+      radial-gradient(40% 40% at 80% 25%, rgba(47,155,255,.34), transparent 70%),
+      radial-gradient(45% 45% at 50% 85%, rgba(139,92,246,.30), transparent 70%);
+    filter: blur(12px);
+    animation: sxAurora 18s ease-in-out infinite alternate;
+  }
+  html[data-fundo="degrade"] body::before {
+    inset:0;
+    background: linear-gradient(120deg,#12041f,#4a0b3d,#0b1f4a,#2a0a4a,#12041f);
+    background-size: 400% 400%;
+    animation: sxDegrade 16s ease infinite;
+  }
+  @keyframes sxAurora {
+    0%   { transform: translate3d(-4%,-3%,0) scale(1); }
+    50%  { transform: translate3d(5%,4%,0) scale(1.15); }
+    100% { transform: translate3d(-3%,6%,0) scale(1.05); }
+  }
+  @keyframes sxDegrade {
+    0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+  }
+
+  /* título */
+  #conteudo-site h1 {
+    background: linear-gradient(90deg, var(--mae-claro), #fff 50%, var(--pai-claro));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  #tituloCalendarioMes { color:#fff !important; }
+
+  /* painéis */
+  #conteudo-site .rounded-2xl.shadow-sm {
+    background: var(--painel) !important;
+    border: var(--pbw) solid var(--pb) !important;
+    box-shadow: var(--psh) !important;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  }
+  #textoRegraMes { background:rgba(255,255,255,.04) !important; border-color:rgba(255,255,255,.08) !important; color:#e9e5ff !important; }
+
+  /* contadores / chips */
+  [class*="bg-rose-50"]:not(.celula-dia) { background:var(--chip-mae) !important; border-color:var(--cb-mae) !important; }
+  [class*="bg-sky-50"]:not(.celula-dia)  { background:var(--chip-pai) !important; border-color:var(--cb-pai) !important; }
+  .text-rose-300,.text-rose-400,.text-rose-600,.text-rose-700,.text-rose-950 { color:var(--mae-claro) !important; }
+  .text-sky-300,.text-sky-400,.text-sky-600,.text-sky-700,.text-sky-950 { color:var(--pai-claro) !important; }
+  html[data-cor="solido"] [class*="bg-rose-50"]:not(.celula-dia) *,
+  html[data-cor="solido"] [class*="bg-sky-50"]:not(.celula-dia) *,
+  html[data-cor="solido"] .status-card-badge * { color:#fff !important; }
+
+  /* barras */
+  #barraMae,.v3-bar-mae { background:var(--bar-mae) !important; }
+  #barraPai,.v3-bar-pai { background:var(--bar-pai) !important; }
+  .v3-progress > span { background:var(--bar-mae) !important; }
+
+  /* cards de status */
+  #cardStatusHoje,#v3PaiCard { background:var(--painel) !important; border:var(--pbw) solid var(--pb) !important; box-shadow:var(--psh) !important; }
+  .status-card-icon { background:rgba(255,255,255,.08) !important; }
+  .status-card-title { color:#fff !important; }
+  .status-card-badge[class*="bg-rose"] { background:var(--chip-mae) !important; color:var(--mae-claro) !important; border:var(--cbw) solid var(--cb-mae) !important; }
+  .status-card-badge[class*="bg-sky"]  { background:var(--chip-pai) !important; color:var(--pai-claro) !important; border:var(--cbw) solid var(--cb-pai) !important; }
+  html[data-cor="solido"] .status-card-badge { color:#fff !important; }
+
+  /* DIAS */
+  .celula-dia { border-radius:14px !important; }
+  .celula-dia[class*="bg-rose"] { background:var(--cell-mae) !important; border-width:var(--cbw) !important; border-color:var(--cb-mae) !important; color:var(--cfg-mae) !important; box-shadow:var(--sh-mae); }
+  .celula-dia[class*="bg-sky"]  { background:var(--cell-pai) !important; border-width:var(--cbw) !important; border-color:var(--cb-pai) !important; color:var(--cfg-pai) !important; box-shadow:var(--sh-pai); }
+  html[data-cor="solido"] .celula-dia *:not([class*="bg-amber"]) { color:#fff !important; }
+  .celula-dia.ring-2 { --tw-ring-color:#fff !important; box-shadow:0 0 16px rgba(255,255,255,.55) !important; }
+  .past-day .day-num::after { background-color:#fff !important; opacity:.85; }
+  .arrasto-highlight { outline-color:#fff !important; }
+
+  /* botões mãe/pai dos modais */
+  button[class*="bg-rose-500"] { background:var(--mae) !important; box-shadow:var(--sh-mae) !important; }
+  button[class*="bg-sky-500"]  { background:var(--pai) !important; box-shadow:var(--sh-pai) !important; }
+
+  /* botões principais */
+  button[class*="from-blue-600"] { background:var(--btn) !important; box-shadow:var(--btn-sh) !important; }
+  #v3FabHoje { background:var(--btn) !important; box-shadow:var(--btn-sh) !important; }
+
+  /* barra inferior */
+  .fixed.bottom-0.left-0.right-0 { background:rgba(10,8,22,.86) !important; border-top:1px solid var(--navb) !important; }
+
+  /* Central da Sophia */
+  .v3-box { background:#0c0919 !important; border:var(--pbw) solid var(--pb) !important; }
+  .v3-head { background:var(--painel) !important; border-bottom-color:rgba(255,255,255,.1) !important; }
+  .v3-card,.v3-month,.v3-result { background:rgba(255,255,255,.05) !important; border-color:rgba(255,255,255,.1) !important; }
+  .v3-big { color:#fff !important; }
+  .v3-tab.active,.v3-filter.active { background:var(--btn) !important; color:#fff !important; border-color:transparent !important; }
+  .v3-card-hero.mae-hero { background:var(--cell-mae) !important; border-color:var(--mae) !important; }
+  .v3-card-hero.pai-hero { background:var(--cell-pai) !important; border-color:var(--pai) !important; }
+
+  /* ===== BOTÃO E PAINEL DE ESTILO ===== */
+  .sx-fab {
+    position:fixed; left:12px; bottom:64px; z-index:96; width:44px; height:44px; border-radius:50%;
+    border:2px solid rgba(255,255,255,.35); background:#1b1530; color:#fff; font-size:20px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; box-shadow:0 4px 16px rgba(0,0,0,.45);
+  }
+  .sx-fundo { position:fixed; inset:0; z-index:130; display:none; align-items:flex-end; justify-content:center; background:rgba(0,0,0,.6); }
+  .sx-fundo.aberto { display:flex; }
+  .sx-sheet {
+    width:100%; max-width:480px; background:#120d22; color:#f5f3ff; border:1px solid rgba(255,255,255,.18);
+    border-radius:24px 24px 0 0; padding:16px 16px 22px; max-height:86vh; overflow:auto;
+  }
+  .sx-sheet h2 { margin:0 0 2px; font-size:17px; }
+  .sx-sheet p { margin:0 0 12px; font-size:12px; color:#b9b4d6; }
+  .sx-sheet h3 { margin:14px 0 6px; font-size:12px; font-weight:800; color:#b9b4d6; }
+  .sx-grupo { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .sx-opt {
+    border:2px solid rgba(255,255,255,.14); background:rgba(255,255,255,.05); color:#fff; border-radius:14px;
+    padding:11px 8px; font-size:13px; font-weight:700; cursor:pointer; text-align:center;
+  }
+  .sx-opt.on { border-color:#ff2d95; background:rgba(255,45,149,.18); }
+  .sx-fechar { margin-top:16px; width:100%; border:0; border-radius:14px; padding:13px; font-weight:800; font-size:15px; color:#fff; background:var(--btn); cursor:pointer; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-fundo="aurora"] body::before, html[data-fundo="degrade"] body::before { animation:none; }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var grupos = [
+    { k:'fundo', t:'Fundo', o:[['aurora','🌌 Aurora (movimento)'],['degrade','🌈 Degradê (movimento)'],['grafite','⬛ Sólido grafite'],['preto','⚫ Sólido preto']] },
+    { k:'borda', t:'Bordas', o:[['glow','✨ Brilho neon'],['solida','▬ Sólida'],['fina','▫ Fina'],['nenhuma','∅ Sem borda']] },
+    { k:'cor',   t:'Cores (mãe rosa / pai azul)', o:[['neon','💗 Neon translúcido'],['solido','🟦 Cores sólidas']] }
+  ];
+  var d = document.documentElement;
+  var fab = document.createElement('button');
+  fab.className = 'sx-fab print-hidden'; fab.type = 'button'; fab.title = 'Estilo do app'; fab.textContent = '🎨';
+  var fundo = document.createElement('div');
+  fundo.className = 'sx-fundo print-hidden';
+  var html = '<div class="sx-sheet"><h2>🎨 Estilo do app</h2><p>Escolha e já vê a mudança. Fica salvo neste aparelho.</p>';
+  grupos.forEach(function (g) {
+    html += '<h3>' + g.t + '</h3><div class="sx-grupo">';
+    g.o.forEach(function (o) { html += '<button type="button" class="sx-opt" data-k="' + g.k + '" data-v="' + o[0] + '">' + o[1] + '</button>'; });
+    html += '</div>';
+  });
+  html += '<button type="button" class="sx-fechar">Pronto</button></div>';
+  fundo.innerHTML = html;
+  document.body.appendChild(fab); document.body.appendChild(fundo);
+
+  function marcar() {
+    fundo.querySelectorAll('.sx-opt').forEach(function (b) {
+      b.classList.toggle('on', d.getAttribute('data-' + b.dataset.k) === b.dataset.v);
+    });
+  }
+  fab.onclick = function () { marcar(); fundo.classList.add('aberto'); };
+  fundo.onclick = function (e) {
+    if (e.target === fundo || e.target.classList.contains('sx-fechar')) { fundo.classList.remove('aberto'); return; }
+    var b = e.target.closest('.sx-opt'); if (!b) return;
+    d.setAttribute('data-' + b.dataset.k, b.dataset.v);
+    try { localStorage.setItem('sx_' + b.dataset.k, b.dataset.v); } catch (x) {}
+    marcar();
+  };
+});
+</script>
+<!--TEMA-NEON-FIM-->
 </head>
 <body class="bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-800 dark:text-gray-100 transition-colors duration-200 pb-28 select-none font-sans">
 
