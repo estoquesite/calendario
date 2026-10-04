@@ -4703,7 +4703,7 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
 </script>
 <!--ABA-ESCOLA-FIM-->
 </body>
-    <!--INICIO-INICIO v2 — APAGUE o bloco anterior (de INICIO-INICIO até INICIO-FIM) e cole este no lugar, antes de </body>, depois do último ABA-ESCOLA-FIM.-->
+    <!--INICIO-INICIO v3 — APAGUE o bloco anterior (de INICIO-INICIO até INICIO-FIM) e cole este no lugar, antes de </body>, depois do último ABA-ESCOLA-FIM.-->
 <style id="inicio-css">
 #inicioView{display:none;max-width:32rem;margin:0 auto;padding:8px 10px 120px;color:var(--txt,#1e1b2e)}
 .in-top{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 10px}
@@ -4713,29 +4713,30 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
 .in-chips button{flex:0 0 auto;border:1px solid var(--softb,rgba(128,128,128,.35));background:var(--soft,rgba(128,128,128,.1));color:var(--txt,inherit);border-radius:12px;padding:7px 11px;font-size:11.5px;font-weight:800;cursor:pointer}
 .in-chips button.on{background:var(--btn,linear-gradient(135deg,#ff2d95,#8b5cf6 55%,#2f9bff));color:#fff;border-color:transparent}
 /* título de cada agenda */
-.in-sec{margin:14px 2px 8px;padding-bottom:5px;font-size:12px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--g);text-shadow:0 0 8px var(--g);border-bottom:1px solid var(--g);box-shadow:0 5px 8px -6px var(--g);display:flex;justify-content:space-between}
+.in-sec{margin:16px 2px 9px;padding-bottom:5px;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:color-mix(in srgb,var(--g) 62%,var(--txt,#1e1b2e));border-bottom:1px solid color-mix(in srgb,var(--g) 55%,transparent);display:flex;justify-content:space-between}
 .in-sec span{opacity:.8}
 /* eventos: neon fininho e bem forte */
-@keyframes inPisca{0%,100%{box-shadow:0 0 5px var(--c),0 0 12px var(--c)}50%{box-shadow:0 0 9px var(--c),0 0 24px var(--c),0 0 40px var(--c)}}
+@keyframes inPisca{0%,100%{box-shadow:0 0 4px color-mix(in srgb,var(--c) 45%,transparent),0 0 9px color-mix(in srgb,var(--c) 22%,transparent)}50%{box-shadow:0 0 6px color-mix(in srgb,var(--c) 65%,transparent),0 0 16px color-mix(in srgb,var(--c) 38%,transparent)}}
 @keyframes inDot{0%,100%{transform:scale(.85);opacity:.7}50%{transform:scale(1.3);opacity:1}}
-.in-it{display:flex;gap:9px;align-items:center;padding:8px 10px;margin-bottom:8px;border-radius:14px;border:1px solid var(--c);background:var(--painel,rgba(255,255,255,.06));box-shadow:0 0 6px var(--c),0 0 16px var(--c),inset 0 0 8px rgba(255,255,255,.04);cursor:pointer;text-align:left}
+.in-it{display:flex;gap:9px;align-items:center;padding:8px 10px;margin-bottom:8px;border-radius:14px;border:1px solid color-mix(in srgb,var(--c) 75%,transparent);background:linear-gradient(135deg,color-mix(in srgb,var(--c) 9%,transparent),transparent 70%),var(--painel,rgba(255,255,255,.06));box-shadow:0 0 4px color-mix(in srgb,var(--c) 40%,transparent),0 0 10px color-mix(in srgb,var(--c) 18%,transparent);cursor:pointer;text-align:left}
 .in-it.pisca{animation:inPisca 1.1s ease-in-out infinite}
 .in-it.hoje{animation:inPisca .65s ease-in-out infinite}
-.in-d{width:9px;height:9px;min-width:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c),0 0 14px var(--c);animation:inDot 1s ease-in-out infinite}
+.in-d{width:9px;height:9px;min-width:9px;border-radius:50%;background:var(--c);box-shadow:0 0 5px color-mix(in srgb,var(--c) 70%,transparent);animation:inDot 1s ease-in-out infinite}
 .in-ic{font-size:20px;line-height:1}
 .in-tx{flex:1;min-width:0}
 .in-tx b{display:block;font-size:12.5px;font-weight:800;line-height:1.25;overflow:hidden;text-overflow:ellipsis}
 .in-tx small{display:block;font-size:10px;opacity:.78;margin-top:1px}
-.in-wh{text-align:right;font-size:10.5px;font-weight:900;white-space:nowrap;color:var(--c);text-shadow:0 0 8px var(--c)}
+.in-wh{text-align:right;font-size:10.5px;font-weight:800;white-space:nowrap;color:color-mix(in srgb,var(--c) 60%,var(--txt,#1e1b2e))}
 .in-wh small{display:block;font-size:9.5px;opacity:.85;color:inherit}
 .in-vazio{font-size:12px;opacity:.7;padding:8px 2px}
 /* tela da digital */
 #inLogin{margin-top:2px;text-align:left}
 #inLogin .in-lt{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;opacity:.7;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-#inLogin .in-lista{max-height:36vh;overflow-y:auto;background:#0a0816;border-radius:16px;padding:8px 9px 2px;color:#f5f3ff}
+#inLogin .in-lista{max-height:36vh;overflow-y:auto;background:#0e0b1c;border-radius:16px;padding:8px 9px 2px;color:#f5f3ff;--txt:#f5f3ff}
 #inLogin .in-it{cursor:default;padding:6px 9px;margin-bottom:7px;background:rgba(255,255,255,.04)}
 #inLogin .in-sec{margin:6px 1px 7px;font-size:10px}
 #inLogin .in-sec:first-child{margin-top:0}
+#tela-login > div:not(.in-cor){position:relative;z-index:1}
 @keyframes inCor{0%{transform:translate(0,0);opacity:0}15%{opacity:.2}85%{opacity:.2}100%{transform:translate(26px,-95vh);opacity:0}}
 .in-cor{position:absolute;left:16%;bottom:-30px;font-size:24px;pointer-events:none;animation:inCor 16s linear infinite}
 /* só coraçõezinhos, poucos e fraquinhos (Escola / Pessoal) */
@@ -4750,7 +4751,7 @@ html[data-modo="claro"] #esSide{background:rgba(255,255,255,.92) !important}
 <script>
 (function(){
   var MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-  var GR={geral:['🎉','Geral • Feriados','#39ff14'],guarda:['👧','Agenda da Sophia','#ff2d95'],escola:['🎒','Escola','#00e5ff'],pessoal:['⭐','Pessoal','#ffe600']};
+  var GR={geral:['🎉','Geral • Feriados','#34d399'],guarda:['👧','Agenda da Sophia','#f472b6'],escola:['🎒','Escola','#38bdf8'],pessoal:['⭐','Pessoal','#fbbf24']};
   var ORDER=['geral','guarda','escola','pessoal'];
   var flt='todos',aberto=false;
   function $(i){return document.getElementById(i)}
@@ -4769,7 +4770,7 @@ html[data-modo="claro"] #esSide{background:rgba(255,255,255,.92) !important}
     if(d<.08)return c;
     if(mx===r)hh=((g-b)/d)%6;else if(mx===g)hh=(b-r)/d+2;else hh=(r-g)/d+4;
     hh*=60;if(hh<0)hh+=360;
-    return 'hsl('+Math.round(hh)+',100%,'+Math.round(Math.max(55,Math.min(l*100,62)))+'%)';
+    return 'hsl('+Math.round(hh)+',82%,'+Math.round(Math.max(62,Math.min(l*100+8,70)))+'%)';
   }
 
   // ---------- coleta de eventos de TODOS os calendários ----------
@@ -4790,11 +4791,11 @@ html[data-modo="claro"] #esSide{background:rgba(255,255,255,.92) !important}
         var d=addD(h,i),x=G(d),k=iso(d),y=d.getFullYear(),m=d.getMonth(),dd=d.getDate();
         var f=(window.feriados&&(feriados[y+'-'+m+'-'+dd]||feriados[m+'-'+dd]))||'';
         var em=emo[y+'-'+m+'-'+dd];
-        if(f)push({src:'guarda',s:k,ic:em||'🎉',t:f,sub:'Feriado',c:'#39ff14'});
-        if(x.emenda||x.grampinho)push({src:'guarda',s:k,ic:'🔗',t:'Emenda de feriado',sub:'Guarda',c:'#ff1f5a',p:true});
-        if(x.desc&&['Mãe','Pai','FDS Pai'].indexOf(x.desc)<0)push({src:'guarda',s:k,ic:em||'📌',t:x.desc,sub:'Com '+(x.resp==='pai'?'o Pai':'a Mãe'),c:'#ffb400'});
-        else if(em)push({src:'guarda',s:k,ic:em,t:'Dia marcado',sub:'Com '+(x.resp==='pai'?'o Pai':'a Mãe'),c:'#ffb400'});
-        if(x.resp&&prev&&x.resp!==prev)push({src:'guarda',s:k,ic:'🔄',t:'Sophia vai para '+(x.resp==='pai'?'o Pai':'a Mãe'),sub:'Troca de guarda',c:x.resp==='pai'?'#2f9bff':'#ff2d95',p:true});
+        if(f)push({src:'guarda',s:k,ic:em||'🎉',t:f,sub:'Feriado',c:'#34d399'});
+        if(x.emenda||x.grampinho)push({src:'guarda',s:k,ic:'🔗',t:'Emenda de feriado',sub:'Guarda',c:'#fb7185',p:true});
+        if(x.desc&&['Mãe','Pai','FDS Pai'].indexOf(x.desc)<0)push({src:'guarda',s:k,ic:em||'📌',t:x.desc,sub:'Com '+(x.resp==='pai'?'o Pai':'a Mãe'),c:'#fbbf24'});
+        else if(em)push({src:'guarda',s:k,ic:em,t:'Dia marcado',sub:'Com '+(x.resp==='pai'?'o Pai':'a Mãe'),c:'#fbbf24'});
+        if(x.resp&&prev&&x.resp!==prev)push({src:'guarda',s:k,ic:'🔄',t:'Sophia vai para '+(x.resp==='pai'?'o Pai':'a Mãe'),sub:'Troca de guarda',c:x.resp==='pai'?'#60a5fa':'#f472b6',p:true});
         prev=x.resp;
       }
     }catch(e){}
