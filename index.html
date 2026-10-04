@@ -4079,7 +4079,7 @@ html.esc-on #conteudo-site{display:none !important}
 })();
 </script>
 <!--ABA-ESCOLA-FIM-->
-<!--ABA-ESCOLA-INICIO v3 — substitua TUDO entre ABA-ESCOLA-INICIO e ABA-ESCOLA-FIM por este bloco (inclusive essas duas linhas de comentário). A aba Guarda não é alterada.-->
+<!--ABA-ESCOLA-INICIO v4 — substitua TUDO entre ABA-ESCOLA-INICIO e ABA-ESCOLA-FIM por este bloco (inclusive essas duas linhas de comentário). A aba Guarda não é alterada.-->
 <style id="aba-escola-css2">
 #abaBar{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 10px;max-width:32rem;margin:0 auto;background:var(--nav,rgba(255,255,255,.92));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 #abaBar button{flex:1;border:1.5px solid var(--softb,rgba(128,128,128,.35));background:var(--soft,rgba(128,128,128,.1));color:var(--txt,inherit);border-radius:14px;padding:9px 6px;font-size:13px;font-weight:800;cursor:pointer}
@@ -4149,6 +4149,15 @@ html.esc-on #conteudo-site{display:none !important}
 #esSide button{width:44px;height:44px;border-radius:14px;border:1.5px solid var(--softb,rgba(128,128,128,.3));background:var(--soft,rgba(128,128,128,.1));font-size:21px;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;color:var(--txt,inherit)}
 #esSide button.on{background:var(--btn,linear-gradient(135deg,#ff2d95,#8b5cf6 55%,#2f9bff));border-color:transparent;box-shadow:var(--btn-sh,none)}
 html.esc-on #esSide{display:flex}
+#esSide{top:auto !important;right:120px !important;bottom:86px !important;transform:none !important;flex-direction:row !important;gap:3px !important;padding:4px !important;border-radius:16px !important;background:rgba(10,8,22,.28) !important;border:1.5px solid rgba(var(--pai-rgb,47,155,255),.8) !important;box-shadow:0 0 12px rgba(var(--pai-rgb,47,155,255),.5) !important;backdrop-filter:blur(6px) !important}
+#esSide button{width:36px !important;height:36px !important;font-size:18px !important;border-radius:11px !important;background:transparent !important;border-color:transparent !important}
+#esSide button.on{background:rgba(var(--mae-rgb,255,45,149),.4) !important;border-color:rgba(var(--mae-rgb,255,45,149),.9) !important;box-shadow:0 0 10px rgba(var(--mae-rgb,255,45,149),.7) !important}
+.es-card{border:1.5px solid rgba(var(--mae-rgb,255,45,149),.95) !important;box-shadow:0 0 16px rgba(var(--mae-rgb,255,45,149),.55),inset 0 0 12px rgba(var(--mae-rgb,255,45,149),.14) !important}
+.es-card.bl{border-color:rgba(var(--pai-rgb,47,155,255),.95) !important;box-shadow:0 0 16px rgba(var(--pai-rgb,47,155,255),.55),inset 0 0 12px rgba(var(--pai-rgb,47,155,255),.14) !important}
+.es-ind{border:1.5px solid rgba(var(--pai-rgb,47,155,255),.95) !important;box-shadow:0 0 12px rgba(var(--pai-rgb,47,155,255),.55) !important}
+.es-ind:nth-child(odd){border-color:rgba(var(--mae-rgb,255,45,149),.95) !important;box-shadow:0 0 12px rgba(var(--mae-rgb,255,45,149),.55) !important}
+.es-bar,.es-bar2{box-shadow:0 0 8px rgba(var(--mae-rgb,255,45,149),.6)}
+.es-box{box-shadow:0 0 24px rgba(var(--mae-rgb,255,45,149),.6) !important}
 @media print{#abaBar,#escolaView,.es-fab,#esSide{display:none !important}}
 </style>
 <script>
@@ -4200,13 +4209,34 @@ html.esc-on #esSide{display:flex}
     .forEach(function(x){x[0].forEach(function(d,i){add(d,d,'a1',M1[i])});x[1].forEach(function(d,i){add(d,d,'a2',M2[i])})});
     return {ev:E,bim:[['1º Bimestre','2026-02-09','2026-04-30'],['2º Bimestre','2026-05-04','2026-07-10'],['3º Bimestre','2026-07-27','2026-10-02'],['4º Bimestre','2026-10-05','2026-12-18']]};
   }
+  function pascoa(a){var A=a%19,b=Math.floor(a/100),c=a%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*A+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((A+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),dd=((h+l-7*m+114)%31)+1;return new Date(a,mo-1,dd)}
+  function domN(a,m,n){var d=new Date(a,m,1);d.setDate(1+((7-d.getDay())%7)+(n-1)*7);return d}
+  function base(a){
+    var o=[],D=function(m,d){return new Date(a,m-1,d)};
+    function add(dt,t,n){o.push([dt,t,n])}
+    function rng(m1,d1,m2,d2,t,n){for(var d=D(m1,d1),e=D(m2,d2);d<=e;d.setDate(d.getDate()+1))add(new Date(d),t,n)}
+    var p=pascoa(a),pd=function(n){var d=new Date(p);d.setDate(p.getDate()+n);return d};
+    add(D(1,1),'f','Confraternização Universal');add(D(1,20),'f','São Sebastião');
+    add(pd(-48),'ev','Carnaval (segunda)');add(pd(-47),'f','Carnaval');add(pd(-46),'ev','Quarta-feira de Cinzas');
+    add(D(3,8),'ev','Dia da Mulher');add(pd(-2),'f','Sexta-feira da Paixão');add(p,'ev','Páscoa');
+    add(D(4,21),'f','Tiradentes');add(D(4,23),'f','São Jorge');add(D(5,1),'f','Dia do Trabalhador');
+    add(domN(a,4,2),'ev','Dia das Mães');add(pd(60),'f','Corpus Christi');add(domN(a,7,2),'ev','Dia dos Pais');
+    add(D(9,7),'f','Independência');add(D(10,12),'f','N. Sra. Aparecida');add(D(10,15),'ev','Dia dos Professores');
+    add(D(11,2),'f','Finados');add(D(11,15),'f','Proc. República');add(D(11,20),'f','Consciência Negra');add(D(12,25),'f','Natal');
+    rng(1,1,1,31,'fe','Férias escolares (previsão)');rng(7,20,7,31,'r','Recesso escolar (previsão)');rng(12,19,12,31,'fe','Férias escolares (previsão)');
+    return o}
+  function mergeBase(a){
+    a=+a;if(!S.mb)S.mb={};S.mb[a]=1;
+    var y=S.y[a],any=Object.keys(y.ev).length>0;
+    base(a).forEach(function(b){var t=b[1];if(any&&(t==='fe'||t==='r'))return;var k=iso(b[0]),l=y.ev[k]||[];if(t==='ev'?l.length:l.some(function(o){return o.t===t}))return;(y.ev[k]=l).push({t:t,n:b[2]})});
+  }
   function load(){try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(!S||!S.y)S={y:{}};if(!S.y[2026])S.y[2026]=seed();
     if(S.t&&S.pri){T=S.t;PRI=S.pri}else{S.t=T;S.pri=PRI}
     if(!S.dc)S.dc={g:'#39ff14',r:'#ff1f5a',b:'#00e5ff'};
     if(!S.mig1){['2026-04-22','2026-06-05'].forEach(function(k){((S.y[2026].ev[k])||[]).forEach(function(x){if(x.t==='r')x.m=true})});S.mig1=1}
-    for(var a in S.y)for(var k in S.y[a].ev)S.y[a].ev[k].forEach(function(x){if(!T[x.t])x.t='ev'})}
+    for(var a in S.y)for(var k in S.y[a].ev)S.y[a].ev[k].forEach(function(x){if(!T[x.t])x.t='ev'});if(!S.mb)S.mb={};for(var ay in S.y)if(!S.mb[ay])mergeBase(ay);save()}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
-  function Y(a){return S.y[a]||(S.y[a]={ev:{},bim:[['1º Bimestre','',''],['2º Bimestre','',''],['3º Bimestre','',''],['4º Bimestre','','']]})}
+  function Y(a){if(!S.y[a]){S.y[a]={ev:{},bim:[['1º Bimestre','',''],['2º Bimestre','',''],['3º Bimestre','',''],['4º Bimestre','','']]};mergeBase(a)}return S.y[a]}
   function EV(k){var y=S.y[k.slice(0,4)];return y&&y.ev[k]||null}
   function top(k){var l=EV(k);if(!l||!l.length)return null;for(var i=0;i<PRI.length;i++)for(var j=0;j<l.length;j++)if(l[j].t===PRI[i])return l[j];return l[0]}
   function proximo(tipos){var h=hoje();for(var i=0;i<400;i++){var d=new Date(h);d.setDate(h.getDate()+i);var l=EV(iso(d));if(l)for(var j=0;j<l.length;j++)if(tipos.indexOf(l[j].t)>-1)return{d:d,e:l[j],n:i}}return null}
@@ -4225,7 +4255,7 @@ html.esc-on #esSide{display:flex}
   }
 
   // ---------- estado de tela ----------
-  var ano=hoje().getFullYear(),mes=hoje().getMonth(),sel=null,aba='cal',ed=null,msg='',ext=false,edOpen=true,lg=null,FIX=['f','r','fe','a1','a2','ev'],sideOpen=false,side=null;
+  var ano=hoje().getFullYear(),mes=hoje().getMonth(),sel=null,aba='cal',ed=null,msg='',ext=false,edOpen=true,lg=null,FIX=['f','r','fe','a1','a2','ev'],sideOpen=false,side=null,banOpen=true;
   var TABS=[['cal','🗓️','Calendário'],['ev','📌','Eventos'],['av','📝','Provas'],['lg','🏷️','Legendas'],['pdf','📎','PDF']];
   function aplicarDots(){['g','r','b'].forEach(function(k){view.style.setProperty('--d'+k,S.dc[k])})}
   function dia(){return sel||iso(hoje())}
@@ -4239,11 +4269,7 @@ html.esc-on #esSide{display:flex}
   // ---------- blocos de tela ----------
   function topo(){return '<div class="es-top"><h2>🎒 Escola — 1º ano • COC Campo Grande</h2><div class="es-yr"><button data-y="-1">‹</button>'+ano+'<button data-y="1">›</button></div></div>'}
 
-  function sideR(){
-    if(!side)return;
-    var cur=TABS.filter(function(t){return t[0]===aba})[0]||TABS[0];
-    side.innerHTML=(sideOpen?TABS.map(function(t){return '<button data-sa="'+t[0]+'" title="'+t[2]+'" class="'+(aba===t[0]?'on':'')+'">'+t[1]+'</button>'}).join(''):'')+'<button data-st="1" class="'+(sideOpen?'':'on')+'">'+(sideOpen?'✕':cur[1])+'</button>';
-  }
+  function sideR(){if(!side)return;side.innerHTML=TABS.map(function(t){return '<button data-sa="'+t[0]+'" title="'+t[2]+'" class="'+(aba===t[0]?'on':'')+'">'+t[1]+'</button>'}).join('')}
 
   function grafico(){
     var st=stats(ano),tot=(st.L+st.F+st.R)||1,C=2*Math.PI*40,off=0,mx=Math.max.apply(null,st.mes)||1;
@@ -4276,12 +4302,13 @@ html.esc-on #esSide{display:flex}
 
   // quadrado piscante do dia + alertas com bolinha piscante
   function banner(){
-    var h=hoje(),k=iso(h),l=EV(k)||[],t=top(k),dow=h.getDay(),txt,sub,cl='#a855f7',ic='🎒';
-    if(t){txt=t.n;sub=T[t.t][0];cl=cor(t);ic=t.e||'📌'}
+    if(!banOpen)return '<div style="text-align:center;margin-bottom:10px"><button class="es-btn sm" data-ban="1">🔔 Mostrar evento do dia</button></div>';
+    var h=hoje(),b=sel?P(sel):h,k=iso(b),l=EV(k)||[],t=top(k),dow=b.getDay(),txt,sub,cl='#a855f7',ic='🎒',DS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+    if(t){txt=t.n;sub=T[t.t][0];cl=cor(t);ic=t.e||'📌';var o=l.filter(function(x){return x!==t}).map(function(x){return x.n});if(o.length)sub+=' • também: '+o.join(', ')}
     else if(dow===0||dow===6){txt='Fim de semana';sub='Sem aula';ic='😴'}
     else{txt='Dia letivo';sub='Aula normal, nada marcado'}
-    if(l.length>1)sub+=' • +'+(l.length-1)+' no dia';
-    var s='<div class="guarda-neon" style="--gn:'+cl+';--gn-rgb:'+rgbOf(cl)+';--gn-claro:'+cl+';margin-bottom:10px"><div class="gn-avatar">'+ic+'</div><div class="gn-info"><div class="gn-label"><span class="gn-dot"></span>Hoje · '+fmt(h)+'</div><div class="gn-titulo">'+esc(txt)+'</div><div class="gn-sub">'+esc(sub)+'</div></div></div>';
+    var lab=(b.getTime()===h.getTime()?'Hoje':DS[dow])+' · '+fmt(b);
+    var s='<div class="guarda-neon" style="position:relative;--gn:'+cl+';--gn-rgb:'+rgbOf(cl)+';--gn-claro:'+cl+';margin-bottom:10px"><div class="gn-avatar">'+ic+'</div><div class="gn-info" style="padding-right:22px"><div class="gn-label"><span class="gn-dot"></span>'+lab+'</div><div class="gn-titulo">'+esc(txt)+'</div><div class="gn-sub">'+esc(sub)+'</div></div><button data-ban="0" style="position:absolute;top:6px;right:9px;border:0;background:transparent;color:var(--txt,#fff);font-size:15px;font-weight:900;opacity:.75;cursor:pointer">✕</button></div>';
     var up=[];
     for(var i=1;i<=150&&up.length<3;i++){var d=new Date(h);d.setDate(h.getDate()+i);(EV(iso(d))||[]).forEach(function(x){if(x.p&&up.length<3)up.push({d:d,e:x,n:i})})}
     up.forEach(function(u){s+='<div class="es-al" data-open="'+iso(u.d)+'" style="--c:'+u.e.p+'"><b class="es-d" style="--c:'+u.e.p+'"></b><span style="flex:1;min-width:0">'+(u.e.e?u.e.e+' ':'')+esc(u.e.n)+'</span><small>'+fmt(u.d)+' • '+quando(u.n)+'</small></div>'});
@@ -4299,7 +4326,7 @@ html.esc-on #esSide{display:flex}
       var dots=(l.some(function(x){return x.t==='f'})?'<b class="es-d g"></b>':'')+(l.some(function(x){return x.m})?'<b class="es-d r"></b>':'')+(dt.getTime()===h.getTime()?'<b class="es-d b"></b>':'')+l.filter(function(x){return x.p}).map(function(x){return '<b class="es-d" style="--c:'+x.p+'"></b>'}).join('');
       var lab=t?((t.t==='ev'||t.t==='f'||t.t==='a1'||t.t==='a2')?t.n:(T[t.t][2]||t.n)):'';
       if(l.length>1)lab+=' +'+(l.length-1);
-      s+='<div class="es-day'+(t?' c':'')+(we&&!t?' we':'')+(dt.getTime()===h.getTime()?' hj':'')+(k===sel?' sl':'')+'" data-k="'+k+'" style="'+(t?'background:'+cor(t)+'38;border:1.5px solid '+cor(t):'background:var(--soft,rgba(0,0,0,.05))')+'"><span class="es-n">'+d+'<span class="es-dots">'+dots+'</span></span>'+(em?'<u class="es-em">'+em+'</u>':'')+'<i>'+esc(lab)+'</i></div>';
+      s+='<div class="es-day'+(t?' c':'')+(we&&!t?' we':'')+(dt.getTime()===h.getTime()?' hj':'')+(k===sel?' sl':'')+'" data-k="'+k+'" style="'+(t?'background:'+cor(t)+'38;border:1.5px solid '+cor(t)+';box-shadow:0 0 9px '+cor(t)+'aa':'background:var(--soft,rgba(0,0,0,.05))')+'"><span class="es-n">'+d+'<span class="es-dots">'+dots+'</span></span>'+(em?'<u class="es-em">'+em+'</u>':'')+'<i>'+esc(lab)+'</i></div>';
     }
     s+='</div></div>';
     return s+(edOpen?editor():'<div style="text-align:center;margin-bottom:10px"><button class="es-btn sm" data-eopen="1">✏️ Abrir editor</button></div>')+legCard();
@@ -4421,6 +4448,7 @@ html.esc-on #esSide{display:flex}
   view.addEventListener('click',function(e){
     var t=e.target,q=function(s){return t.closest(s)},x,v;
     if(t.classList.contains('es-mod')){ext=false;render();return}
+    if(x=q('[data-ban]')){banOpen=x.dataset.ban==='1';render();return}
     if(x=q('[data-cx]')){ext=false;render();return}
     if(x=q('[data-sw]')){$('esC').value=x.dataset.sw;$('esCp').checked=false;return}
     if(x=q('[data-pw]')){pdot(x.dataset.pw);return}
@@ -4522,7 +4550,7 @@ html.esc-on #esSide{display:flex}
       while((m4=mb.exec(txt)))bim.push([m4[1]+'º Bimestre',m4[4]+'-'+m4[3]+'-'+m4[2],m4[7]+'-'+m4[6]+'-'+m4[5]]);
       if(!n)return status('Não consegui ler eventos desse PDF.');
       if(S.y[a]&&Object.keys(S.y[a].ev).length&&!confirm('Já existe calendário de '+a+'. Substituir pelo do PDF?'))return status('Importação cancelada.');
-      S.y[a]={ev:E,bim:bim};save();ano=a;mes=0;aba='cal';sel=null;
+      S.y[a]={ev:E,bim:bim};mergeBase(a);save();ano=a;mes=0;aba='cal';sel=null;
       render();status('✅ '+n+' marcações e '+bim.length+' bimestres lidos para '+a+'.');
     }catch(err){status('Erro ao ler o PDF. Confira a internet e tente de novo.')}
   }
@@ -4534,7 +4562,7 @@ html.esc-on #esSide{display:flex}
   side.addEventListener('click',function(e){
     var b=e.target.closest('button');if(!b)return;
     if(b.dataset.sa){aba=b.dataset.sa;sideOpen=false;render();window.scrollTo(0,0)}
-    else{sideOpen=!sideOpen;sideR()}
+    
   });
   function ir(a){
     var es=a==='escola';
