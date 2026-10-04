@@ -3647,5 +3647,175 @@ html[data-fundo="degrade"] body::before{animation:sxDegrade 16s ease infinite !i
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',painel);else painel();
 })();
 </script>
+<!--ABA-ESCOLA-INICIO — cole antes de </body>. Não altera nenhuma linha do app.-->
+<style id="aba-escola-css">
+#abaBar{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 10px;max-width:32rem;margin:0 auto;background:var(--nav,rgba(255,255,255,.9));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+#abaBar button{flex:1;border:1.5px solid rgba(128,128,128,.35);background:rgba(128,128,128,.1);color:inherit;border-radius:14px;padding:9px 6px;font-size:13px;font-weight:800;cursor:pointer}
+#abaBar button.on{background:linear-gradient(135deg,#ff2d95,#8b5cf6 55%,#2f9bff);color:#fff;border-color:transparent}
+#escolaView{display:none;max-width:32rem;margin:0 auto;padding:8px 10px 120px}
+.es-card{background:rgba(128,128,128,.1);border:1px solid rgba(128,128,128,.28);border-radius:18px;padding:12px;margin-bottom:10px}
+.es-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.es-ind{background:rgba(128,128,128,.1);border:1px solid rgba(128,128,128,.28);border-radius:16px;padding:10px;min-width:0}
+.es-ind h4{margin:0 0 3px;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;opacity:.65}
+.es-ind b{display:block;font-size:13px;font-weight:800;line-height:1.25}
+.es-ind small{display:block;font-size:10.5px;opacity:.75;margin-top:2px}
+.es-bar{height:8px;border-radius:99px;background:rgba(128,128,128,.25);overflow:hidden;margin-top:6px}
+.es-bar span{display:block;height:100%;background:linear-gradient(90deg,#8b5cf6,#2f9bff)}
+.es-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.es-nav button{border:0;background:rgba(128,128,128,.2);color:inherit;border-radius:10px;padding:6px 12px;font-weight:800;font-size:12px;cursor:pointer}
+.es-nav h3{margin:0;font-size:16px;font-weight:800}
+.es-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.es-dow{text-align:center;font-size:10px;font-weight:800;opacity:.55;padding:2px 0}
+.es-day{min-height:46px;border-radius:10px;padding:3px;border:1px solid rgba(128,128,128,.25);font-size:11px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative}
+.es-day.we{opacity:.45}
+.es-day.hj{outline:2px solid #3b82f6;outline-offset:-1px}
+.es-day i{font-style:normal;font-size:7px;font-weight:800;line-height:1.1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#fff}
+.es-day .n{color:inherit}
+.es-t{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:middle;margin-right:5px}
+.es-leg{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:10.5px;font-weight:700;margin-top:8px}
+.es-row{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid rgba(128,128,128,.2);font-size:12px;align-items:flex-start}
+.es-row:last-child{border:0}
+.es-row b{min-width:62px}
+.es-h{margin:0 0 6px;font-size:12px;font-weight:800}
+.es-tab{width:100%;border-collapse:collapse;font-size:11px}
+.es-tab td{padding:3px 4px;border-bottom:1px solid rgba(128,128,128,.18)}
+.es-tab th{text-align:left;padding:3px 4px;font-size:10px;opacity:.7}
+@media print{#abaBar,#escolaView{display:none !important}}
+</style>
+<script>
+(function(){
+  var MES=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  var T={
+    a2:['AV2 — Avaliação 2','#ef4444','AV2'],a1:['AV1 — Avaliação 1','#f59e0b','AV1'],ch:['2ª Chamada','#a855f7','2ªch'],
+    rec:['Recuperação','#f97316','Recup.'],bol:['Boletim','#3b82f6','Boletim'],f:['Feriado','#10b981','Feriado'],
+    r:['Recesso','#14b8a6','Recesso'],fe:['Férias escolares','#94a3b8','Férias'],rr:['Reunião de Responsáveis','#ec4899','Reunião'],
+    cc:['Conselho de Classe','#22c55e','Conselho'],ev:['Evento / Outros','#06b6d4',''],ia:['Início das aulas','#eab308','Início']
+  };
+  var PRI=['a2','a1','ch','rec','bol','f','r','fe','rr','cc','ia','ev'];
+  var ev={}; // 'YYYY-MM-DD' -> [{t,n}]
+  function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function P(s){var a=s.split('-');return new Date(+a[0],a[1]-1,+a[2])}
+  function add(a,b,t,n){
+    if(a.length<10)a='2026-'+a; if(b&&b.length<10)b='2026-'+b; b=b||a;
+    for(var d=P(a),e=P(b);d<=e;d.setDate(d.getDate()+1)){var k=iso(d);(ev[k]=ev[k]||[]).push({t:t,n:n})}
+  }
+  // Calendário geral
+  add('01-01','01-01','f','Confraternização Universal');add('01-02','02-01','fe','Férias escolares');add('01-20','01-20','f','São Sebastião');
+  add('02-02','02-04','ev','Retorno dos Professores');add('02-05','02-06','rr','Reunião de Responsáveis');add('02-09','02-09','ia','Início das aulas');
+  add('02-10','02-12','ev','Avaliações Diagnósticas');add('02-13','02-13','ev','COC Folia');add('02-16','02-20','r','Carnaval');add('02-17','02-17','f','Carnaval');
+  add('03-08','03-08','f','Dia da Mulher');add('04-03','04-03','f','Sexta-feira da Paixão');add('04-21','04-21','f','Tiradentes');add('04-22','04-22','r','Recesso');
+  add('04-23','04-23','f','São Jorge');add('04-30','04-30','ev','Final de Bimestre');add('05-01','05-01','f','Dia do Trabalhador');
+  add('05-04','05-05','ch','2ª Chamada');add('05-08','05-08','bol','Boletim 1º Bim');add('05-10','05-10','ev','Dia das Mães');add('05-11','05-15','rr','Reunião de Responsáveis');
+  add('06-04','06-04','f','Corpus Christi');add('06-05','06-05','r','Recesso');add('07-06','07-07','ch','2ª Chamada');add('07-10','07-10','bol','Boletim 2º Bim');
+  add('07-13','07-17','rec','Aula de Recuperação');add('07-20','07-22','rec','Prova de Recuperação');add('07-23','07-31','r','Recesso Escolar');
+  add('08-03','08-03','ia','Início das aulas (2º sem.)');add('08-07','08-07','bol','Boletim de Recuperação');add('08-09','08-09','ev','Dia dos Pais');add('08-10','08-14','rr','Reunião de Responsáveis');
+  add('09-07','09-07','f','Independência');add('09-28','09-29','ch','2ª Chamada');add('10-02','10-02','bol','Boletim 3º Bim');add('10-12','10-12','f','N. Sra. Aparecida');
+  add('10-15','10-15','f','Dia dos Professores');add('10-19','10-22','rr','Reunião de Responsáveis');add('11-02','11-02','f','Finados');add('11-15','11-15','f','Proc. República');
+  add('11-20','11-20','f','Consciência Negra');add('12-04','12-04','ch','2ª Chamada');add('12-07','12-11','rec','Aula de Recuperação');add('12-10','12-10','bol','Boletim 4º Bim');
+  add('12-14','12-16','rec','Recuperação Final');add('12-17','12-17','cc','Conselho de Classe');add('12-18','12-18','ev','Fim do ano letivo');add('12-25','12-25','f','Natal');
+  // Avaliações (datas por bimestre)
+  var M1=['Português e Prática Textual','Geografia','História e Ciências Sociais','Ciências da Natureza','Matemática'];
+  var M2=['Português e Prática Textual','Geografia e Inglês','História e Ciências Sociais','Ciências da Natureza','Matemática'];
+  var AV=[
+    {b:1,a1:['03-16','03-17','03-18','03-19','03-20'],a2:['04-24','04-27','04-28','04-29','04-30']},
+    {b:2,a1:['05-25','05-26','05-27','05-28','05-29'],a2:['06-29','06-30','07-01','07-02','07-03']},
+    {b:3,a1:['08-17','08-18','08-19','08-20','08-21'],a2:['09-21','09-22','09-23','09-24','09-25']},
+    {b:4,a1:['10-23','10-26','10-27','10-28','10-29'],a2:['11-27','11-30','12-01','12-02','12-03']}
+  ];
+  AV.forEach(function(x){x.a1.forEach(function(d,i){add(d,d,'a1',M1[i])});x.a2.forEach(function(d,i){add(d,d,'a2',M2[i])})});
+  var BIM=[['1º Bimestre','2026-02-09','2026-04-30'],['2º Bimestre','2026-05-04','2026-07-10'],['3º Bimestre','2026-07-27','2026-10-02'],['4º Bimestre','2026-10-05','2026-12-18']];
+
+  function hoje(){var d=new Date();d.setHours(0,0,0,0);return d}
+  function fmt(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')}
+  function dif(d){return Math.round((d-hoje())/86400000)}
+  function quando(n){return n===0?'Hoje':n===1?'Amanhã':'Em '+n+' dias'}
+  function top(k){var l=ev[k];if(!l)return null;for(var i=0;i<PRI.length;i++)for(var j=0;j<l.length;j++)if(l[j].t===PRI[i])return l[j];return l[0]}
+  function proximo(tipos){var h=hoje();for(var i=0;i<400;i++){var d=new Date(h);d.setDate(h.getDate()+i);var l=ev[iso(d)];if(l)for(var j=0;j<l.length;j++)if(tipos.indexOf(l[j].t)>-1)return{d:d,e:l[j],n:i}}return null}
+
+  var ano=2026,mes=hoje().getFullYear()===2026?hoje().getMonth():0,sel=null;
+  var bar=document.createElement('div');bar.id='abaBar';bar.className='print-hidden';
+  bar.innerHTML='<button data-a="guarda">👨‍👩‍👧 Guarda</button><button data-a="escola">🎒 Escola</button>';
+  var site=document.getElementById('conteudo-site');
+  var view=document.createElement('div');view.id='escolaView';
+  document.body.insertBefore(bar,site);document.body.insertBefore(view,site.nextSibling);
+
+  function indicadores(){
+    var h=hoje(),k=iso(h),t=top(k),dow=h.getDay(),txt,sub='';
+    if(t&&['f','r','fe'].indexOf(t.t)>-1){txt=t.n;sub=T[t.t][0]}
+    else if(dow===0||dow===6){txt='Fim de semana';sub='Sem aula'}
+    else{txt='Dia letivo';sub=t?t.n:'Aula normal'}
+    var bi=null;BIM.forEach(function(b,i){if(h>=P(b[1])&&h<=P(b[2]))bi=i});
+    var bh;
+    if(bi===null){bh='<h4>Bimestre</h4><b>Fora do período</b><small>Recesso/férias</small>'}
+    else{var b=BIM[bi],ini=P(b[1]),fim=P(b[2]),pct=Math.round((h-ini)/(fim-ini)*100);
+      bh='<h4>'+b[0]+'</h4><b>'+pct+'% concluído</b><small>Faltam '+dif(fim)+' dias (até '+fmt(fim)+')</small><div class="es-bar"><span style="width:'+pct+'%"></span></div>'}
+    var pa=proximo(['a1','a2']),pf=proximo(['f']),pb=proximo(['bol']);
+    function c(h4,p){return '<div class="es-ind"><h4>'+h4+'</h4>'+(p?'<b>'+p.e.n+'</b><small>'+fmt(p.d)+' • '+quando(p.n)+'</small>':'<b>—</b>')+'</div>'}
+    return '<div class="es-grid2"><div class="es-ind"><h4>Hoje • '+fmt(h)+'</h4><b>'+txt+'</b><small>'+sub+'</small></div><div class="es-ind">'+bh+'</div>'
+      +c('📝 Próxima avaliação',pa)+c('🎉 Próximo feriado',pf)+c('📄 Próximo boletim',pb)
+      +'<div class="es-ind"><h4>🧮 Média</h4><b>(AV1×3 + TP×3 + AV2×4) ÷ 10</b><small>Precisa ≥ 7,0</small></div></div>';
+  }
+
+  function calendario(){
+    var h=hoje(),pd=new Date(ano,mes,1).getDay(),nd=new Date(ano,mes+1,0).getDate();
+    var s='<div class="es-card"><div class="es-nav"><button data-m="-1">‹ Ant</button><h3>'+MES[mes]+' '+ano+'</h3><button data-m="1">Próx ›</button></div><div class="es-cal">';
+    'DSTQQSS'.split('').forEach(function(x){s+='<div class="es-dow">'+x+'</div>'});
+    for(var i=0;i<pd;i++)s+='<div></div>';
+    for(var d=1;d<=nd;d++){
+      var dt=new Date(ano,mes,d),k=iso(dt),t=top(k),we=dt.getDay()%6===0;
+      var bg=t?T[t.t][1]:'transparent',lab=t?(t.t==='ev'?t.n:(t.t==='f'||t.t==='a1'||t.t==='a2'?t.n:T[t.t][2])):'';
+      s+='<div class="es-day'+(we&&!t?' we':'')+(dt.getTime()===h.getTime()?' hj':'')+'" data-k="'+k+'" style="background:'+(t?bg+'cc':'transparent')+'"><span class="n">'+d+'</span><i>'+lab+'</i></div>';
+    }
+    s+='</div><div class="es-leg">';
+    PRI.forEach(function(p){s+='<span><span class="es-t" style="background:'+T[p][1]+'"></span>'+T[p][0]+'</span>'});
+    s+='</div></div>';
+    if(sel){var l=ev[sel]||[];s+='<div class="es-card"><p class="es-h">📍 '+fmt(P(sel))+'</p>'+(l.length?l.map(function(x){return '<div class="es-row"><span class="es-t" style="background:'+T[x.t][1]+'"></span><span><b>'+T[x.t][0]+'</b> — '+x.n+'</span></div>'}).join(''):'<small>Aula normal, sem eventos.</small>')+'</div>'}
+    return s;
+  }
+
+  function listaMes(){
+    var out=[];for(var d=1;d<=new Date(ano,mes+1,0).getDate();d++){var k=ano+'-'+String(mes+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');(ev[k]||[]).forEach(function(x){out.push([d,x])})}
+    return '<div class="es-card"><p class="es-h">📌 Eventos de '+MES[mes]+'</p>'+(out.length?out.map(function(o){return '<div class="es-row"><b>'+String(o[0]).padStart(2,'0')+'/'+String(mes+1).padStart(2,'0')+'</b><span><span class="es-t" style="background:'+T[o[1].t][1]+'"></span>'+o[1].n+'</span></div>'}).join(''):'<small>Nenhum evento neste mês.</small>')+'</div>';
+  }
+
+  function provas(){
+    var s='<div class="es-card"><p class="es-h">📝 Avaliações por bimestre</p>';
+    AV.forEach(function(x){
+      s+='<p class="es-h" style="margin-top:8px">'+x.b+'º Bimestre</p><table class="es-tab"><tr><th>AV1</th><th></th><th>AV2</th><th></th></tr>';
+      for(var i=0;i<5;i++)s+='<tr><td><b>'+fmt(P('2026-'+x.a1[i]))+'</b></td><td>'+M1[i].replace('Português e Prática Textual','Português / Prát. Textual').replace('História e Ciências Sociais','História / C. Sociais')+'</td><td><b>'+fmt(P('2026-'+x.a2[i]))+'</b></td><td>'+M2[i].replace('Português e Prática Textual','Português / Prát. Textual').replace('História e Ciências Sociais','História / C. Sociais')+'</td></tr>';
+      s+='</table>';
+    });
+    s+='</div><div class="es-card"><p class="es-h">🧮 Média e boletins</p><div class="es-row"><b>Pesos</b><span>AV1 = 3 • TP = 3 • AV2 = 4</span></div><div class="es-row"><b>Fórmula</b><span>(AV1×3 + TP×3 + AV2×4) ÷ 10 ≥ 7,0</span></div><div class="es-row"><b>Boletins</b><span>1º Bim 08/05 • 2º Bim 10/07 • 3º Bim 02/10 • 4º Bim 10/12</span></div></div>';
+    s+='<div class="es-card"><p class="es-h">📞 Contatos</p><div class="es-row"><span>Direção: Monique Agatha<br>Coord. Anos Iniciais: Laís Rabelo<br>lais.pedagogico@coccampogrande.com.br<br>Comunicação oficial: <b>Classapp</b></span></div></div>';
+    return s;
+  }
+
+  function render(){view.innerHTML='<h2 style="margin:4px 2px 8px;font-size:16px;font-weight:800">🎒 Calendário da Escola — 1º ano • COC Campo Grande</h2>'+indicadores()+calendario()+listaMes()+provas()}
+
+  view.addEventListener('click',function(e){
+    var m=e.target.closest('[data-m]');
+    if(m){mes+=+m.dataset.m;if(mes>11){mes=0;ano++}if(mes<0){mes=11;ano--}sel=null;render();return}
+    var d=e.target.closest('[data-k]');if(d){sel=d.dataset.k;render()}
+  });
+  var x0=0,y0=0;
+  view.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+  view.addEventListener('touchend',function(e){var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
+    if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){mes+=dx<0?1:-1;if(mes>11){mes=0;ano++}if(mes<0){mes=11;ano--}sel=null;render()}},{passive:true});
+
+  function ir(a){
+    var esc=a==='escola';
+    site.style.display=esc?'none':'';view.style.display=esc?'block':'none';
+    ['v3FabHoje','btn-voz-flutuante'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=esc?'none':''});
+    bar.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.a===a)});
+    try{localStorage.setItem('sx_aba',a)}catch(e){}
+    if(esc)render();
+    window.scrollTo(0,0);
+  }
+  bar.addEventListener('click',function(e){var b=e.target.closest('button');if(b)ir(b.dataset.a)});
+  var ini='guarda';try{ini=localStorage.getItem('sx_aba')||'guarda'}catch(e){}
+  ir(ini);
+})();
+</script>
+<!--ABA-ESCOLA-FIM-->
 </body>
 </html>
