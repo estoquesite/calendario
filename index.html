@@ -4079,7 +4079,7 @@ html.esc-on #conteudo-site{display:none !important}
 })();
 </script>
 <!--ABA-ESCOLA-FIM-->
-<!--ABA-ESCOLA-INICIO v6 — substitua TUDO entre ABA-ESCOLA-INICIO e ABA-ESCOLA-FIM por este bloco (inclusive essas duas linhas de comentário). A aba Guarda não é alterada.-->
+<!--ABA-ESCOLA-INICIO v7 — substitua TUDO entre ABA-ESCOLA-INICIO e ABA-ESCOLA-FIM por este bloco (inclusive essas duas linhas de comentário). A aba Guarda não é alterada.-->
 <style id="aba-escola-css2">
 #abaBar{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 10px;max-width:32rem;margin:0 auto;background:var(--nav,rgba(255,255,255,.92));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 #abaBar button{flex:1;border:1.5px solid var(--softb,rgba(128,128,128,.35));background:var(--soft,rgba(128,128,128,.1));color:var(--txt,inherit);border-radius:14px;padding:9px 6px;font-size:13px;font-weight:800;cursor:pointer}
@@ -4407,7 +4407,7 @@ html.esc-on #esSide{display:flex}
   function paleta(){
     var cm=S.pal[0],cp=S.pal[1];
     var inp=function(w,v){return '<input type="color" data-cp="'+w+'" value="'+v+'" style="width:56px;height:34px;border:0;background:none;padding:0">'};
-    return '<div class="es-card pk"><p class="es-h">🎨 Cores desta aba (independente da Guarda)</p><div class="es-emo" style="margin-bottom:8px">'+PRE.map(function(p){return '<button type="button" class="es-btn sm" data-pre="'+p[0]+'|'+p[1]+'">'+p[2]+'</button>'}).join('')+'</div><div class="es-row" style="cursor:default"><span style="flex:1">👩 Mãe</span>'+inp('mae',cm)+'</div><div class="es-row" style="cursor:default"><span style="flex:1">👨 Pai</span>'+inp('pai',cp)+'</div></div>';
+    return '<div class="es-card pk"><p class="es-h">🎨 Cores desta aba (independente da Guarda)</p><div class="es-emo" style="margin-bottom:8px">'+PRE.map(function(p){return '<button type="button" class="es-btn sm" data-pre="'+p[0]+'|'+p[1]+'">'+p[2]+'</button>'}).join('')+'</div><div class="es-row" style="cursor:default"><span style="flex:1">Cor 1</span>'+inp('mae',cm)+'</div><div class="es-row" style="cursor:default"><span style="flex:1">Cor 2</span>'+inp('pai',cp)+'</div></div>';
   }
   function legendas(){
     var cnt={};for(var a in S.y)for(var k in S.y[a].ev)S.y[a].ev[k].forEach(function(x){cnt[x.t]=(cnt[x.t]||0)+1});
@@ -4527,8 +4527,9 @@ html.esc-on #esSide{display:flex}
     if(t.id==='esPdf'&&t.files[0])lerPDF(t.files[0]);
   });
   var x0=0,y0=0;
-  view.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
-  view.addEventListener('touchend',function(e){if(ext||aba!=='cal')return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
+  var inCal=false;
+  view.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY;inCal=!!e.target.closest('.es-cal')},{passive:true});
+  view.addEventListener('touchend',function(e){if(ext||aba!=='cal'||!inCal)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
     if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5){mes+=dx<0?1:-1;if(mes>11){mes=0;ano++}if(mes<0){mes=11;ano--}sel=null;render()}},{passive:true});
 
   // ---------- leitura do PDF (salva no ano que está selecionado) ----------
@@ -4607,12 +4608,33 @@ html.esc-on #esSide{display:flex}
     document.documentElement.classList.toggle('esc-on',es);
     ['v3FabHoje','btn-voz-flutuante'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=es?'none':''});
     bar.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.a===a)});
-    try{localStorage.setItem('sx_aba',a)}catch(e){}
+    curA=a;try{localStorage.setItem('sx_aba',a)}catch(e){}
     if(es)render();
     window.scrollTo(0,0);
   }
   bar.addEventListener('click',function(e){var b=e.target.closest('button');if(b)ir(b.dataset.a)});
   var ly=0;window.addEventListener('scroll',function(){var y=window.scrollY||0;if(y<20)bar.classList.remove('oculta');else if(y>ly+6)bar.classList.add('oculta');else if(y<ly-6)bar.classList.remove('oculta');ly=y},{passive:true});
+  // arrastar o dedo numa área vazia (ou na borda da tela) troca de aba
+  var ORD=['guarda','escola','pessoal'],curA='guarda',sx=0,sy=0,stt=0,sOk=false;
+  function modalAberto(){
+    if(document.querySelector('.es-mod,#v3Modal.open,.sx-fundo.aberto'))return true;
+    return ['customModal','modalPeriodoRapido','modalMotivos','modalImpressao','modalSeletorMesAno','tela-login'].some(function(id){var el=document.getElementById(id);return el&&!el.classList.contains('hidden')});
+  }
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length!==1){sOk=false;return}
+    var t=e.touches[0],tg=e.target;sx=t.clientX;sy=t.clientY;stt=Date.now();
+    var borda=sx<22||sx>window.innerWidth-22;
+    sOk=!modalAberto()&&!tg.closest('input,select,textarea,#esSide,.es-emo,.v3-tabs');
+    if(!borda&&tg.closest('.es-cal,#bloco-calendario-print'))sOk=false;
+  },{passive:true,capture:true});
+  document.addEventListener('touchend',function(e){
+    if(!sOk)return;sOk=false;
+    if(typeof isArrastandoPeriodo!=='undefined'&&isArrastandoPeriodo)return;
+    var t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
+    if(Math.abs(dx)<80||Math.abs(dx)<Math.abs(dy)*1.8||Date.now()-stt>800)return;
+    var i=ORD.indexOf(curA)+(dx<0?1:-1);if(i<0||i>=ORD.length)return;
+    e.stopPropagation();ir(ORD[i]);
+  },true);
   var ini='guarda';try{ini=localStorage.getItem('sx_aba')||'guarda'}catch(e){}
   ir(ini);
 })();
