@@ -4079,7 +4079,7 @@ html.esc-on #conteudo-site{display:none !important}
 })();
 </script>
 <!--ABA-ESCOLA-FIM-->
-<!--ABA-ESCOLA-INICIO v4 — substitua TUDO entre ABA-ESCOLA-INICIO e ABA-ESCOLA-FIM por este bloco (inclusive essas duas linhas de comentário). A aba Guarda não é alterada.-->
+<!--ABA-ESCOLA-INICIO v5 — substitua TUDO entre ABA-ESCOLA-INICIO e ABA-ESCOLA-FIM por este bloco (inclusive essas duas linhas de comentário). A aba Guarda não é alterada.-->
 <style id="aba-escola-css2">
 #abaBar{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 10px;max-width:32rem;margin:0 auto;background:var(--nav,rgba(255,255,255,.92));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 #abaBar button{flex:1;border:1.5px solid var(--softb,rgba(128,128,128,.35));background:var(--soft,rgba(128,128,128,.1));color:var(--txt,inherit);border-radius:14px;padding:9px 6px;font-size:13px;font-weight:800;cursor:pointer}
@@ -4149,15 +4149,17 @@ html.esc-on #conteudo-site{display:none !important}
 #esSide button{width:44px;height:44px;border-radius:14px;border:1.5px solid var(--softb,rgba(128,128,128,.3));background:var(--soft,rgba(128,128,128,.1));font-size:21px;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;color:var(--txt,inherit)}
 #esSide button.on{background:var(--btn,linear-gradient(135deg,#ff2d95,#8b5cf6 55%,#2f9bff));border-color:transparent;box-shadow:var(--btn-sh,none)}
 html.esc-on #esSide{display:flex}
-#esSide{top:auto !important;right:120px !important;bottom:86px !important;transform:none !important;flex-direction:row !important;gap:3px !important;padding:4px !important;border-radius:16px !important;background:rgba(10,8,22,.28) !important;border:1.5px solid rgba(var(--pai-rgb,47,155,255),.8) !important;box-shadow:0 0 12px rgba(var(--pai-rgb,47,155,255),.5) !important;backdrop-filter:blur(6px) !important}
+#esSide{top:auto !important;right:120px !important;bottom:86px !important;transform:none !important;flex-direction:row !important;gap:3px !important;padding:4px !important;border-radius:16px !important;background:rgba(10,8,22,.08) !important;border:1px solid rgba(var(--pai-rgb,47,155,255),.35) !important;box-shadow:none !important;backdrop-filter:blur(2px) !important;opacity:.45;transition:opacity .2s}
+#esSide:hover,#esSide:active{opacity:1}
 #esSide button{width:36px !important;height:36px !important;font-size:18px !important;border-radius:11px !important;background:transparent !important;border-color:transparent !important}
-#esSide button.on{background:rgba(var(--mae-rgb,255,45,149),.4) !important;border-color:rgba(var(--mae-rgb,255,45,149),.9) !important;box-shadow:0 0 10px rgba(var(--mae-rgb,255,45,149),.7) !important}
+#esSide button.on{background:rgba(var(--mae-rgb,255,45,149),.25) !important;border-color:rgba(var(--mae-rgb,255,45,149),.6) !important;box-shadow:none !important}
 .es-card{border:1.5px solid rgba(var(--mae-rgb,255,45,149),.95) !important;box-shadow:0 0 16px rgba(var(--mae-rgb,255,45,149),.55),inset 0 0 12px rgba(var(--mae-rgb,255,45,149),.14) !important}
 .es-card.bl{border-color:rgba(var(--pai-rgb,47,155,255),.95) !important;box-shadow:0 0 16px rgba(var(--pai-rgb,47,155,255),.55),inset 0 0 12px rgba(var(--pai-rgb,47,155,255),.14) !important}
 .es-ind{border:1.5px solid rgba(var(--pai-rgb,47,155,255),.95) !important;box-shadow:0 0 12px rgba(var(--pai-rgb,47,155,255),.55) !important}
 .es-ind:nth-child(odd){border-color:rgba(var(--mae-rgb,255,45,149),.95) !important;box-shadow:0 0 12px rgba(var(--mae-rgb,255,45,149),.55) !important}
 .es-bar,.es-bar2{box-shadow:0 0 8px rgba(var(--mae-rgb,255,45,149),.6)}
 .es-box{box-shadow:0 0 24px rgba(var(--mae-rgb,255,45,149),.6) !important}
+#escolaView,.es-fab{--btn:linear-gradient(135deg,var(--mae,#ff2d95),var(--pai,#2f9bff));--btn-sh:0 6px 22px rgba(var(--mae-rgb,255,45,149),.35)}
 @media print{#abaBar,#escolaView,.es-fab,#esSide{display:none !important}}
 </style>
 <script>
@@ -4237,7 +4239,7 @@ html.esc-on #esSide{display:flex}
     for(var a in S.y)for(var k in S.y[a].ev)S.y[a].ev[k].forEach(function(x){if(!T[x.t])x.t='ev'});if(!S.mb)S.mb={};for(var ay in S.y)if(!S.mb[ay])mergeBase(ay);save()}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
   function Y(a){if(!S.y[a]){S.y[a]={ev:{},bim:[['1º Bimestre','',''],['2º Bimestre','',''],['3º Bimestre','',''],['4º Bimestre','','']]};mergeBase(a)}return S.y[a]}
-  function EV(k){var y=S.y[k.slice(0,4)];return y&&y.ev[k]||null}
+  function EV(k){var yr=k.slice(0,4);if(!S.y[yr]&&+yr>=2026&&+yr<=2100)Y(yr);var y=S.y[yr];return y&&y.ev[k]||null}
   function top(k){var l=EV(k);if(!l||!l.length)return null;for(var i=0;i<PRI.length;i++)for(var j=0;j<l.length;j++)if(l[j].t===PRI[i])return l[j];return l[0]}
   function proximo(tipos){var h=hoje();for(var i=0;i<400;i++){var d=new Date(h);d.setDate(h.getDate()+i);var l=EV(iso(d));if(l)for(var j=0;j<l.length;j++)if(tipos.indexOf(l[j].t)>-1)return{d:d,e:l[j],n:i}}return null}
   function bims(a){return Y(a).bim.filter(function(b){return b[1]&&b[2]})}
@@ -4255,7 +4257,7 @@ html.esc-on #esSide{display:flex}
   }
 
   // ---------- estado de tela ----------
-  var ano=hoje().getFullYear(),mes=hoje().getMonth(),sel=null,aba='cal',ed=null,msg='',ext=false,edOpen=true,lg=null,FIX=['f','r','fe','a1','a2','ev'],sideOpen=false,side=null,banOpen=true;
+  var ano=hoje().getFullYear(),mes=hoje().getMonth(),sel=null,aba='cal',ed=null,msg='',ext=false,edOpen=false,lg=null,FIX=['f','r','fe','a1','a2','ev'],sideOpen=false,side=null,banOpen=true;
   var TABS=[['cal','🗓️','Calendário'],['ev','📌','Eventos'],['av','📝','Provas'],['lg','🏷️','Legendas'],['pdf','📎','PDF']];
   function aplicarDots(){['g','r','b'].forEach(function(k){view.style.setProperty('--d'+k,S.dc[k])})}
   function dia(){return sel||iso(hoje())}
@@ -4329,7 +4331,7 @@ html.esc-on #esSide{display:flex}
       s+='<div class="es-day'+(t?' c':'')+(we&&!t?' we':'')+(dt.getTime()===h.getTime()?' hj':'')+(k===sel?' sl':'')+'" data-k="'+k+'" style="'+(t?'background:'+cor(t)+'38;border:1.5px solid '+cor(t)+';box-shadow:0 0 9px '+cor(t)+'aa':'background:var(--soft,rgba(0,0,0,.05))')+'"><span class="es-n">'+d+'<span class="es-dots">'+dots+'</span></span>'+(em?'<u class="es-em">'+em+'</u>':'')+'<i>'+esc(lab)+'</i></div>';
     }
     s+='</div></div>';
-    return s+(edOpen?editor():'<div style="text-align:center;margin-bottom:10px"><button class="es-btn sm" data-eopen="1">✏️ Abrir editor</button></div>')+legCard();
+    return s+(edOpen?editor():'<div style="text-align:center;margin-bottom:10px"><button class="es-btn sm" data-eopen="1">✏️ Editar este dia</button></div>')+legCard();
   }
 
   function editor(){
@@ -4374,12 +4376,19 @@ html.esc-on #esSide{display:flex}
     return s;
   }
 
+  var PRE=[['#ff2d95','#2f9bff','💗💙 Rosa+Azul'],['#a855f7','#22e68c','💜💚 Roxo+Verde'],['#ff8a00','#00e1ff','🧡🩵 Laranja+Ciano'],['#ff3b30','#ffd60a','❤️💛 Vermelho+Amarelo'],['#ffbe00','#aa50ff','💛💜 Dourado+Roxo'],['#78ff00','#ff0078','💚🩷 Lima+Pink']];
+  function setPal(m,p){try{localStorage.setItem('sx_cmae',m);localStorage.setItem('sx_cpai',p);localStorage.setItem('sx_pal','custom')}catch(e){}document.documentElement.setAttribute('data-pal','custom')}
+  function paleta(){
+    var cm='#ff2d95',cp='#2f9bff';try{cm=localStorage.getItem('sx_cmae')||cm;cp=localStorage.getItem('sx_cpai')||cp}catch(e){}
+    var inp=function(w,v){return '<input type="color" data-cp="'+w+'" value="'+v+'" style="width:56px;height:34px;border:0;background:none;padding:0">'};
+    return '<div class="es-card pk"><p class="es-h">🎨 Cores do neon (vale para o app todo)</p><div class="es-emo" style="margin-bottom:8px">'+PRE.map(function(p){return '<button type="button" class="es-btn sm" data-pre="'+p[0]+'|'+p[1]+'">'+p[2]+'</button>'}).join('')+'</div><div class="es-row" style="cursor:default"><span style="flex:1">👩 Mãe</span>'+inp('mae',cm)+'</div><div class="es-row" style="cursor:default"><span style="flex:1">👨 Pai</span>'+inp('pai',cp)+'</div></div>';
+  }
   function legendas(){
     var cnt={};for(var a in S.y)for(var k in S.y[a].ev)S.y[a].ev[k].forEach(function(x){cnt[x.t]=(cnt[x.t]||0)+1});
     var s='<div class="es-card"><p class="es-h">🏷️ Legendas <button class="es-btn sm" data-lgn="1" style="float:right">➕ Nova</button><button class="es-btn sm" data-clr="lg" style="float:right;margin-right:6px;background:#ef4444">🗑 Apagar minhas</button></p><div style="clear:both"></div>';
     PRI.forEach(function(p){s+='<div class="es-row" style="cursor:default"><span class="es-t" style="background:'+T[p][1]+'"></span><span style="flex:1"><b>'+esc(T[p][0])+'</b>'+(T[p][2]?' <small>('+esc(T[p][2])+')</small>':'')+' <small style="opacity:.6">'+(cnt[p]||0)+' uso(s)</small></span><button class="es-btn sm" data-lged="'+p+'">✏️</button>'+(FIX.indexOf(p)>-1?'':'<button class="es-btn sm" data-lgdel="'+p+'" style="background:#ef4444">🗑</button>')+'</div>'});
     s+='<small style="display:block;margin-top:8px;opacity:.75">As legendas novas aparecem sozinhas na lista de tipos ao criar eventos.</small></div>';
-    s+='<div class="es-card bl"><p class="es-h">🎨 Cores das bolinhas</p>'+[['g','Feriado'],['r','Emenda'],['b','Hoje (bolinha e borda do dia)']].map(function(o){return '<div class="es-row" style="cursor:default"><b class="es-d '+o[0]+'" style="min-width:9px"></b><span style="flex:1">'+o[1]+'</span><input type="color" data-dc="'+o[0]+'" value="'+S.dc[o[0]]+'" style="width:56px;height:34px;border:0;background:none;padding:0"></div>'}).join('')+'<button class="es-btn sm" data-dcr="1" style="margin-top:8px">↺ Voltar ao neon padrão</button></div>';
+    s+='<div class="es-card bl"><p class="es-h">🎨 Cores das bolinhas</p>'+[['g','Feriado'],['r','Emenda'],['b','Hoje (bolinha e borda do dia)']].map(function(o){return '<div class="es-row" style="cursor:default"><b class="es-d '+o[0]+'" style="min-width:9px"></b><span style="flex:1">'+o[1]+'</span><input type="color" data-dc="'+o[0]+'" value="'+S.dc[o[0]]+'" style="width:56px;height:34px;border:0;background:none;padding:0"></div>'}).join('')+'<button class="es-btn sm" data-dcr="1" style="margin-top:8px">↺ Voltar ao neon padrão</button></div>'+paleta();
     if(lg!==null){var c=lg==='new'?['','#8b5cf6','']:T[lg];
       s+='<div class="es-card pk"><p class="es-h">'+(lg==='new'?'➕ Nova legenda':'✏️ Editando legenda')+'</p><label class="es-lbl">Nome</label><input id="lgN" class="es-in" value="'+esc(c[0])+'" placeholder="Ex.: Passeio escolar"><label class="es-lbl">Sigla no quadradinho (opcional)</label><input id="lgS" class="es-in" maxlength="8" value="'+esc(c[2])+'" placeholder="Ex.: Passeio"><label class="es-lbl">Cor</label><input id="lgC" type="color" value="'+c[1]+'" style="width:56px;height:36px;border:0;background:none;padding:0"><div style="display:flex;gap:8px;margin-top:12px"><button class="es-btn" style="flex:1" data-lgsv="1">💾 Salvar</button><button class="es-btn" style="background:#64748b;box-shadow:none" data-lgcn="1">Cancelar</button></div></div>';}
     return s;
@@ -4448,6 +4457,7 @@ html.esc-on #esSide{display:flex}
   view.addEventListener('click',function(e){
     var t=e.target,q=function(s){return t.closest(s)},x,v;
     if(t.classList.contains('es-mod')){ext=false;render();return}
+    if(x=q('[data-pre]')){v=x.dataset.pre.split('|');setPal(v[0],v[1]);render();return}
     if(x=q('[data-ban]')){banOpen=x.dataset.ban==='1';render();return}
     if(x=q('[data-cx]')){ext=false;render();return}
     if(x=q('[data-sw]')){$('esC').value=x.dataset.sw;$('esCp').checked=false;return}
@@ -4476,10 +4486,11 @@ html.esc-on #esSide{display:flex}
     if(x=q('[data-hoje]')){var hh=hoje();ano=hh.getFullYear();mes=hh.getMonth();sel=null;ed=null;render();return}
     if(x=q('[data-m]')){mes+=+x.dataset.m;if(mes>11){mes=0;ano++}if(mes<0){mes=11;ano--}sel=null;ed=null;render();return}
     if(x=q('[data-ab]')){aba=x.dataset.ab;render();return}
-    if(x=q('[data-k]')){sel=x.dataset.k;ed=null;edOpen=true;render()}
+    if(x=q('[data-k]')){sel=x.dataset.k;ed=null;render()}
   });
   view.addEventListener('change',function(e){
     var t=e.target;
+    if(t.dataset&&t.dataset.cp){setPal(view.querySelector('[data-cp="mae"]').value,view.querySelector('[data-cp="pai"]').value);return}
     if(t.dataset&&t.dataset.dc){S.dc[t.dataset.dc]=t.value;save();aplicarDots();return}
     if(t.dataset&&t.dataset.bn!==undefined){Y(ano).bim[+t.dataset.bn][0]=t.value;save();return}
     if(t.dataset&&t.dataset.bi!==undefined){Y(ano).bim[+t.dataset.bi][+t.dataset.f]=t.value;save();render();return}
