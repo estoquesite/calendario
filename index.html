@@ -4703,39 +4703,55 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
 </script>
 <!--ABA-ESCOLA-FIM-->
 </body>
-    <!--INICIO-INICIO v1 — cole este bloco INTEIRO logo antes de </body>, depois do último <!--ABA-ESCOLA-FIM-->. Não altera nada do que já existe.-->
+    <!--INICIO-INICIO v2 — APAGUE o bloco anterior (de INICIO-INICIO até INICIO-FIM) e cole este no lugar, antes de </body>, depois do último ABA-ESCOLA-FIM.-->
 <style id="inicio-css">
 #inicioView{display:none;max-width:32rem;margin:0 auto;padding:8px 10px 120px;color:var(--txt,#1e1b2e)}
 .in-top{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 10px}
 .in-top h2{margin:0;font-size:17px;font-weight:900;background:linear-gradient(90deg,var(--mae-t,#be185d),var(--tit-mid,#4c1d95),var(--pai-t,#1d4ed8));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .in-top small{font-size:11px;font-weight:700;opacity:.75}
-.in-chips{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px}
-.in-chips button{flex:0 0 auto;border:1.5px solid var(--softb,rgba(128,128,128,.35));background:var(--soft,rgba(128,128,128,.1));color:var(--txt,inherit);border-radius:12px;padding:7px 11px;font-size:11.5px;font-weight:800;cursor:pointer}
+.in-chips{display:flex;gap:5px;overflow-x:auto;margin-bottom:6px}
+.in-chips button{flex:0 0 auto;border:1px solid var(--softb,rgba(128,128,128,.35));background:var(--soft,rgba(128,128,128,.1));color:var(--txt,inherit);border-radius:12px;padding:7px 11px;font-size:11.5px;font-weight:800;cursor:pointer}
 .in-chips button.on{background:var(--btn,linear-gradient(135deg,#ff2d95,#8b5cf6 55%,#2f9bff));color:#fff;border-color:transparent}
-.in-sec{margin:12px 2px 6px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;opacity:.7}
-@keyframes inPisca{0%,100%{box-shadow:0 0 0 0 transparent,0 0 3px 0 var(--c)}50%{box-shadow:0 0 14px 3px var(--c)}}
+/* título de cada agenda */
+.in-sec{margin:14px 2px 8px;padding-bottom:5px;font-size:12px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:var(--g);text-shadow:0 0 8px var(--g);border-bottom:1px solid var(--g);box-shadow:0 5px 8px -6px var(--g);display:flex;justify-content:space-between}
+.in-sec span{opacity:.8}
+/* eventos: neon fininho e bem forte */
+@keyframes inPisca{0%,100%{box-shadow:0 0 5px var(--c),0 0 12px var(--c)}50%{box-shadow:0 0 9px var(--c),0 0 24px var(--c),0 0 40px var(--c)}}
 @keyframes inDot{0%,100%{transform:scale(.85);opacity:.7}50%{transform:scale(1.3);opacity:1}}
-.in-it{display:flex;gap:9px;align-items:center;padding:9px 10px;margin-bottom:7px;border-radius:14px;border:1.5px solid var(--c);background:var(--painel,rgba(255,255,255,.1));cursor:pointer;text-align:left}
+.in-it{display:flex;gap:9px;align-items:center;padding:8px 10px;margin-bottom:8px;border-radius:14px;border:1px solid var(--c);background:var(--painel,rgba(255,255,255,.06));box-shadow:0 0 6px var(--c),0 0 16px var(--c),inset 0 0 8px rgba(255,255,255,.04);cursor:pointer;text-align:left}
 .in-it.pisca{animation:inPisca 1.1s ease-in-out infinite}
-.in-it.hoje{border-width:2.5px;animation:inPisca .65s ease-in-out infinite}
-.in-d{width:10px;height:10px;min-width:10px;border-radius:50%;background:var(--c);box-shadow:0 0 6px var(--c);animation:inDot 1s ease-in-out infinite}
+.in-it.hoje{animation:inPisca .65s ease-in-out infinite}
+.in-d{width:9px;height:9px;min-width:9px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c),0 0 14px var(--c);animation:inDot 1s ease-in-out infinite}
 .in-ic{font-size:20px;line-height:1}
 .in-tx{flex:1;min-width:0}
 .in-tx b{display:block;font-size:12.5px;font-weight:800;line-height:1.25;overflow:hidden;text-overflow:ellipsis}
 .in-tx small{display:block;font-size:10px;opacity:.78;margin-top:1px}
-.in-wh{text-align:right;font-size:10.5px;font-weight:900;white-space:nowrap;color:var(--c)}
-.in-wh small{display:block;font-size:9.5px;opacity:.8;color:inherit}
+.in-wh{text-align:right;font-size:10.5px;font-weight:900;white-space:nowrap;color:var(--c);text-shadow:0 0 8px var(--c)}
+.in-wh small{display:block;font-size:9.5px;opacity:.85;color:inherit}
 .in-vazio{font-size:12px;opacity:.7;padding:8px 2px}
+/* tela da digital */
 #inLogin{margin-top:2px;text-align:left}
 #inLogin .in-lt{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;opacity:.7;margin-bottom:6px;display:flex;align-items:center;gap:6px}
-#inLogin .in-lista{max-height:34vh;overflow-y:auto}
-#inLogin .in-it{cursor:default;padding:7px 9px;margin-bottom:5px;background:transparent}
-@media print{#inicioView,#inLogin{display:none !important}}
+#inLogin .in-lista{max-height:36vh;overflow-y:auto;background:#0a0816;border-radius:16px;padding:8px 9px 2px;color:#f5f3ff}
+#inLogin .in-it{cursor:default;padding:6px 9px;margin-bottom:7px;background:rgba(255,255,255,.04)}
+#inLogin .in-sec{margin:6px 1px 7px;font-size:10px}
+#inLogin .in-sec:first-child{margin-top:0}
+@keyframes inCor{0%{transform:translate(0,0);opacity:0}15%{opacity:.2}85%{opacity:.2}100%{transform:translate(26px,-95vh);opacity:0}}
+.in-cor{position:absolute;left:16%;bottom:-30px;font-size:24px;pointer-events:none;animation:inCor 16s linear infinite}
+/* só coraçõezinhos, poucos e fraquinhos (Escola / Pessoal) */
+#esBrilho .esbp:nth-child(n+6):not([data-b]){display:none !important}
+/* barrinha lateral: some enquanto rola, volta mais escura quando para */
+#esSide{opacity:.95 !important;background:rgba(10,8,22,.82) !important;border:1px solid rgba(var(--pai-rgb,47,155,255),.8) !important;box-shadow:0 0 10px rgba(var(--pai-rgb,47,155,255),.45) !important;backdrop-filter:blur(6px) !important;-webkit-backdrop-filter:blur(6px) !important;transition:opacity .25s ease !important}
+html[data-modo="claro"] #esSide{background:rgba(255,255,255,.92) !important}
+#esSide button.on{background:rgba(var(--mae-rgb,255,45,149),.4) !important;border-color:rgba(var(--mae-rgb,255,45,149),.8) !important}
+#esSide.rolando{opacity:0 !important;pointer-events:none}
+@media print{#inicioView,#inLogin,.in-cor{display:none !important}}
 </style>
 <script>
 (function(){
   var MESES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-  var SRC={guarda:['👧','Sophia (Guarda)'],escola:['🎒','Escola'],pessoal:['⭐','Pessoal']};
+  var GR={geral:['🎉','Geral • Feriados','#39ff14'],guarda:['👧','Agenda da Sophia','#ff2d95'],escola:['🎒','Escola','#00e5ff'],pessoal:['⭐','Pessoal','#ffe600']};
+  var ORDER=['geral','guarda','escola','pessoal'];
   var flt='todos',aberto=false;
   function $(i){return document.getElementById(i)}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -4745,16 +4761,28 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
   function addD(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
   function fm(s){var d=P(s);return String(d.getDate()).padStart(2,'0')+'/'+MESES[d.getMonth()]}
   function nDias(s){return Math.round((P(s)-hoje())/86400000)}
+  // deixa qualquer cor mais neon (saturada e brilhante)
+  function neon(c){
+    if(!c||c.charAt(0)!=='#'||c.length<7)return c||'#ff2d95';
+    var h=c.slice(1),r=parseInt(h.substr(0,2),16)/255,g=parseInt(h.substr(2,2),16)/255,b=parseInt(h.substr(4,2),16)/255;
+    var mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn,hh=0;
+    if(d<.08)return c;
+    if(mx===r)hh=((g-b)/d)%6;else if(mx===g)hh=(b-r)/d+2;else hh=(r-g)/d+4;
+    hh*=60;if(hh<0)hh+=360;
+    return 'hsl('+Math.round(hh)+',100%,'+Math.round(Math.max(55,Math.min(l*100,62)))+'%)';
+  }
 
   // ---------- coleta de eventos de TODOS os calendários ----------
   function coletar(dias){
-    var h=hoje(),out=[],last={},gf={};
+    var h=hoje(),out=[],last={},gs={};
     function push(it){
+      it.g=it.sub==='Feriado'?'geral':it.src;
       var key=it.src+'|'+it.t+'|'+it.sub,l=last[key];
+      if(it.g==='geral'){if(gs[it.s]&&gs[it.s]!==key)return;gs[it.s]=key}
+      it.c=neon(it.c);
       if(l&&Math.round((P(it.s)-P(l.e))/86400000)===1){l.e=it.s;if(it.p)l.p=true;return}
       it.e=it.s;last[key]=it;out.push(it);
     }
-    // 1) Guarda da Sophia
     try{
       var G=function(d){return (window.regraPadrao&&regraPadrao(d.getDate(),d.getMonth(),d.getFullYear()))||{}};
       var prev=G(addD(h,-1)).resp,emo=window.emojisDia||{};
@@ -4762,15 +4790,14 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
         var d=addD(h,i),x=G(d),k=iso(d),y=d.getFullYear(),m=d.getMonth(),dd=d.getDate();
         var f=(window.feriados&&(feriados[y+'-'+m+'-'+dd]||feriados[m+'-'+dd]))||'';
         var em=emo[y+'-'+m+'-'+dd];
-        if(f){gf[k]=1;push({src:'guarda',s:k,ic:em||'🎉',t:f,sub:'Feriado',c:'#10b981'})}
-        if(x.emenda||x.grampinho)push({src:'guarda',s:k,ic:'🔗',t:'Emenda de feriado',sub:'Guarda',c:'#ef4444',p:true});
-        if(x.desc&&['Mãe','Pai','FDS Pai'].indexOf(x.desc)<0)push({src:'guarda',s:k,ic:em||'📌',t:x.desc,sub:'Com '+(x.resp==='pai'?'o Pai':'a Mãe'),c:'#f59e0b'});
-        else if(em)push({src:'guarda',s:k,ic:em,t:'Dia marcado',sub:'Com '+(x.resp==='pai'?'o Pai':'a Mãe'),c:'#f59e0b'});
+        if(f)push({src:'guarda',s:k,ic:em||'🎉',t:f,sub:'Feriado',c:'#39ff14'});
+        if(x.emenda||x.grampinho)push({src:'guarda',s:k,ic:'🔗',t:'Emenda de feriado',sub:'Guarda',c:'#ff1f5a',p:true});
+        if(x.desc&&['Mãe','Pai','FDS Pai'].indexOf(x.desc)<0)push({src:'guarda',s:k,ic:em||'📌',t:x.desc,sub:'Com '+(x.resp==='pai'?'o Pai':'a Mãe'),c:'#ffb400'});
+        else if(em)push({src:'guarda',s:k,ic:em,t:'Dia marcado',sub:'Com '+(x.resp==='pai'?'o Pai':'a Mãe'),c:'#ffb400'});
         if(x.resp&&prev&&x.resp!==prev)push({src:'guarda',s:k,ic:'🔄',t:'Sophia vai para '+(x.resp==='pai'?'o Pai':'a Mãe'),sub:'Troca de guarda',c:x.resp==='pai'?'#2f9bff':'#ff2d95',p:true});
         prev=x.resp;
       }
     }catch(e){}
-    // 2) Escola e 3) Pessoal (lidos do que você já salvou)
     function ler(key,src,icone){
       var S=null;try{S=JSON.parse(localStorage.getItem(key))}catch(e){}
       if(!S||!S.y)return;var T=S.t||{};
@@ -4778,7 +4805,6 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
         var d=addD(h,i),k=iso(d),yy=S.y[k.slice(0,4)],l=yy&&yy.ev&&yy.ev[k];if(!l)continue;
         l.forEach(function(x){
           if(x.t==='fe')return;
-          if(src==='escola'&&x.t==='f'&&gf[k])return;
           var tt=T[x.t]||['Evento','#a855f7'];
           push({src:src,s:k,ic:x.e||icone,t:x.n||tt[0],sub:tt[0],c:x.c||tt[1],p:!!x.p||!!x.m});
         });
@@ -4797,36 +4823,41 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
   }
   function item(it,go){
     var n=nDias(it.s),w=quando(it),cls='in-it'+(n<=0?' hoje':(n<=7||it.p)?' pisca':'');
-    return '<div class="'+cls+'" style="--c:'+it.c+'"'+(go?' data-go="'+it.src+'"':'')+'><span class="in-d"></span><span class="in-ic">'+esc(it.ic)+'</span><div class="in-tx"><b>'+esc(it.t)+'</b><small>'+SRC[it.src][0]+' '+SRC[it.src][1]+' • '+esc(it.sub)+'</small></div><div class="in-wh">'+w[0]+'<small>'+w[1]+'</small></div></div>';
+    return '<div class="'+cls+'" style="--c:'+it.c+'"'+(go?' data-go="'+it.src+'"':'')+'><span class="in-d"></span><span class="in-ic">'+esc(it.ic)+'</span><div class="in-tx"><b>'+esc(it.t)+'</b><small>'+esc(it.sub)+'</small></div><div class="in-wh">'+w[0]+'<small>'+w[1]+'</small></div></div>';
   }
+  function sec(g,n){var o=GR[g];return '<div class="in-sec" style="--g:'+o[2]+'"><b>'+o[0]+' '+o[1]+'</b><span>'+n+'</span></div>'}
 
   // ---------- 1) Tela da digital ----------
   function renderLogin(){
-    var box=$('inLogin');
+    var box=$('inLogin'),tl=$('tela-login');
     if(!box){
       var card=document.querySelector('#tela-login > div');if(!card)return;
       card.style.maxWidth='23rem';card.style.maxHeight='92vh';card.style.overflowY='auto';
       box=document.createElement('div');box.id='inLogin';card.appendChild(box);
     }
-    var l=coletar(45).filter(function(x){return nDias(x.s)<=14||x.p}).slice(0,8);
-    box.innerHTML='<div class="in-lt"><span class="in-d" style="--c:#ff2d95"></span> Próximos eventos</div><div class="in-lista">'+(l.length?l.map(function(x){return item(x,false)}).join(''):'<div class="in-vazio">Nada importante nos próximos dias 🙂</div>')+'</div>';
+    if(tl&&!tl.querySelector('.in-cor')){tl.style.overflow='hidden';var c=document.createElement('span');c.className='in-cor';c.textContent='💗';tl.insertBefore(c,tl.firstChild)}
+    var l=coletar(45).filter(function(x){return nDias(x.s)<=14||x.p}),s='';
+    ORDER.forEach(function(g){var z=l.filter(function(x){return x.g===g}).slice(0,3);if(z.length)s+=sec(g,z.length)+z.map(function(x){return item(x,false)}).join('')});
+    box.innerHTML='<div class="in-lt"><span class="in-d" style="--c:#ff2d95"></span> Próximos eventos</div><div class="in-lista">'+(s||'<div class="in-vazio">Nada importante nos próximos dias 🙂</div>')+'</div>';
   }
 
-  // ---------- 2) Página Início ----------
+  // ---------- 2) Página Início (separada por agenda) ----------
   var view=document.createElement('div');view.id='inicioView';document.body.appendChild(view);
   function renderInicio(){
     var h=hoje(),DS=['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
-    var all=coletar(120),l=all.filter(function(x){return flt==='todos'||x.src===flt});
+    var l=coletar(120);
     var x=(window.regraPadrao&&regraPadrao(h.getDate(),h.getMonth(),h.getFullYear()))||{},pai=x.resp==='pai',c=pai?'#2f9bff':'#ff2d95';
     var s='<div class="in-top"><h2>🏠 Início</h2><small>'+DS[h.getDay()]+', '+fm(iso(h))+'</small></div>';
     s+='<div class="guarda-neon" style="--gn:'+c+';--gn-rgb:'+(pai?'47,155,255':'255,45,149')+';--gn-claro:'+c+';margin-bottom:10px"><div class="gn-avatar">'+(pai?'👨':'👩')+'</div><div class="gn-info"><div class="gn-label"><span class="gn-dot"></span>Hoje</div><div class="gn-titulo">Sophia está com '+(pai?'o Pai':'a Mãe')+'</div></div></div>';
-    s+='<div class="in-chips">'+[['todos','Todos'],['guarda','👧 Sophia'],['escola','🎒 Escola'],['pessoal','⭐ Pessoal']].map(function(o){return '<button data-f="'+o[0]+'" class="'+(flt===o[0]?'on':'')+'">'+o[1]+'</button>'}).join('')+'</div>';
-    var g=[['Hoje e amanhã',function(n){return n<=1}],['Próximos 7 dias',function(n){return n>1&&n<=7}],['Mais adiante',function(n){return n>7}]];
-    g.forEach(function(gr){
-      var z=l.filter(function(it){return gr[1](nDias(it.s))});
-      if(z.length)s+='<div class="in-sec">'+gr[0]+'</div>'+z.slice(0,gr[0]==='Mais adiante'?15:40).map(function(it){return item(it,true)}).join('');
+    s+='<div class="in-chips">'+[['todos','Todos'],['geral','🎉 Geral'],['guarda','👧 Sophia'],['escola','🎒 Escola'],['pessoal','⭐ Pessoal']].map(function(o){return '<button data-f="'+o[0]+'" class="'+(flt===o[0]?'on':'')+'">'+o[1]+'</button>'}).join('')+'</div>';
+    var tem=false;
+    ORDER.forEach(function(g){
+      if(flt!=='todos'&&flt!==g)return;
+      var z=l.filter(function(it){return it.g===g});
+      if(!z.length){if(flt!=='todos')s+=sec(g,0)+'<div class="in-vazio">Nada nos próximos meses.</div>';return}
+      tem=true;s+=sec(g,z.length)+z.slice(0,flt==='todos'?6:30).map(function(it){return item(it,true)}).join('');
     });
-    if(!l.length)s+='<div class="in-vazio">Nenhum evento encontrado.</div>';
+    if(!tem&&flt==='todos')s+='<div class="in-vazio">Nenhum evento encontrado.</div>';
     view.innerHTML=s;
   }
   view.addEventListener('click',function(e){
@@ -4850,12 +4881,10 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
     renderInicio();window.scrollTo(0,0);
   }
   function fechar(){aberto=false;view.style.display='none'}
-  // clique em "Início" não passa para o código das outras abas
   document.addEventListener('click',function(e){
     var b=e.target.closest&&e.target.closest('#abaBar button');if(!b)return;
     if(b.dataset.a==='inicio'){e.stopPropagation();abrir()}else if(aberto)fechar();
   },true);
-  // se outra aba abrir (ex.: deslizando o dedo), fecha o Início
   new MutationObserver(function(){
     if(aberto&&(site.style.display!=='none'||(ev&&ev.style.display==='block')))fechar();
   }).observe(site,{attributes:true,attributeFilter:['style']});
@@ -4863,15 +4892,35 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
     if(aberto&&ev.style.display==='block')fechar();
   }).observe(ev,{attributes:true,attributeFilter:['style']});
 
+  // ---------- só coraçõezinhos flutuando (sem estrela, sem mistura) ----------
+  try{
+    if(!localStorage.getItem('sx_in_v2')){
+      ['guarda','escola','pessoal','inicio'].forEach(function(a){var k='sx_brilho_'+a,v=localStorage.getItem(k);if(v!=='nenhum')localStorage.setItem(k,'coracoes')});
+      localStorage.setItem('sx_in_v2','1');
+    }
+  }catch(e){}
+  var bl=$('esBrilho');
+  function umCoracao(){if(!bl)return;[].forEach.call(bl.querySelectorAll('.esbp'),function(p){if(/^(💖|💕|🩷)$/.test(p.textContent))p.textContent='💗'})}
+  if(bl){new MutationObserver(umCoracao).observe(bl,{childList:true});umCoracao()}
+
+  // ---------- barrinha lateral: some enquanto rola, aparece quando para ----------
+  var tm=null;
+  window.addEventListener('scroll',function(){
+    var sd=$('esSide');if(!sd)return;
+    sd.classList.add('rolando');clearTimeout(tm);
+    tm=setTimeout(function(){sd.classList.remove('rolando')},450);
+  },{passive:true});
+
   function tudo(){try{renderLogin();if(aberto)renderInicio()}catch(e){}}
   window.addEventListener('guarda:extras-atualizar',tudo);
   window.addEventListener('storage',tudo);
   window.addEventListener('focus',tudo);
   setInterval(tudo,60000);
-  setTimeout(tudo,1200); // depois da sincronização com a nuvem
+  setTimeout(tudo,1200);
   renderLogin();
-  abrir(); // o app já abre na página Início
+  var gb=bar&&bar.querySelector('[data-a="guarda"]');if(gb)gb.click(); // recarrega os brilhos já só com coração
+  abrir();
 })();
 </script>
 <!--INICIO-FIM-->
-</html>
+    </html>
