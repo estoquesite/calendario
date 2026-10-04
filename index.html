@@ -3683,7 +3683,8 @@ html.esc-on #conteudo-site{display:none !important}
 .es-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .es-dow{text-align:center;font-size:10px;font-weight:800;opacity:.6;padding:2px 0}
 .es-day{position:relative;min-height:50px;border-radius:10px;padding:3px;border:1px solid var(--softb,rgba(0,0,0,.15));font-size:11px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;color:var(--txt,#1e1b2e)}
-.es-day.c{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.45)}
+
+.es-day.c{font-weight:900}
 .es-day.we{opacity:.55}
 .es-day.sl{outline:3px solid var(--mae,#ff2d95);outline-offset:-2px}
 .es-day i{font-style:normal;font-size:7px;font-weight:800;line-height:1.15;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:100%}
@@ -3703,10 +3704,10 @@ html.esc-on #conteudo-site{display:none !important}
 .es-box{width:100%;max-width:32rem;max-height:88vh;overflow:auto;background:var(--sheet,#fff);color:var(--txt,#1e1b2e);border:var(--pbw,1px) solid var(--cb-mae,rgba(255,45,149,.7));box-shadow:var(--sh-mae,none);border-radius:22px 22px 0 0;padding:14px}
 .es-lbl{font-size:10px;font-weight:800;opacity:.75;margin-top:8px;display:block}
 .es-fab{position:fixed;right:16px;bottom:86px;z-index:95;border:0;border-radius:999px;padding:11px 18px;font-weight:900;font-size:14px;color:#fff;background:var(--btn,linear-gradient(135deg,#ff2d95,#8b5cf6 55%,#2f9bff));box-shadow:var(--btn-sh,0 0 18px rgba(255,45,149,.6));cursor:pointer;display:none}
-@keyframes esDot{0%,100%{transform:scale(.9);box-shadow:0 0 0 0 var(--c),0 0 5px 1px var(--c)}50%{transform:scale(1.4);box-shadow:0 0 0 5px transparent,0 0 16px 6px var(--c)}}
-@keyframes esHoje{0%,100%{box-shadow:0 0 6px 1px var(--db,#00e5ff),0 0 0 2px var(--db,#00e5ff)}50%{box-shadow:0 0 22px 7px var(--db,#00e5ff),0 0 0 3px #fff}}
-.es-day.hj{z-index:2;outline:3px solid var(--db,#00e5ff);outline-offset:-2px;animation:esHoje 1s ease-in-out infinite}
-.es-d{width:12px;height:12px;min-width:12px;border-radius:50%;border:2px solid #fff;display:inline-block;vertical-align:middle;background:var(--c);animation:esDot 1s ease-in-out infinite}
+@keyframes esDot{0%,100%{transform:scale(.9);box-shadow:0 0 0 0 var(--c),0 0 3px 0 var(--c)}50%{transform:scale(1.2);box-shadow:0 0 0 3px transparent,0 0 8px 2px var(--c)}}
+@keyframes esHoje{0%,100%{box-shadow:0 0 3px 0 var(--db,#00e5ff)}50%{box-shadow:0 0 12px 3px var(--db,#00e5ff)}}
+.es-day.hj{z-index:2;outline:2px solid var(--db,#00e5ff);outline-offset:-2px;animation:esHoje 1s ease-in-out infinite}
+.es-d{width:9px;height:9px;min-width:9px;border-radius:50%;border:1.5px solid #fff;display:inline-block;vertical-align:middle;background:var(--c);animation:esDot 1s ease-in-out infinite}
 .es-d.g{--c:var(--dg,#39ff14)}.es-d.r{--c:var(--dr,#ff1f5a)}.es-d.b{--c:var(--db,#00e5ff)}
 .es-n{display:inline-flex;align-items:center}
 .es-dots{display:inline-flex;gap:5px;margin-left:5px}
@@ -3733,6 +3734,7 @@ html.esc-on #conteudo-site{display:none !important}
   function dif(d){return Math.round((d-hoje())/86400000)}
   function quando(n){return n===0?'Hoje':n===1?'Amanhã':'Em '+n+' dias'}
   function cor(x){return x.c||T[x.t][1]}
+  var SW=['#ff2d95','#8b5cf6','#2f9bff','#00e5ff','#39ff14','#ffe600','#ff8a00','#ff1f5a','#10b981','#94a3b8'];
   var EMO=['✈️','🏖️','🎂','🎉','📚','📝','🏫','🎒','🎨','⚽','🏥','🎭','🎃','🎄','⭐','❤️','🧪','🎵'];
   function $(i){return document.getElementById(i)}
   function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -3839,7 +3841,7 @@ html.esc-on #conteudo-site{display:none !important}
       var dots=(l.some(function(x){return x.t==='f'})?'<b class="es-d g"></b>':'')+(l.some(function(x){return x.m})?'<b class="es-d r"></b>':'')+(dt.getTime()===h.getTime()?'<b class="es-d b"></b>':'');
       var lab=t?((t.t==='ev'||t.t==='f'||t.t==='a1'||t.t==='a2')?t.n:(T[t.t][2]||t.n)):'';
       if(l.length>1)lab+=' +'+(l.length-1);
-      s+='<div class="es-day'+(t?' c':'')+(we&&!t?' we':'')+(dt.getTime()===h.getTime()?' hj':'')+(k===sel?' sl':'')+'" data-k="'+k+'" style="background:'+(t?cor(t)+'e0':'var(--soft,rgba(0,0,0,.05))')+'"><span class="es-n">'+d+'<span class="es-dots">'+dots+'</span></span>'+(em?'<u class="es-em">'+em+'</u>':'')+'<i>'+esc(lab)+'</i></div>';
+      s+='<div class="es-day'+(t?' c':'')+(we&&!t?' we':'')+(dt.getTime()===h.getTime()?' hj':'')+(k===sel?' sl':'')+'" data-k="'+k+'" style="'+(t?'background:'+cor(t)+'38;border:1.5px solid '+cor(t):'background:var(--soft,rgba(0,0,0,.05))')+'"><span class="es-n">'+d+'<span class="es-dots">'+dots+'</span></span>'+(em?'<u class="es-em">'+em+'</u>':'')+'<i>'+esc(lab)+'</i></div>';
     }
     s+='</div></div>';
     return s+(edOpen?editor():'<div style="text-align:center;margin-bottom:10px"><button class="es-btn sm" data-eopen="1">✏️ Abrir editor</button></div>')+legCard();
@@ -3854,7 +3856,7 @@ html.esc-on #conteudo-site{display:none !important}
       +'<label class="es-lbl">Tipo (legenda)</label><select id="esT" class="es-in">'+PRI.map(function(p){return '<option value="'+p+'"'+(tp===p?' selected':'')+'>'+esc(T[p][0])+'</option>'}).join('')+'</select>'
       +'<label class="es-lbl">Descrição</label><input id="esN" class="es-in" value="'+(cur?esc(cur.n):'')+'" placeholder="Ex.: Prova de Matemática">'
       +'<label class="es-lbl">Emoji</label><input id="esE" class="es-in" maxlength="14" value="'+(cur&&cur.e?esc(cur.e):'')+'" placeholder="Toque num emoji abaixo"><div class="es-emo">'+EMO.map(function(e){return '<button type="button" data-emo="'+e+'">'+e+'</button>'}).join('')+'<button type="button" data-emo="">∅</button></div>'
-      +'<label class="es-lbl">Cor</label><div style="display:flex;gap:10px;align-items:center;margin-top:3px"><input id="esC" type="color" value="'+(cur&&cur.c?cur.c:T[tp][1])+'" style="width:56px;height:36px;border:0;background:none;padding:0"><label style="font-size:11px;font-weight:700"><input type="checkbox" id="esCp" '+(cur&&cur.c?'':'checked')+'> usar a cor padrão da legenda</label></div>'
+      +'<label class="es-lbl">Cor livre do dia</label><div class="es-emo" style="margin-bottom:6px">'+SW.map(function(c){return '<button type="button" data-sw="'+c+'" style="background:'+c+';width:26px;height:26px;padding:0"></button>'}).join('')+'</div><div style="display:flex;gap:10px;align-items:center;margin-top:3px"><input id="esC" type="color" value="'+(cur&&cur.c?cur.c:T[tp][1])+'" style="width:56px;height:36px;border:0;background:none;padding:0"><label style="font-size:11px;font-weight:700"><input type="checkbox" id="esCp" '+(cur&&cur.c?'':'checked')+'> usar a cor da legenda</label></div>'
       +'<label style="display:flex;gap:6px;align-items:center;margin-top:10px;font-size:11.5px;font-weight:800"><input type="checkbox" id="esM" '+(cur&&cur.m?'checked':'')+'> <span class="es-d r"></span> Emenda de feriado (bolinha vermelha)</label>'
       +'<label class="es-lbl">Data</label><input id="esData" type="date" class="es-in" value="'+k+'">'
       +'<label class="es-lbl">Até (opcional, para períodos)</label><input id="esFim" type="date" class="es-in">'
@@ -3891,7 +3893,7 @@ html.esc-on #conteudo-site{display:none !important}
     var s='<div class="es-card"><p class="es-h">🏷️ Legendas <button class="es-btn sm" data-lgn="1" style="float:right">➕ Nova</button></p><div style="clear:both"></div>';
     PRI.forEach(function(p){s+='<div class="es-row" style="cursor:default"><span class="es-t" style="background:'+T[p][1]+'"></span><span style="flex:1"><b>'+esc(T[p][0])+'</b>'+(T[p][2]?' <small>('+esc(T[p][2])+')</small>':'')+' <small style="opacity:.6">'+(cnt[p]||0)+' uso(s)</small></span><button class="es-btn sm" data-lged="'+p+'">✏️</button>'+(FIX.indexOf(p)>-1?'':'<button class="es-btn sm" data-lgdel="'+p+'" style="background:#ef4444">🗑</button>')+'</div>'});
     s+='<small style="display:block;margin-top:8px;opacity:.75">As legendas novas aparecem sozinhas na lista de tipos ao criar eventos.</small></div>';
-    s+='<div class="es-card bl"><p class="es-h">🎨 Cores das bolinhas</p>'+[['g','Feriado'],['r','Emenda'],['b','Hoje (bolinha e borda do dia)']].map(function(o){return '<div class="es-row" style="cursor:default"><b class="es-d '+o[0]+'" style="min-width:12px"></b><span style="flex:1">'+o[1]+'</span><input type="color" data-dc="'+o[0]+'" value="'+S.dc[o[0]]+'" style="width:56px;height:34px;border:0;background:none;padding:0"></div>'}).join('')+'<button class="es-btn sm" data-dcr="1" style="margin-top:8px">↺ Voltar ao neon padrão</button></div>';
+    s+='<div class="es-card bl"><p class="es-h">🎨 Cores das bolinhas</p>'+[['g','Feriado'],['r','Emenda'],['b','Hoje (bolinha e borda do dia)']].map(function(o){return '<div class="es-row" style="cursor:default"><b class="es-d '+o[0]+'" style="min-width:9px"></b><span style="flex:1">'+o[1]+'</span><input type="color" data-dc="'+o[0]+'" value="'+S.dc[o[0]]+'" style="width:56px;height:34px;border:0;background:none;padding:0"></div>'}).join('')+'<button class="es-btn sm" data-dcr="1" style="margin-top:8px">↺ Voltar ao neon padrão</button></div>';
     if(lg!==null){var c=lg==='new'?['','#8b5cf6','']:T[lg];
       s+='<div class="es-card pk"><p class="es-h">'+(lg==='new'?'➕ Nova legenda':'✏️ Editando legenda')+'</p><label class="es-lbl">Nome</label><input id="lgN" class="es-in" value="'+esc(c[0])+'" placeholder="Ex.: Passeio escolar"><label class="es-lbl">Sigla no quadradinho (opcional)</label><input id="lgS" class="es-in" maxlength="8" value="'+esc(c[2])+'" placeholder="Ex.: Passeio"><label class="es-lbl">Cor</label><input id="lgC" type="color" value="'+c[1]+'" style="width:56px;height:36px;border:0;background:none;padding:0"><div style="display:flex;gap:8px;margin-top:12px"><button class="es-btn" style="flex:1" data-lgsv="1">💾 Salvar</button><button class="es-btn" style="background:#64748b;box-shadow:none" data-lgcn="1">Cancelar</button></div></div>';}
     return s;
@@ -3953,6 +3955,7 @@ html.esc-on #conteudo-site{display:none !important}
     var t=e.target,q=function(s){return t.closest(s)},x,v;
     if(t.classList.contains('es-mod')){ext=false;render();return}
     if(x=q('[data-cx]')){ext=false;render();return}
+    if(x=q('[data-sw]')){$('esC').value=x.dataset.sw;$('esCp').checked=false;return}
     if(x=q('[data-emo]')){$('esE').value=x.dataset.emo;return}
     if(x=q('[data-sv]')){salvarEv();return}
     if(x=q('[data-cn]')){ed=null;render();return}
@@ -4014,16 +4017,32 @@ html.esc-on #conteudo-site{display:none !important}
       var rows=it.filter(function(i){return AB.indexOf(i.s)>-1&&i.x<minX});
       var E={},n=0;
       function add(k,t,nm){if(!T[t])t='ev';var l=E[k]=E[k]||[];if(!l.some(function(o){return o.t===t&&o.n===nm})){l.push({t:t,n:nm});n++}}
+      var TK=/AVD|AV1|AV2|2ªCH|COC|FE|RP|RR|IA|CA|RC|AR|PR|BR|RF|FB|F|R|B/g;
+      function partes(i){
+        var u=i.s.toUpperCase().replace(/[\/\s]+/g,'');
+        var m=u.match(TK);
+        if(!m||m.join('')!==u)return [[u,i.x+i.w/2]];
+        var pos=0,out=[];m.forEach(function(t){out.push([t,i.x+i.w*(pos+t.length/2)/u.length]);pos+=t.length});return out;
+      }
+      var folias=it.filter(function(i){return /folia/i.test(i.s)});
+      function dentro(cx,y,r){return Math.abs(y-r.y)<=4}
       rows.forEach(function(r){var m=AB.indexOf(r.s);
+        function nearCol(cx){var c=null,best=1e9;cols.forEach(function(cc){var d=Math.abs(cc.cx-cx);if(d<best){best=d;c=cc}});return best>sp*.75?null:c}
         it.forEach(function(i){
-          if(Math.abs(i.y-r.y)>4||i.x<minX)return;
-          var c=null,best=1e9;cols.forEach(function(cc){var d=Math.abs(cc.cx-(i.x+i.w/2));if(d<best){best=d;c=cc}});
-          if(!c||best>sp*.75)return;
-          var u=i.s.toUpperCase().replace(/\s+/g,' '),dt=new Date(a,m,c.n);if(dt.getMonth()!==m)return;
-          var k=iso(dt);
-          if(/^2ªCH|^2ª/.test(u)){add(k,'ch','2ª Chamada');if(/ B$/.test(u))add(k,'bol','Boletim');return}
-          if(u.indexOf('COC')===0&&u.indexOf('FOLIA')>-1){add(k,'ev','COC Folia');return}
-          var cd=COD[u.split(' ')[0]]||COD[u];if(cd)add(k,cd[0],cd[1]);
+          if(i.x<minX||/folia/i.test(i.s))return;
+          if(Math.abs(i.y-r.y)>4)return;
+          partes(i).forEach(function(pt){
+            var c=nearCol(pt[1]);if(!c)return;
+            var u=pt[0],dt=new Date(a,m,c.n);if(dt.getMonth()!==m)return;var k=iso(dt);
+            if(u==='COC'&&folias.some(function(f){return Math.abs(f.x+f.w/2-pt[1])<sp*.9&&Math.abs(f.y-i.y)<14}))return;
+            if(u.indexOf('2ª')===0){add(k,'ch','2ª Chamada');return}
+            var cd=COD[u];if(cd)add(k,cd[0],cd[1]);
+          });
+        });
+        folias.forEach(function(f){
+          var near=rows.reduce(function(b,rr){return Math.abs(rr.y-f.y)<Math.abs(b.y-f.y)?rr:b},rows[0]);
+          if(near!==r)return;
+          var c=nearCol(f.x+f.w/2);if(!c)return;var dt=new Date(a,m,c.n);if(dt.getMonth()===m)add(iso(dt),'ev','COC Folia');
         });
       });
       // feriados com nome
