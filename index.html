@@ -4079,7 +4079,7 @@ html.esc-on #conteudo-site{display:none !important}
 })();
 </script>
 <!--ABA-ESCOLA-FIM-->
-<!--ABA-ESCOLA-INICIO v7 — substitua TUDO entre ABA-ESCOLA-INICIO e ABA-ESCOLA-FIM por este bloco (inclusive essas duas linhas de comentário). A aba Guarda não é alterada.-->
+<!--ABA-ESCOLA-INICIO v8 — substitua TUDO entre ABA-ESCOLA-INICIO e ABA-ESCOLA-FIM por este bloco (inclusive essas duas linhas de comentário). A aba Guarda não é alterada.-->
 <style id="aba-escola-css2">
 #abaBar{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 10px;max-width:32rem;margin:0 auto;background:var(--nav,rgba(255,255,255,.92));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 #abaBar button{flex:1;border:1.5px solid var(--softb,rgba(128,128,128,.35));background:var(--soft,rgba(128,128,128,.1));color:var(--txt,inherit);border-radius:14px;padding:9px 6px;font-size:13px;font-weight:800;cursor:pointer}
@@ -4163,11 +4163,21 @@ html.esc-on #esSide{display:flex}
 #abaBar{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;transition:transform .25s ease}
 #abaBar.oculta{transform:translateY(-120%)}
 #abaBar button{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#esBrilho{position:fixed;inset:0;z-index:90;pointer-events:none;overflow:hidden}
+.esbp{position:absolute;bottom:-30px;opacity:0;line-height:1}
+#esPapel{position:fixed;inset:0;z-index:-2;background-size:cover;background-position:center;display:none;pointer-events:none}
+#esPapel::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
+html[data-modo="claro"] #esPapel::after{background:rgba(255,255,255,.4)}
+html.esc-on #sxPapel{display:none !important}
+html.esc-on[data-epapel="on"] #esPapel{display:block}
+html.esc-on[data-epapel="on"] body::before{display:none !important}
+html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block !important}
+@media print{#esBrilho,#esPapel{display:none !important}}
 @media print{#abaBar,#escolaView,.es-fab,#esSide{display:none !important}}
 </style>
 <script>
 (function(){
-  ['abaBar','escolaView','esFab','esSide'].forEach(function(id){var o=document.getElementById(id);if(o)o.remove()});
+  ['abaBar','escolaView','esFab','esSide','esBrilho','esPapel'].forEach(function(id){var o=document.getElementById(id);if(o)o.remove()});
   var os=document.getElementById('aba-escola-css');if(os)os.remove();
   var MES=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"],S,MODE='escola',ST={},KEYS={escola:'sx_escola_v2',pessoal:'sx_pessoal_v1'};
   var T0={
@@ -4414,7 +4424,7 @@ html.esc-on #esSide{display:flex}
     var s='<div class="es-card"><p class="es-h">🏷️ Legendas <button class="es-btn sm" data-lgn="1" style="float:right">➕ Nova</button><button class="es-btn sm" data-clr="lg" style="float:right;margin-right:6px;background:#ef4444">🗑 Apagar minhas</button></p><div style="clear:both"></div>';
     PRI.forEach(function(p){s+='<div class="es-row" style="cursor:default"><span class="es-t" style="background:'+T[p][1]+'"></span><span style="flex:1"><b>'+esc(T[p][0])+'</b>'+(T[p][2]?' <small>('+esc(T[p][2])+')</small>':'')+' <small style="opacity:.6">'+(cnt[p]||0)+' uso(s)</small></span><button class="es-btn sm" data-lged="'+p+'">✏️</button>'+(FIX.indexOf(p)>-1?'':'<button class="es-btn sm" data-lgdel="'+p+'" style="background:#ef4444">🗑</button>')+'</div>'});
     s+='<small style="display:block;margin-top:8px;opacity:.75">As legendas novas aparecem sozinhas na lista de tipos ao criar eventos.</small></div>';
-    s+='<div class="es-card bl"><p class="es-h">🎨 Cores das bolinhas</p>'+[['g','Feriado'],['r','Emenda'],['b','Hoje (bolinha e borda do dia)']].map(function(o){return '<div class="es-row" style="cursor:default"><b class="es-d '+o[0]+'" style="min-width:9px"></b><span style="flex:1">'+o[1]+'</span><input type="color" data-dc="'+o[0]+'" value="'+S.dc[o[0]]+'" style="width:56px;height:34px;border:0;background:none;padding:0"></div>'}).join('')+'<button class="es-btn sm" data-dcr="1" style="margin-top:8px">↺ Voltar ao neon padrão</button></div>'+paleta();
+    s+='<div class="es-card bl"><p class="es-h">🎨 Cores das bolinhas</p>'+[['g','Feriado'],['r','Emenda'],['b','Hoje (bolinha e borda do dia)']].map(function(o){return '<div class="es-row" style="cursor:default"><b class="es-d '+o[0]+'" style="min-width:9px"></b><span style="flex:1">'+o[1]+'</span><input type="color" data-dc="'+o[0]+'" value="'+S.dc[o[0]]+'" style="width:56px;height:34px;border:0;background:none;padding:0"></div>'}).join('')+'<button class="es-btn sm" data-dcr="1" style="margin-top:8px">↺ Voltar ao neon padrão</button></div>'+paleta()+fundoCard();
     if(lg!==null){var c=lg==='new'?['','#8b5cf6','']:T[lg];
       s+='<div class="es-card pk"><p class="es-h">'+(lg==='new'?'➕ Nova legenda':'✏️ Editando legenda')+'</p><label class="es-lbl">Nome</label><input id="lgN" class="es-in" value="'+esc(c[0])+'" placeholder="Ex.: Passeio escolar"><label class="es-lbl">Sigla no quadradinho (opcional)</label><input id="lgS" class="es-in" maxlength="8" value="'+esc(c[2])+'" placeholder="Ex.: Passeio"><label class="es-lbl">Cor</label><input id="lgC" type="color" value="'+c[1]+'" style="width:56px;height:36px;border:0;background:none;padding:0"><div style="display:flex;gap:8px;margin-top:12px"><button class="es-btn" style="flex:1" data-lgsv="1">💾 Salvar</button><button class="es-btn" style="background:#64748b;box-shadow:none" data-lgcn="1">Cancelar</button></div></div>';}
     return s;
@@ -4483,6 +4493,10 @@ html.esc-on #esSide{display:flex}
   view.addEventListener('click',function(e){
     var t=e.target,q=function(s){return t.closest(s)},x,v;
     if(t.classList.contains('es-mod')){ext=false;render();return}
+    if(x=q('[data-wf]')){wfile.click();return}
+    if(x=q('[data-wl]')){var u=prompt('Cole o link (URL) da imagem:');if(u){var im=new Image();im.onload=function(){setWall(u)};im.onerror=function(){alert('Não consegui abrir essa imagem')};im.src=u}return}
+    if(x=q('[data-wr]')){setWall(null);return}
+    if(x=q('[data-brm]')){try{localStorage.setItem('sx_brilho_'+curA,x.dataset.brm)}catch(e){}brilhos();render();return}
     if(x=q('[data-pre]')){v=x.dataset.pre.split('|');setPal(v[0],v[1]);render();return}
     if(x=q('[data-ban]')){banOpen=x.dataset.ban==='1';render();return}
     if(x=q('[data-cx]')){ext=false;render();return}
@@ -4608,7 +4622,7 @@ html.esc-on #esSide{display:flex}
     document.documentElement.classList.toggle('esc-on',es);
     ['v3FabHoje','btn-voz-flutuante'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=es?'none':''});
     bar.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.a===a)});
-    curA=a;try{localStorage.setItem('sx_aba',a)}catch(e){}
+    curA=a;brilhos();aplicaWall();try{localStorage.setItem('sx_aba',a)}catch(e){}
     if(es)render();
     window.scrollTo(0,0);
   }
@@ -4635,6 +4649,54 @@ html.esc-on #esSide{display:flex}
     var i=ORD.indexOf(curA)+(dx<0?1:-1);if(i<0||i>=ORD.length)return;
     e.stopPropagation();ir(ORD[i]);
   },true);
+  // papel de parede por aba + brilhos fraquinhos sobre o calendário
+  var BR={coracoes:['💗','💖','💕','🩷'],estrelas:['✨','⭐','🌟'],misto:['💗','✨','⭐','💖','🌟']};
+  var brL=document.createElement('div');brL.id='esBrilho';document.body.appendChild(brL);
+  var papelE=document.createElement('div');papelE.id='esPapel';document.body.appendChild(papelE);
+  var wfile=document.createElement('input');wfile.type='file';wfile.accept='image/*';wfile.style.display='none';document.body.appendChild(wfile);
+  function brMode(c){try{return localStorage.getItem('sx_brilho_'+c)||'misto'}catch(e){return 'misto'}}
+  function brilhos(){
+    brL.innerHTML='';var m=brMode(curA);if(!BR[m])return;
+    for(var i=0;i<12;i++){var p=document.createElement('span');p.className='esbp';p.textContent=BR[m][i%BR[m].length];
+      p.style.left=(Math.random()*96)+'%';p.style.fontSize=(11+Math.random()*9)+'px';brL.appendChild(p);
+      var dx=Math.random()*60-30,dur=(14+Math.random()*14)*1000;
+      p.animate([{transform:'translate(0,0)',opacity:0},{opacity:.28,offset:.15},{opacity:.28,offset:.85},{transform:'translate('+dx+'px,-110vh)',opacity:0}],{duration:dur,delay:-Math.random()*dur,iterations:Infinity,easing:'linear'})}
+  }
+  function estoura(x,y){
+    var m=brMode(curA);if(!BR[m])return;
+    [].forEach.call(brL.children,function(p){var r=p.getBoundingClientRect();if(Math.abs(r.left+r.width/2-x)<30&&Math.abs(r.top+r.height/2-y)<30&&!p.dataset.b){p.style.visibility='hidden';setTimeout(function(){p.style.visibility=''},4000)}});
+    for(var i=0;i<6;i++){(function(){
+      var b=document.createElement('span');b.className='esbp';b.textContent=BR[m][Math.floor(Math.random()*BR[m].length)];b.dataset.b='1';
+      b.style.cssText='left:'+x+'px;top:'+y+'px;bottom:auto;font-size:'+(10+Math.random()*8)+'px';brL.appendChild(b);
+      var a=Math.random()*6.283,d=40+Math.random()*50;
+      var an=b.animate([{transform:'translate(-50%,-50%) scale(.6)',opacity:.4},{transform:'translate(calc(-50% + '+Math.cos(a)*d+'px),calc(-50% + '+Math.sin(a)*d+'px)) scale(1.1)',opacity:0}],{duration:750,easing:'ease-out'});
+      an.onfinish=function(){b.remove()};
+    })()}
+  }
+  document.addEventListener('pointerdown',function(e){if(e.target.closest&&e.target.closest('input,select,textarea'))return;estoura(e.clientX,e.clientY)},{passive:true});
+  function wkey(c){return c==='guarda'?'sx_wall':'sx_wall_'+c}
+  function aplicaWall(){
+    var d=document.documentElement;
+    if(curA==='guarda'){d.setAttribute('data-epapel','off');return}
+    var v=null;try{v=localStorage.getItem(wkey(curA))}catch(e){}
+    papelE.style.backgroundImage=v?'url("'+v+'")':'';d.setAttribute('data-epapel',v?'on':'off');
+  }
+  function setWall(v){try{if(v)localStorage.setItem(wkey(curA),v);else localStorage.removeItem(wkey(curA))}catch(e){alert('Imagem grande demais, tente outra');return}aplicaWall()}
+  wfile.onchange=function(){var fl=wfile.files[0];if(!fl)return;var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var w=Math.min(900,im.width),c=document.createElement('canvas');c.width=w;c.height=im.height*w/im.width;c.getContext('2d').drawImage(im,0,0,c.width,c.height);setWall(c.toDataURL('image/jpeg',.7))};im.src=r.result};r.readAsDataURL(fl);wfile.value=''};
+  function fundoCard(){
+    var bm=brMode(curA),o=[['coracoes','💗 Corações'],['estrelas','⭐ Estrelas'],['misto','✨ Mistos'],['nenhum','∅ Nenhum']];
+    return '<div class="es-card bl"><p class="es-h">🖼️ Papel de parede desta aba</p><div class="es-emo"><button class="es-btn sm" data-wf="1">🖼️ Foto do celular</button><button class="es-btn sm" data-wl="1">🌐 Link</button><button class="es-btn sm" data-wr="1" style="background:#64748b;box-shadow:none">❌ Remover</button></div><p class="es-h" style="margin-top:12px">✨ Brilhos passando sobre o calendário (bem fraquinhos)</p><div class="es-emo">'+o.map(function(x){return '<button class="es-btn sm" data-brm="'+x[0]+'" style="'+(bm===x[0]?'':'opacity:.5')+'">'+x[1]+'</button>'}).join('')+'</div></div>';
+  }
+  // mesma opção de brilhos dentro do 🎨 (vale para a aba em que você está)
+  function painelBr(){
+    var f=document.querySelector('.sx-fechar');if(!f||document.getElementById('sxBr'))return;
+    var o=[['coracoes','💗 Corações'],['estrelas','⭐ Estrelas'],['misto','✨ Mistos'],['nenhum','∅ Nenhum']];
+    f.insertAdjacentHTML('beforebegin','<h3 id="sxBr">Brilhos sobre o calendário (aba atual)</h3><div class="sx-grupo">'+o.map(function(x){return '<button type="button" class="sx-btn2" data-brx="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>');
+    var mk=function(){document.querySelectorAll('[data-brx]').forEach(function(b){b.style.borderColor=brMode(curA)===b.dataset.brx?'#ff2d95':''})};
+    document.querySelectorAll('[data-brx]').forEach(function(b){b.onclick=function(){try{localStorage.setItem('sx_brilho_'+curA,b.dataset.brx)}catch(e){}brilhos();mk()}});
+    var fb=document.querySelector('.sx-fab');if(fb)fb.addEventListener('click',mk);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',painelBr);else painelBr();
   var ini='guarda';try{ini=localStorage.getItem('sx_aba')||'guarda'}catch(e){}
   ir(ini);
 })();
