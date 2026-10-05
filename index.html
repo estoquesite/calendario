@@ -5063,4 +5063,103 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
 })();
 </script>
 <!--INICIO-FIM-->  
+    <!--PATCH-PESSOAL-INICIO — cole TUDO isto no final do arquivo, logo depois de <!--INICIO-FIM--> (antes de </html>). Não precisa mexer em mais nada.-->
+<style id="formato-guarda">
+#escolaView .es-cal{gap:4px}
+#escolaView .es-day{min-height:44px;max-height:52px;border-radius:12px;padding:4px;align-items:center;text-align:center;user-select:none;-webkit-user-select:none}
+#escolaView .gd-top{display:flex;justify-content:space-between;align-items:center;width:100%;padding:0 2px}
+#escolaView .gd-l{display:flex;align-items:center;gap:4px}
+#escolaView .gd-s{font-size:9px;font-weight:800;opacity:.85;line-height:1}
+#escolaView .gd-b{display:block;width:100%;min-height:10px;font-size:7.5px;line-height:1.3;font-weight:700;border-radius:4px;padding:0 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#escolaView .es-day .day-num{position:relative;font-size:12px;font-weight:900}
+#escolaView .es-day.pd{opacity:.5}
+#escolaView .es-day.pd .day-num::after{content:"";position:absolute;left:-4px;right:-4px;top:50%;height:1.5px;background:currentColor;transform:translateY(-50%)}
+#escolaView .es-day.hj{transform:scale(1.02)}
+#escolaView .gd-hint{display:flex;justify-content:space-between;font-size:10px;opacity:.75;margin:0 2px 6px}
+#escolaView .gd-leg{display:flex;gap:12px;font-size:9.5px;font-weight:700;padding-top:4px;margin:0 2px 8px;border-top:1px solid var(--softb,rgba(0,0,0,.12))}
+</style>
+<script>
+(function(){
+  var view=document.getElementById('escolaView');if(!view)return;
+  var KP='sx_pessoal_v1';
+  function modo(){var a='';try{a=localStorage.getItem('sx_aba')||''}catch(e){}return a==='pessoal'?'pessoal':'escola'}
+  function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+  function hoje(){var d=new Date();d.setHours(0,0,0,0);return d}
+  function fm(d){return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')}
+  function quando(n){return n===0?'Hoje':n===1?'Amanhã':'Em '+n+' dias'}
+
+  // 1) remove "Dia dos Professores" da agenda pessoal (e recarrega uma vez)
+  function limpaPessoal(){
+    var raw=null;try{raw=localStorage.getItem(KP)}catch(e){}
+    if(!raw||raw.indexOf('Dia dos Professores')<0)return false;
+    var n=+(sessionStorage.getItem('pp_clean')||0);if(n>=3)return false;
+    try{
+      var D=JSON.parse(raw);
+      for(var y in D.y)for(var k in D.y[y].ev){
+        D.y[y].ev[k]=D.y[y].ev[k].filter(function(x){return x.n!=='Dia dos Professores'});
+        if(!D.y[y].ev[k].length)delete D.y[y].ev[k];
+      }
+      localStorage.setItem(KP,JSON.stringify(D));sessionStorage.setItem('pp_clean',n+1);
+      location.reload();return true;
+    }catch(e){return false}
+  }
+
+  // 2) próximo evento da agenda pessoal (só dados da pessoal)
+  function proximoPessoal(){
+    var D=null;try{D=JSON.parse(localStorage.getItem(KP))}catch(e){}
+    if(!D||!D.y)return null;var h=hoje();
+    for(var i=0;i<400;i++){
+      var d=new Date(h);d.setDate(h.getDate()+i);var k=iso(d);
+      var yy=D.y[k.slice(0,4)],l=yy&&yy.ev&&yy.ev[k];
+      if(l&&l.length)return{d:d,n:i,x:l[0]};
+    }
+    return null;
+  }
+
+  // 3) quadrado principal da pessoal com informação própria
+  function bannerPessoal(){
+    var b=view.querySelector('.guarda-neon');if(!b)return;
+    var tt=b.querySelector('.gn-titulo'),sb=b.querySelector('.gn-sub'),av=b.querySelector('.gn-avatar');
+    if(!tt||!sb||!av)return;
+    var t=tt.textContent.trim();
+    if(t==='Dia letivo'){
+      tt.textContent='Dia livre';av.textContent='⭐';
+      var p=proximoPessoal();
+      sb.textContent=p?'Próximo: '+(p.x.e?p.x.e+' ':'')+p.x.n+' • '+quando(p.n)+' ('+fm(p.d)+')':'Nenhum compromisso marcado';
+    }else if(t==='Fim de semana'){
+      sb.textContent='Dia livre';
+    }
+  }
+
+  // 4) calendário no formato da Guarda (Escola e Pessoal)
+  function formato(){
+    var h=hoje();
+    var nav=view.querySelector('.es-nav');
+    if(nav&&!view.querySelector('.gd-hint')){
+      nav.insertAdjacentHTML('afterend','<div class="gd-hint"><span>✨ Toque no dia para ver e editar</span><span>deslize para trocar o mês</span></div><div class="gd-leg"><span><b class="es-d g"></b> Feriado</span><span><b class="es-d r"></b> Emenda</span><span><b class="es-d b"></b> Hoje</span></div>');
+    }
+    view.querySelectorAll('.es-day').forEach(function(c){
+      if(c.querySelector('.gd-top'))return;
+      var k=c.dataset.k;if(!k)return;
+      var dots=c.querySelector('.es-dots'),em=c.querySelector('.es-em'),lb=c.querySelector('i');
+      var lab=lb?lb.textContent:'',sig=em?em.textContent:(lab?lab.charAt(0).toUpperCase():'');
+      if(lab.length>8)lab=lab.substring(0,7)+'..';
+      var pas=new Date(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8))<h;
+      c.classList.toggle('pd',pas);
+      var cor=c.style.borderColor;
+      var badge=(lab&&cor)?'background:color-mix(in srgb,'+cor+' 35%,transparent)':'';
+      c.innerHTML='<div class="gd-top"><div class="gd-l"><span class="day-num">'+(+k.slice(8))+'</span><span class="es-dots">'+(dots?dots.innerHTML:'')+'</span></div><span class="gd-s">'+sig+'</span></div><span class="gd-b" style="'+badge+'">'+lab.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span>';
+    });
+  }
+
+  function fix(){
+    if(modo()==='pessoal'&&limpaPessoal())return;
+    formato();
+    if(modo()==='pessoal')bannerPessoal();
+  }
+  new MutationObserver(fix).observe(view,{childList:true});
+  fix();
+})();
+</script>
+<!--PATCH-PESSOAL-FIM-->
     </html>
