@@ -4703,7 +4703,7 @@ html.esc-on:not([data-epapel="on"])[data-papel="on"] body::before{display:block 
 </script>
 <!--ABA-ESCOLA-FIM-->
 </body>
-    <!--INICIO-INICIO v5 — APAGUE o bloco anterior (de INICIO-INICIO até INICIO-FIM) e cole este no lugar, antes de </body>, depois do último ABA-ESCOLA-FIM.-->
+  <!--INICIO-INICIO v6 — APAGUE o bloco anterior (de INICIO-INICIO até INICIO-FIM) e cole este no lugar, antes de </body>, depois do último ABA-ESCOLA-FIM.-->
 <style id="inicio-css">
 #inicioView{display:none;max-width:32rem;margin:0 auto;padding:8px 10px 120px;color:var(--txt,#1e1b2e)}
 .in-top{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 10px}
@@ -4756,10 +4756,8 @@ html[data-modo="claro"] #esSide{background:rgba(255,255,255,.92) !important}
 #inEstiloFab{position:fixed;left:12px;bottom:64px;z-index:94;width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;background:var(--nav,rgba(255,255,255,.92));border:1.5px solid rgba(var(--pai-rgb,47,155,255),.8);box-shadow:0 0 8px rgba(var(--pai-rgb,47,155,255),.4);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 #inSheet{z-index:135}
 /* estilo "Normal": sem brilho */
-@keyframes inMainN{0%,100%{opacity:1}50%{opacity:.78}}
-html[data-cor="solido"] .in-main{animation:inMainN 1.1s ease-in-out infinite;box-shadow:none}
-html[data-cor="solido"] .in-it,html[data-cor="solido"] .in-d{box-shadow:none}
-html[data-cor="solido"] .guarda-neon{animation:none !important;box-shadow:none !important}
+html[data-cor="solido"] .in-it,html[data-cor="solido"] .in-it .in-d{box-shadow:none}
+/* eventos principais (quadrado do próximo evento, banner do dia) ficam SEMPRE neon */
 html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView .es-ind,html[data-cor="solido"] #escolaView .es-box,html[data-cor="solido"] #escolaView .es-bar,html[data-cor="solido"] #escolaView .es-bar2{box-shadow:none !important}
 @media print{#inicioView,#inLogin,.in-cor,#inEstiloFab{display:none !important}}
 </style>
@@ -4778,16 +4776,17 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
   function fm(s){var d=P(s);return String(d.getDate()).padStart(2,'0')+'/'+MESES[d.getMonth()]}
   function nDias(s){return Math.round((P(s)-hoje())/86400000)}
   // deixa qualquer cor mais neon (saturada e brilhante)
-  function neon(c){
+  function neon(c,f){
     if(!c||c.charAt(0)!=='#'||c.length<7)return c||'#ff2d95';
     var h=c.slice(1),r=parseInt(h.substr(0,2),16)/255,g=parseInt(h.substr(2,2),16)/255,b=parseInt(h.substr(4,2),16)/255;
     var mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn,hh=0;
     if(d<.08)return c;
     if(mx===r)hh=((g-b)/d)%6;else if(mx===g)hh=(b-r)/d+2;else hh=(r-g)/d+4;
     hh*=60;if(hh<0)hh+=360;
-    return 'hsl('+Math.round(hh)+',82%,'+Math.round(Math.max(62,Math.min(l*100+8,70)))+'%)';
+    return f?'hsl('+Math.round(hh)+',100%,58%)':'hsl('+Math.round(hh)+',82%,'+Math.round(Math.max(62,Math.min(l*100+8,70)))+'%)';
   }
 
+  function vivid(c){var m=/^hsl\((\d+),/.exec(c);return m?'hsl('+m[1]+',100%,58%)':neon(c,true)}
   // ---------- coleta de eventos de TODOS os calendários ----------
   function coletar(dias){
     var h=hoje(),out=[],last={},gs={};
@@ -4848,7 +4847,7 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
   }
   function mainCard(it,go){
     var w=quando(it);
-    return '<div class="in-main" style="--c:'+it.c+'"'+(go?' data-go="'+it.src+'"':'')+'><div class="in-mh"><span class="in-d"></span>Próximo evento • '+w[0]+'</div><div class="in-mb"><span class="in-mic">'+esc(it.ic)+'</span><div><b>'+esc(it.t)+'</b><small>'+GR[it.g][1]+' • '+esc(it.sub)+' • '+w[1]+'</small></div></div></div>';
+    return '<div class="in-main" style="--c:'+vivid(it.c)+'"'+(go?' data-go="'+it.src+'"':'')+'><div class="in-mh"><span class="in-d"></span>Próximo evento • '+w[0]+'</div><div class="in-mb"><span class="in-mic">'+esc(it.ic)+'</span><div><b>'+esc(it.t)+'</b><small>'+GR[it.g][1]+' • '+esc(it.sub)+' • '+w[1]+'</small></div></div></div>';
   }
   function sec(g,n){var o=GR[g];return '<div class="in-sec" style="--g:'+agC(g)+'"><b>'+o[0]+' '+o[1]+'</b><span>'+n+'</span></div>'}
 
@@ -4990,6 +4989,19 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
   var oAD=window.alternarDarkMode;
   if(oAD)window.alternarDarkMode=function(){oAD.apply(this,arguments);put(curTab(),'modo',dR.classList.contains('dark')?'escuro':'claro')};
 
+  var PEV={neon:['#ff2d95','#2f9bff','#39ff14','#ffe600','#ff8a00','#a855f7','#00e5ff','#ff1f5a'],pastel:['#f9a8d4','#93c5fd','#86efac','#fde68a','#fdba74','#c4b5fd','#67e8f9','#fca5a5'],classica:['#ef4444','#3b82f6','#10b981','#f59e0b','#8b5cf6','#ec4899','#14b8a6','#64748b'],suave:['#e07a5f','#6d597a','#81b29a','#f2cc8f','#9d8189','#b56576','#8ab17d','#3d405b']};
+  var PAG={neon:['#39ff14','#ff2d95','#00e5ff','#ffe600'],pastel:['#86efac','#f9a8d4','#93c5fd','#fde68a'],classica:['#10b981','#ec4899','#3b82f6','#f59e0b'],suave:['#81b29a','#e07a5f','#6d597a','#f2cc8f']};
+  function paletaEv(t,k){
+    if(t==='inicio'){var ag={};ORDER.forEach(function(g,i){ag[g]=PAG[k][i]});put('inicio','ag',ag);depois('inicio');return}
+    var key=t==='escola'?'sx_escola_v2':'sx_pessoal_v1',D=null;
+    try{D=JSON.parse(localStorage.getItem(key))}catch(e){}
+    if(!D||!D.t){alert('Abra a aba '+TABN[t]+' e salve algo uma vez; depois tente de novo.');return}
+    if(!confirm('Aplicar esta paleta nos tipos de evento da aba '+TABN[t]+'? O app vai recarregar.'))return;
+    var ks=D.pri||Object.keys(D.t),p=PEV[k];
+    ks.forEach(function(x,i){if(D.t[x])D.t[x][1]=p[i%p.length]});
+    try{localStorage.setItem(key,JSON.stringify(D))}catch(e){return}
+    location.reload();
+  }
   var sh=document.createElement('div');sh.id='inSheet';sh.className='sx-fundo print-hidden';document.body.appendChild(sh);
   var PRE=[['#ec4899','#3b82f6','Rosa + Azul'],['#8b5cf6','#10b981','Roxo + Verde'],['#f97316','#0ea5e9','Laranja + Azul'],['#ef4444','#eab308','Vermelho + Amarelo'],['#16a34a','#ec4899','Verde + Rosa'],['#475569','#94a3b8','Cinza'],['#ff2d95','#2f9bff','✨ Neon rosa + azul'],['#a855f7','#22e68c','✨ Neon roxo + verde']];
   function bolas(a,b){return '<span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+a+';margin-right:2px"></span><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:'+b+';margin-right:5px"></span>'}
@@ -5004,6 +5016,7 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
     h+='<h3>Cores prontas</h3><div class="sx-grupo">'+PRE.map(function(x){return '<button type="button" class="sx-opt" data-pre="'+x[0]+'|'+x[1]+'">'+bolas(x[0],x[1])+x[2]+'</button>'}).join('')+'</div>';
     h+='<h3>Escolher as cores livremente</h3><div class="sx-grupo"><label class="sx-btn2">Cor 1 <input type="color" id="inC1" value="'+(c.c1||d[0])+'" style="vertical-align:middle;width:44px;height:30px"></label><label class="sx-btn2">Cor 2 <input type="color" id="inC2" value="'+(c.c2||d[1])+'" style="vertical-align:middle;width:44px;height:30px"></label></div>';
     if(t==='inicio')h+='<h3>Cor de cada agenda</h3><div class="sx-grupo">'+ORDER.map(function(g){return '<label class="sx-btn2">'+GR[g][0]+' '+GR[g][1].split(' •')[0].replace('Agenda da ','')+' <input type="color" data-ag="'+g+'" value="'+agC(g)+'" style="vertical-align:middle;width:36px;height:28px"></label>'}).join('')+'</div>';
+    if(t!=='guarda')h+='<h3>Paleta dos eventos</h3><div class="sx-grupo">'+[['neon','✨ Neon vivas'],['pastel','🌸 Pastel'],['classica','🎨 Clássica'],['suave','🍂 Suave']].map(function(x){return '<button type="button" class="sx-opt" data-ev="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>';
     h+='<button type="button" class="sx-btn2" id="inReset" style="width:100%;margin-top:12px">↺ Voltar ao padrão desta aba</button>';
     if(t==='guarda')h+='<button type="button" class="sx-btn2" id="inMais" style="width:100%;margin-top:8px">🖼️ Papel de parede e partículas</button>';
     h+='<button type="button" class="sx-fechar">Pronto</button></div>';
@@ -5019,6 +5032,7 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
     if(e.target===sh||e.target.closest('.sx-fechar')){sh.classList.remove('aberto');return}
     if(b=e.target.closest('[data-e]')){put(t,b.dataset.e,b.dataset.v);if(b.dataset.e==='tipo'&&b.dataset.v==='normal'&&!raw(t).borda)put(t,'borda','solida');depois(t);return}
     if(b=e.target.closest('[data-pre]')){var p=b.dataset.pre.split('|');put(t,'c1',p[0]);put(t,'c2',p[1]);depois(t);return}
+    if(b=e.target.closest('[data-ev]')){paletaEv(t,b.dataset.ev);return}
     if(e.target.closest('#inReset')){try{localStorage.removeItem('sx_estilo_'+t)}catch(x){}depois(t);return}
     if(e.target.closest('#inMais')){sh.classList.remove('aberto');var f=document.querySelector('.sx-fab');if(f)f.click()}
   });
@@ -5048,5 +5062,5 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
   initEstilo();
 })();
 </script>
-<!--INICIO-FIM-->
+<!--INICIO-FIM-->  
     </html>
