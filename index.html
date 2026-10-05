@@ -5062,8 +5062,7 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
   initEstilo();
 })();
 </script>
-<!--INICIO-FIM-->  
-    <!--PATCH-PESSOAL-INICIO — cole TUDO isto no final do arquivo, logo depois de <!--INICIO-FIM--> (antes de </html>). Não precisa mexer em mais nada.-->
+<!--PATCH-PESSOAL-INICIO v2 - cole tudo isto no final do arquivo, depois do ultimo bloco-->
 <style id="formato-guarda">
 #escolaView .es-cal{gap:4px}
 #escolaView .es-day{min-height:44px;max-height:52px;border-radius:12px;padding:4px;align-items:center;text-align:center;user-select:none;-webkit-user-select:none}
@@ -5142,7 +5141,7 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
       if(c.querySelector('.gd-top'))return;
       var k=c.dataset.k;if(!k)return;
       var dots=c.querySelector('.es-dots'),em=c.querySelector('.es-em'),lb=c.querySelector('i');
-      var lab=lb?lb.textContent:'',sig=em?em.textContent:(lab?lab.charAt(0).toUpperCase():'');
+      var lab=lb?lb.textContent:'',nd=dots?dots.children.length:0,sig=em?em.textContent:(lab?lab.charAt(0).toUpperCase():'');if(nd){if(em)lab=em.textContent+' '+lab;sig=''}
       if(lab.length>8)lab=lab.substring(0,7)+'..';
       var pas=new Date(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8))<h;
       c.classList.toggle('pd',pas);
@@ -5159,6 +5158,126 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
   }
   new MutationObserver(fix).observe(view,{childList:true});
   fix();
+})();
+</script>
+<style id="pp-extras">
+.pq-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.pq{min-width:0;border-radius:18px;padding:10px 11px;border:2px solid var(--c);background:linear-gradient(135deg,color-mix(in srgb,var(--c) 14%,transparent),transparent 75%),var(--painel,#fff);animation:inMain 1s ease-in-out infinite;cursor:pointer;color:var(--txt,#1e1b2e);text-align:left}
+.pq-h{display:flex;align-items:center;gap:6px;font-size:9px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 60%,var(--txt,#1e1b2e))}
+.pq-b{display:flex;align-items:center;gap:7px;margin-top:7px}
+.pq-i{font-size:24px;line-height:1}
+.pq-b b{font-size:12.5px;font-weight:800;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.pq small{display:block;font-size:10px;font-weight:700;opacity:.8;margin-top:5px}
+.pq small.m{opacity:.6;font-weight:600;margin-top:2px}
+#inicioView>.in-main,#inLogin .in-main{display:none}
+</style>
+<script>
+(function(){
+  var V=document.getElementById('inicioView'),L=document.getElementById('inLogin'),EV=document.getElementById('escolaView');
+  var MES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  var GR={geral:['🎉','Feriados','#34d399'],guarda:['👧','Sophia','#f472b6'],escola:['🎒','Escola','#38bdf8'],pessoal:['⭐','Pessoal','#fbbf24']};
+  function ld(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+  function p2(n){return String(n).padStart(2,'0')}
+  function iso(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+  function fmt(d){return p2(d.getDate())+'/'+p2(d.getMonth()+1)}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function agc(g){var c=ld('sx_estilo_inicio');return(c&&c.ag&&c.ag[g])||GR[g][2]}
+  function modo(){var a='';try{a=localStorage.getItem('sx_aba')||''}catch(e){}return a==='pessoal'?'pessoal':'escola'}
+
+  // ---------- 1) um quadrado por agenda (Início e tela da digital) ----------
+  function lista(){
+    var h=new Date();h.setHours(0,0,0,0);
+    var R={geral:[],guarda:[],escola:[],pessoal:[]},DD={escola:ld('sx_escola_v2'),pessoal:ld('sx_pessoal_v1')},emo=window.emojisDia||{},prev=null;
+    try{var o=new Date(h);o.setDate(h.getDate()-1);prev=(regraPadrao(o.getDate(),o.getMonth(),o.getFullYear())||{}).resp}catch(e){}
+    for(var i=0;i<=120;i++){
+      var d=new Date(h);d.setDate(h.getDate()+i);
+      var k=iso(d),y=d.getFullYear(),m=d.getMonth(),dd=d.getDate(),x={};
+      try{x=regraPadrao(dd,m,y)||{}}catch(e){}
+      var f=(window.feriados&&(feriados[y+'-'+m+'-'+dd]||feriados[m+'-'+dd]))||'',em=emo[y+'-'+m+'-'+dd];
+      if(f)R.geral.push({d:d,i:i,ic:em||'🎉',t:f});
+      if(x.emenda)R.guarda.push({d:d,i:i,ic:'🔗',t:'Emenda de feriado'});
+      if(x.desc&&['Mãe','Pai','FDS Pai'].indexOf(x.desc)<0)R.guarda.push({d:d,i:i,ic:em||'📌',t:x.desc});
+      if(x.resp&&prev&&x.resp!==prev)R.guarda.push({d:d,i:i,ic:'🔄',t:'Sophia vai para '+(x.resp==='pai'?'o Pai':'a Mãe')});
+      prev=x.resp;
+      ['escola','pessoal'].forEach(function(g){
+        var D=DD[g],l=D&&D.y&&D.y[y]&&D.y[y].ev&&D.y[y].ev[k];if(!l)return;
+        l.forEach(function(e){
+          if(e.t==='fe')return;
+          var T=(D.t&&D.t[e.t])||['Evento'],nome=e.n||T[0];
+          if(e.t==='f')R.geral.push({d:d,i:i,ic:e.e||'🎉',t:nome});
+          else R[g].push({d:d,i:i,ic:e.e||GR[g][0],t:nome});
+        });
+      });
+    }
+    return R;
+  }
+  function quad(g,l){
+    var c=agc(g),a=GR[g],f=l[0],s='<div class="pq" style="--c:'+c+'" data-go="'+g+'"><div class="pq-h"><span class="in-d"></span>'+a[0]+' '+a[1]+'</div>';
+    if(f){
+      var w=f.i===0?'HOJE':f.i===1?'AMANHÃ':'Em '+f.i+' dias',seen={},mais=0;seen[f.t]=1;
+      l.forEach(function(x){if(x.i<=30&&!seen[x.t]){seen[x.t]=1;mais++}});
+      s+='<div class="pq-b"><span class="pq-i">'+esc(f.ic)+'</span><b>'+esc(f.t)+'</b></div><small>'+w+' • '+fmt(f.d)+'</small>'+(mais?'<small class="m">+'+mais+' nos próx. 30 dias</small>':'');
+    }else s+='<div class="pq-b"><span class="pq-i">✅</span><b>Sem eventos</b></div><small>Nada nos próximos meses</small>';
+    return s+'</div>';
+  }
+  function grid(){
+    var R=lista();
+    return '<div class="pq-grid">'+['geral','guarda','escola','pessoal'].map(function(g){R[g].sort(function(a,b){return a.i-b.i});return quad(g,R[g])}).join('')+'</div>';
+  }
+  function insV(){if(!V||V.querySelector('.pq-grid'))return;var a=V.querySelector('.guarda-neon'),h=grid();if(a)a.insertAdjacentHTML('afterend',h);else V.insertAdjacentHTML('afterbegin',h)}
+  function insL(){if(!L||L.querySelector('.pq-grid'))return;L.insertAdjacentHTML('afterbegin',grid())}
+  if(V){new MutationObserver(insV).observe(V,{childList:true});insV()}
+  if(L){new MutationObserver(insL).observe(L,{childList:true});insL()}
+
+  // ---------- 2) fechar a legenda e 3) copiar para o WhatsApp (Escola e Pessoal) ----------
+  function leg(card){
+    var c=localStorage.getItem('pp_leg')==='1',l=card.querySelector('.es-leg'),b=card.querySelector('[data-ppleg]'),g=EV.querySelector('.gd-leg');
+    if(l)l.style.display=c?'none':'';if(g)g.style.display=c?'none':'';if(b)b.textContent=c?'▾ Abrir':'✕ Fechar';
+  }
+  function fix2(){
+    if(!EV)return;
+    var lc=EV.querySelector('[data-ab="lg"]');
+    if(lc){
+      var card=lc.closest('.es-card');
+      if(!card.querySelector('[data-ppleg]'))lc.insertAdjacentHTML('afterend','<button class="es-btn sm" data-ppleg="1" style="float:right;margin-right:6px;background:#64748b;box-shadow:none"></button>');
+      leg(card);
+    }
+    var cal=EV.querySelector('.es-cal');
+    if(cal&&!EV.querySelector('[data-ppwa]'))cal.closest('.es-card').insertAdjacentHTML('afterend','<div style="text-align:center;margin-bottom:10px"><button class="es-btn" data-ppwa="1" style="background:linear-gradient(135deg,#059669,#0d9488);box-shadow:none">💬 Copiar WhatsApp</button></div>');
+  }
+  function copiar(t){
+    var ok=function(){if(window.mostrarToast)mostrarToast('📋 Resumo copiado para o WhatsApp!')};
+    var web=function(){window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(t),'_blank')};
+    if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(ok).catch(web);else web();
+  }
+  function wa(){
+    var md=modo(),D=ld(md==='pessoal'?'sx_pessoal_v1':'sx_escola_v2'),h3=EV.querySelector('.es-nav h3');
+    if(!D||!h3)return;
+    var p=h3.textContent.trim().split(' '),m=MES.indexOf(p[0]),y=+p[1];if(m<0)return;
+    var nd=new Date(y,m+1,0).getDate(),R=[],mm=p2(m+1);
+    for(var d=1;d<=nd;d++){
+      var l=(D.y[y]&&D.y[y].ev&&D.y[y].ev[y+'-'+mm+'-'+p2(d)])||[];
+      l.forEach(function(e){
+        var T=(D.t&&D.t[e.t])||['Evento'],n=e.n||T[0],r=R.filter(function(z){return z.n===n&&z.t===T[0]&&z.e===d-1})[0];
+        if(r)r.e=d;else R.push({s:d,e:d,n:n,t:T[0],ic:e.e||''});
+      });
+    }
+    var body=R.length?R.map(function(r){
+      var ds=r.s===r.e?p2(r.s)+'/'+mm:p2(r.s)+' a '+p2(r.e)+'/'+mm;
+      return '• '+ds+' — '+(r.ic?r.ic+' ':'')+r.n+(r.n!==r.t?' ('+r.t+')':'');
+    }).join('\n'):'Nenhum evento marcado neste mês.';
+    copiar((md==='pessoal'?'⭐ *Agenda Pessoal - ':'🎒 *Agenda Escolar - ')+MES[m]+' '+y+'*\n'+body+'\n\n_Gerado pelo App de Guarda Compartilhada_');
+  }
+  if(EV){
+    new MutationObserver(fix2).observe(EV,{childList:true});fix2();
+    EV.addEventListener('click',function(e){
+      if(e.target.closest('[data-ppleg]')){
+        try{localStorage.setItem('pp_leg',localStorage.getItem('pp_leg')==='1'?'0':'1')}catch(x){}
+        var c=EV.querySelector('[data-ppleg]');if(c)leg(c.closest('.es-card'));return;
+      }
+      if(e.target.closest('[data-ppwa]'))wa();
+    });
+  }
 })();
 </script>
 <!--PATCH-PESSOAL-FIM-->
