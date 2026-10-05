@@ -5281,4 +5281,102 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
 })();
 </script>
 <!--PATCH-PESSOAL-FIM-->
+    <!--PATCH-ICONE-INICIO - cole no final do arquivo, depois do patch anterior-->
+<script>
+(function(){
+  function ld(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+  function p2(n){return String(n).padStart(2,'0')}
+  function iso(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+  function dia(n){var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+n);return d}
+
+  // conta os eventos de hoje e de amanha (feriado, guarda, escola, pessoal)
+  function contar(d,ant){
+    var n=0,y=d.getFullYear(),m=d.getMonth(),dd=d.getDate(),k=iso(d),x={},a={};
+    try{x=regraPadrao(dd,m,y)||{};a=regraPadrao(ant.getDate(),ant.getMonth(),ant.getFullYear())||{}}catch(e){}
+    if(window.feriados&&(feriados[y+'-'+m+'-'+dd]||feriados[m+'-'+dd]))n++;
+    if(x.emenda)n++;
+    if(x.desc&&['Mãe','Pai','FDS Pai'].indexOf(x.desc)<0)n++;
+    if(x.resp&&a.resp&&x.resp!==a.resp)n++;
+    ['sx_escola_v2','sx_pessoal_v1'].forEach(function(key){
+      var D=ld(key),l=D&&D.y&&D.y[y]&&D.y[y].ev&&D.y[y].ev[k];if(!l)return;
+      l.forEach(function(e){if(e.t!=='fe')n++});
+    });
+    return n;
+  }
+
+  var tituloOriginal=document.title,link=document.querySelector('link[rel="icon"]'),iconeOriginal=link&&link.href,piscar=null,total=0;
+  var iconeAlerta='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#3b82f6"/><circle cx="46" cy="18" r="14" fill="#ef4444"/></svg>');
+
+  function atualizar(){
+    total=contar(dia(0),dia(-1))+contar(dia(1),dia(0));
+    // bolinha/numero no icone do app instalado (Android e iPhone com o app instalado)
+    try{
+      if(navigator.setAppBadge){if(total>0)navigator.setAppBadge(total);else navigator.clearAppBadge()}
+    }catch(e){}
+    // titulo e icone da aba piscando enquanto o app esta em segundo plano
+    clearInterval(piscar);document.title=tituloOriginal;if(link&&iconeOriginal)link.href=iconeOriginal;
+    if(total>0&&document.hidden){
+      var t=false;
+      piscar=setInterval(function(){
+        t=!t;document.title=t?'🔔 '+total+' evento(s)!':tituloOriginal;
+        if(link)link.href=t?iconeAlerta:iconeOriginal;
+      },1000);
+    }
+  }
+  document.addEventListener('visibilitychange',atualizar);
+  window.addEventListener('guarda:extras-atualizar',atualizar);
+  window.addEventListener('storage',atualizar);
+  setInterval(atualizar,60000);
+  setTimeout(atualizar,1500);
+})();
+</script>
+<!--PATCH-ICONE-FIM-->
+!--PATCH-VIBRAR-INICIO - cole no final do arquivo, depois do patch anterior-->
+<script>
+(function(){
+  function ld(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+  function p2(n){return String(n).padStart(2,'0')}
+  function iso(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+  function dia(n){var d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+n);return d}
+
+  // lista os eventos de um dia (feriado, guarda, escola e pessoal)
+  function eventos(d,ant){
+    var out=[],y=d.getFullYear(),m=d.getMonth(),dd=d.getDate(),k=iso(d),x={},a={};
+    try{x=regraPadrao(dd,m,y)||{};a=regraPadrao(ant.getDate(),ant.getMonth(),ant.getFullYear())||{}}catch(e){}
+    var f=(window.feriados&&(feriados[y+'-'+m+'-'+dd]||feriados[m+'-'+dd]))||'';
+    if(f)out.push(f);
+    if(x.emenda)out.push('Emenda de feriado');
+    if(x.desc&&['Mãe','Pai','FDS Pai'].indexOf(x.desc)<0)out.push(x.desc);
+    if(x.resp&&a.resp&&x.resp!==a.resp)out.push('Sophia vai para '+(x.resp==='pai'?'o Pai':'a Mãe'));
+    ['sx_escola_v2','sx_pessoal_v1'].forEach(function(key){
+      var D=ld(key),l=D&&D.y&&D.y[y]&&D.y[y].ev&&D.y[y].ev[k];if(!l)return;
+      l.forEach(function(e){if(e.t==='fe')return;var T=(D.t&&D.t[e.t])||['Evento'];out.push(e.n||T[0])});
+    });
+    return out;
+  }
+
+  function avisar(){
+    var h=dia(0),am=dia(1),hj=eventos(h,dia(-1)),ev=eventos(am,h),kh='vb_hj_'+iso(h),ka='vb_am_'+iso(h),msg=null,pad;
+    try{
+      if(hj.length&&!localStorage.getItem(kh)){localStorage.setItem(kh,'1');pad=[250,120,250,120,500];msg='📌 Hoje: '+hj.slice(0,2).join(', ')}
+      else if(ev.length&&!localStorage.getItem(ka)){localStorage.setItem(ka,'1');pad=[180,100,180];msg='🔔 Amanhã: '+ev.slice(0,2).join(', ')}
+    }catch(e){}
+    if(!msg)return;
+    if(navigator.vibrate){try{navigator.vibrate(pad)}catch(e){}}
+    if(window.mostrarToast)mostrarToast(msg);
+  }
+
+  // o Chrome só libera a vibração depois de um toque do usuário
+  function armar(){
+    var go=function(){
+      document.removeEventListener('click',go,true);document.removeEventListener('touchend',go,true);
+      setTimeout(avisar,250);
+    };
+    document.addEventListener('click',go,true);document.addEventListener('touchend',go,true);
+  }
+  armar();
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)armar()});
+})();
+</script>
+<!--PATCH-VIBRAR-FIM-->
     </html>
