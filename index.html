@@ -6160,4 +6160,71 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--DIAS-RESTANTES-FIM-->
+<!--IMPRESSAO-ANO-INICIO-->
+<script>
+(function(){
+  if(window.__atPrintAno)return;window.__atPrintAno=1;
+  var prev=window.gerarAnoCompletoPDF;if(typeof prev!=='function')return;
+  var NM=window.nomesMeses||['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  function hoje(){var d=new Date();d.setHours(0,0,0,0);return d}
+  function resumoAno(y){
+    var h=hoje(),cy=h.getFullYear(),fim=new Date(y,11,31),ini=(y===cy)?h:new Date(y,0,1),a=0,b=0,n=0,ta=0,tb=0;
+    for(var d=new Date(y,0,1);d<=fim;d.setDate(d.getDate()+1)){
+      var r=window.regraPadrao(d.getDate(),d.getMonth(),y)||{},pai=r.resp==='pai';
+      if(pai)tb++;else ta++;
+      if(d>=ini){if(pai)b++;else a++;n++}
+    }
+    if(y===cy)return '<b>'+y+'</b> — faltam '+n+' dias: 👩 Mãe '+a+' · 👨 Pai '+b+' &nbsp;|&nbsp; ano inteiro: 👩 '+ta+' · 👨 '+tb;
+    if(y>cy)return '<b>'+y+'</b> inteiro: 👩 Mãe '+ta+' dias · 👨 Pai '+tb+' dias';
+    return '<b>'+y+'</b> (encerrado): 👩 Mãe '+ta+' dias · 👨 Pai '+tb+' dias';
+  }
+  function tr(h,ai,mi,af,mf){
+    var doc=new DOMParser().parseFromString(h,'text/html'),M=[],cache={};
+    for(var y=ai;y<=af;y++){var s0=(y===ai)?mi:0,e0=(y===af)?mf:11;for(var m=s0;m<=e0;m++)M.push([y,m])}
+    var st=doc.createElement('style');
+    st.textContent='.ano-impressao{text-align:center;font-size:9pt;font-weight:600;color:#334155;margin:0 0 2mm}';
+    doc.head.appendChild(st);
+    function R(y){return cache[y]||(cache[y]=resumoAno(y))}
+    function lines(ys){return ys.map(function(y){return '<div class="ano-impressao">'+R(y)+'</div>'}).join('')}
+    var folhas=doc.querySelectorAll('.folha');
+    if(folhas.length){
+      var p=0;
+      folhas.forEach(function(f){
+        var k=f.querySelectorAll('.mes-pagina-impressao').length||1,ms=M.slice(p,p+k);p+=k;
+        if(!ms.length)return;
+        var ys=[];ms.forEach(function(x){if(ys.indexOf(x[0])<0)ys.push(x[0])});
+        var a=NM[ms[0][1]]+' '+ms[0][0],b=NM[ms[ms.length-1][1]]+' '+ms[ms.length-1][0];
+        var hd=f.querySelector('.folha-h');if(!hd)return;
+        hd.innerHTML='Guarda Compartilhada — Sophia — '+ys.join(' / ')+(k>1?'<br><span style="font-size:10pt;font-weight:600;color:#64748b">'+(a===b?a:a+' a '+b)+'</span>':'');
+        hd.insertAdjacentHTML('afterend',lines(ys));
+      });
+    }else{
+      doc.querySelectorAll('section.mes-pagina-impressao').forEach(function(s,i){
+        var mm=M[i];if(!mm)return;
+        var h1=s.querySelector('.titulo-impressao h1'),mes=s.querySelector('.titulo-impressao .mes');
+        if(h1)h1.textContent='Guarda Compartilhada — Sophia — '+mm[0];
+        var ref=s.querySelector('.cont-impressao')||mes;
+        if(ref)ref.insertAdjacentHTML('afterend',lines([mm[0]]));
+      });
+    }
+    return '<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
+  }
+  var novo=function(ai,mi,af,mf){
+    var hj=hoje();
+    ai=(ai==null)?(typeof anoAtual==='number'?anoAtual:hj.getFullYear()):ai;
+    mi=(mi==null)?(typeof mesAtual==='number'?mesAtual:hj.getMonth()):mi;
+    af=(af==null)?ai+1:af;mf=(mf==null)?11:mf;
+    var B=window.Blob;
+    window.Blob=function(parts,opt){
+      if(opt&&/html/.test(opt.type||'')&&parts&&typeof parts[0]==='string'){try{parts=[tr(parts[0],ai,mi,af,mf)]}catch(e){}}
+      return new B(parts,opt);
+    };
+    window.Blob.prototype=B.prototype;
+    try{return prev.call(this,ai,mi,af,mf)}finally{window.Blob=B}
+  };
+  window.gerarAnoCompletoPDF=novo;window.gerenarAnoCompletoPDF=novo;
+})();
+</script>
+<!--IMPRESSAO-ANO-FIM-->
+ 
     </html>
