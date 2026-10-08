@@ -6780,4 +6780,95 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--MESES-NO-PDF-FIM-->
+    <!--PATCH-MODAIS-INICIO: cole este bloco inteiro no FINAL do arquivo, depois do último bloco. Para tirar, apague tudo entre PATCH-MODAIS-INICIO e PATCH-MODAIS-FIM. Não remove nenhum botão flutuante. -->
+<style id="patch-modais">
+/* 1) Os modais passam por cima dos botões flutuantes (🔮 🎨 ✨ Extras 🎤) */
+#modalImpressao,
+#customModal,
+#modalPeriodoRapido,
+#modalMotivos,
+#modalSeletorMesAno {
+  z-index: 120 !important;
+}
+
+/* 2) Caixa do modal: um pouco mais larga, com rolagem própria se a tela for pequena */
+#modalImpressao > div,
+#customModal > div,
+#modalMotivos > div,
+#modalSeletorMesAno > div,
+#modalPeriodoRapido > div {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+#modalImpressao > div,
+#customModal > div,
+#modalMotivos > div,
+#modalSeletorMesAno > div {
+  max-width: 24rem !important;
+}
+
+/* 3) Imprimir PDF: botões um embaixo do outro, mesmo tamanho, texto sem cortar */
+#modalImpressao .flex.gap-2.pt-2 {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+}
+#modalImpressao .flex.gap-2.pt-2 > button,
+#modalImpressao button[onclick="confirmarGerarPDF()"],
+#btnCopiarListaModal,
+#btnGerarWordLayout {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-height: 46px !important;
+  margin: 0 !important;
+  padding: 10px 14px !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+  white-space: normal !important;
+  color: #fff !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .15) !important;
+}
+/* o botão Gerar PDF mantém o degradê do tema; os outros dois ganham cor própria */
+#btnCopiarListaModal {
+  background: linear-gradient(135deg, #059669, #0d9488) !important;
+}
+#btnGerarWordLayout {
+  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+}
+#modalImpressao .flex.gap-2.pt-2 > button:active,
+#btnCopiarListaModal:active,
+#btnGerarWordLayout:active {
+  transform: scale(.97);
+}
+
+/* 4) Atalhos "Só este mês / 12 meses" e campos com o mesmo acabamento */
+#modalImpressao .grid.grid-cols-2 > button {
+  min-height: 40px !important;
+  border-radius: 12px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+#modalImpressao select,
+#modalImpressao input[type="month"] {
+  min-height: 42px !important;
+  border-radius: 14px !important;
+}
+
+/* 5) Botões dos outros modais (editar dia, período rápido): altura confortável para o dedo */
+#customModal .flex.gap-2.pt-2 > button,
+#modalPeriodoRapido button.rounded-xl,
+#modalMotivos button.rounded-xl,
+#modalSeletorMesAno button.rounded-xl {
+  min-height: 42px;
+}
+</style>
+<!--PATCH-MODAIS-FIM-->
 </html>
