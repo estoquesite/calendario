@@ -5381,6 +5381,7 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
 <script>
 (function(){
 var ANO_INI=2027,ANO_FIM=2036,JULHO_INI=9; // férias de julho começam sempre no dia 9
+var DIA_CRIANCAS='dia'; // 'dia' = só o 12/10 · 'fds' = só o fim de semana vizinho · 'ambos' = o dia + o fim de semana
 var SOPHIA_MD='06-06',SOPHIA_COM_MAE_EM='impar'; // base: calendário 2027 (06/06/2027 com a mãe)
 function D(y,m,d){return new Date(y,m,d)}
 function key(d){return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()}
@@ -5423,6 +5424,11 @@ function build(y){
   fds(B,add(nth(y,7,2,0),-2),'pai','Dia dos Pais');
   span(B,D(y,10,19),D(y,10,25),'pai','Aniv. Pai');
   fds(B,sexta(D(y,5,6)),imp?'mae':'pai','Aniv. Sophia');
+  // Dia das Crianças (12/10): alterna, base 2026 = mãe (ano par mãe, ímpar pai); o dia + fim de semana vizinho (segunda feriado = fim de semana anterior)
+  var dc=D(y,9,12),hd=par?'mae':'pai';
+  if(DIA_CRIANCAS==='dia')B[key(dc)]=R(hd,'Dia das Crianças');
+  else if(dc.getDay()===1&&DIA_CRIANCAS==='ambos')span(B,add(dc,-3),dc,hd,'Dia das Crianças');
+  else{fds(B,dc.getDay()===1?add(dc,-3):sexta(dc),hd,'Dia das Crianças');if(DIA_CRIANCAS==='ambos')B[key(dc)]=R(hd,'Dia das Crianças')}
   var nr=par?'mae':'pai',n2=D(y,11,26);if(n2.getDay()===5||n2.getDay()===6)n2=add(n2,7-n2.getDay());
   span(B,D(y,11,24),n2,nr,'Natal');B[key(D(y,11,31))]=R(nr,'Ano Novo');
   // ---- FINS DE SEMANA: pai sempre com 2 por mês, alternando a partir do primeiro fim de semana já definido ----
