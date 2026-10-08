@@ -5564,6 +5564,39 @@ if(!window.projecaoGuarda){
     btn.style.display=fora?'none':'flex';
   },400);
 })();
+
+// ===== ATUALIZAR (puxar a tela) fica na mesma aba/mês/rolagem; abrir o app do zero cai no Início =====
+(function(){
+  if(window.__pjNav)return;window.__pjNav=1;
+  var K='pj_estado',S=null;
+  try{S=JSON.parse(sessionStorage.getItem(K))}catch(e){}
+  var nv=(performance.getEntriesByType&&performance.getEntriesByType('navigation')[0])||null;
+  var reload=nv?nv.type==='reload':!!(performance.navigation&&performance.navigation.type===1);
+  function tabAtual(){
+    var iv=document.getElementById('inicioView'),ev=document.getElementById('escolaView');
+    if(iv&&iv.style.display==='block')return 'inicio';
+    if(ev&&ev.style.display==='block'){var a='escola';try{a=localStorage.getItem('sx_aba')||'escola'}catch(e){}return a==='pessoal'?'pessoal':'escola'}
+    return 'guarda';
+  }
+  function salvar(){
+    var o={tab:tabAtual(),y:window.scrollY||0};
+    try{if(typeof anoAtual==='number'){o.ano=anoAtual;o.mes=mesAtual}}catch(e){}
+    try{sessionStorage.setItem(K,JSON.stringify(o))}catch(e){}
+  }
+  function ir(t){var b=document.querySelector('#abaBar button[data-a="'+t+'"]');if(b)b.click()}
+  setTimeout(function(){
+    if(reload&&S&&S.tab){
+      if(S.tab==='guarda'&&S.ano!=null){
+        try{anoAtual=S.ano;mesAtual=S.mes;if(typeof sincronizarCamposPeriodoComMes==='function')sincronizarCamposPeriodoComMes(true);renderizar()}catch(e){}
+      }
+      ir(S.tab);
+      setTimeout(function(){window.scrollTo(0,S.y||0)},150);
+    }else{ir('inicio')}
+    setTimeout(function(){setInterval(salvar,400)},600);
+  },300);
+  window.addEventListener('pagehide',salvar);
+  document.addEventListener('visibilitychange',function(){if(document.hidden)salvar()});
+})();
 </script>
 <!--PROJECAO-FIM-->
     </html>
