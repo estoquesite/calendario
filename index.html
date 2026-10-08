@@ -6226,7 +6226,6 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--IMPRESSAO-ANO-FIM-->
- <!--IMPRESSAO-ANO-INICIO v3: APAGUE os DOIS blocos antigos (cada um vai de IMPRESSAO-ANO-INICIO até IMPRESSAO-ANO-FIM, são dois blocos no final do arquivo) e cole só este no lugar. O resumo do ano agora sai UMA vez, fora do calendário (em cima da moldura).-->
 <script>
 (function(){
   if(window.__atPrintAno3)return;window.__atPrintAno3=1;
@@ -6256,8 +6255,6 @@ if(!window.projecaoGuarda){
       '.ano-impressao{text-align:center;font-size:9pt;font-weight:600;color:#334155;margin:0 0 1.5mm}'+
       '.folha-g{display:flex !important;flex-direction:column !important;gap:0 !important}'+
       '.ano-grupo{border:.3mm solid #94a3b8;border-radius:2mm;padding:1.5mm 2mm;display:flex;flex-direction:column;min-height:0}'+
-      '.ano-impressao+.ano-grupo{margin-top:0}'+
-      '.ano-grupo+.ano-impressao{margin-top:3mm}'+
       '.ano-grid{display:grid;grid-template-columns:repeat('+cols+',1fr);grid-auto-rows:1fr;gap:4mm;flex:1;min-height:0}';
     doc.head.appendChild(st);
     function R(y){return cache[y]||(cache[y]=resumoAno(y))}
@@ -6278,7 +6275,6 @@ if(!window.projecaoGuarda){
         });
         g.innerHTML='';
         grupos.forEach(function(u){
-          // resumo do ano FORA da moldura (acima dela), uma vez só
           var t=doc.createElement('div');t.className='ano-impressao';t.innerHTML=R(u.y);g.appendChild(t);
           var box=doc.createElement('div');box.className='ano-grupo';
           box.style.flex=Math.ceil(u.s.length/cols)+' 1 0';
@@ -6288,7 +6284,6 @@ if(!window.projecaoGuarda){
         });
       });
     }else{
-      // 1 mês por folha: resumo do ano logo abaixo do título do mês (uma vez só)
       doc.querySelectorAll('section.mes-pagina-impressao').forEach(function(s,i){
         var mm=M[i];if(!mm)return;
         var ref=s.querySelector('.cont-impressao')||s.querySelector('.titulo-impressao .mes');
@@ -6311,7 +6306,8 @@ if(!window.projecaoGuarda){
     window.Blob.prototype=B.prototype;
     try{return prev.call(this,ai,mi,af,mf)}finally{window.Blob=B}
   };
-  window.gerarAnoCompletoPDF=novo;window.gerenarAnoCompletoPDF=novo;
+  window.gerarAnoCompletoPDF=novo;
+  window.gerenarAnoCompletoPDF=novo;
 })();
 </script>
 <!--IMPRESSAO-ANO-FIM-->
