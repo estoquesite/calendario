@@ -5377,9 +5377,8 @@ html[data-cor="solido"] #escolaView .es-card,html[data-cor="solido"] #escolaView
 })();
 </script>
 <!--PATCH-VIBRAR-FIM-->
-    <!--PROJECAO-INICIO: cole este bloco inteiro no FINAL do arquivo, depois do último bloco. Para tirar, apague tudo entre PROJECAO-INICIO e PROJECAO-FIM.-->
+    <!--PROJECAO-INICIO v2: cole este bloco inteiro no FINAL do arquivo, depois do último bloco. Se já colou a versão anterior, pode deixar (não duplica) ou apagar entre PROJECAO-INICIO e PROJECAO-FIM antes. Para tirar, apague tudo entre PROJECAO-INICIO e PROJECAO-FIM.-->
 <script>
-/* PROJEÇÃO DA GUARDA 2027–2036 — cole num <script> antes de </body>, depois do último bloco. Não altera 2026 nem o estilo do app. */
 (function(){
 var ANO_INI=2027,ANO_FIM=2036,JULHO_INI=9; // férias de julho começam sempre no dia 9
 var SOPHIA_MD='06-06',SOPHIA_COM_MAE_EM='impar'; // base: calendário 2027 (06/06/2027 com a mãe)
@@ -5441,20 +5440,130 @@ function build(y){
   return M;
 }
 
-// completa os feriados 2028–2036 (o app só trazia os móveis de 2026/2027)
-if(window.feriados){for(var y=2028;y<=2036;y++){var F=feriadosAno(y);for(var k in F){if(!window.feriados[k])window.feriados[k]=F[k]}}}
-var orig=window.regraPadrao,cache={};
-window.regraPadrao=function(dia,mes,ano){
-  if(ano<ANO_INI||ano>ANO_FIM)return orig(dia,mes,ano);
-  var k=ano+'-'+mes+'-'+dia;
-  if(typeof overrides!=='undefined'&&overrides[k])return overrides[k];
-  if(!cache[ano])cache[ano]=build(ano);
-  return cache[ano][k]||R('mae','Mãe');
-};
-if(window.renderizar)window.renderizar();
+if(!window.projecaoGuarda){
+  window.projecaoGuarda={build:build};
+  // completa os feriados 2028–2036 (o app só trazia os móveis de 2026/2027)
+  if(window.feriados){for(var y=2028;y<=2036;y++){var F=feriadosAno(y);for(var k in F){if(!window.feriados[k])window.feriados[k]=F[k]}}}
+  var orig=window.regraPadrao,cache={};
+  window.regraPadrao=function(dia,mes,ano){
+    if(ano<ANO_INI||ano>ANO_FIM)return orig(dia,mes,ano);
+    var k=ano+'-'+mes+'-'+dia;
+    if(typeof overrides!=='undefined'&&overrides[k])return overrides[k];
+    if(!cache[ano])cache[ano]=build(ano);
+    return cache[ano][k]||R('mae','Mãe');
+  };
+  if(window.renderizar)window.renderizar();
+}
 })();
 
+// ===== PAINEL "🔮 PROJEÇÃO" dentro do app (ver, alterar, voltar ao automático) =====
+(function(){
+  if(window.__pjUI)return;window.__pjUI=1;
+  var MN=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],anoV=Math.max(2027,Math.min(2036,new Date().getFullYear())),selK=null,modo='meu',pc={};
+  var st=document.createElement('style');st.textContent=`
+#pjBtn{position:fixed;left:12px;bottom:116px;z-index:94;width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;background:var(--nav,rgba(255,255,255,.92));color:var(--txt,#1e1b2e);border:1.5px solid rgba(var(--mae-rgb,255,45,149),.8);box-shadow:0 0 8px rgba(var(--mae-rgb,255,45,149),.4)}
+#pjMod{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center}
+#pjMod.on{display:flex}
+.pj-box{width:100%;max-width:680px;max-height:94vh;overflow:auto;background:var(--sheet,#fff);color:var(--txt,#1e1b2e);border-radius:24px 24px 0 0;padding:14px;border:1.5px solid rgba(var(--mae-rgb,255,45,149),.7);box-shadow:0 0 24px rgba(var(--mae-rgb,255,45,149),.4)}
+.pj-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.pj-top h2{margin:0;font-size:16px;font-weight:900}
+.pj-x{border:1px solid rgba(128,128,150,.4);background:transparent;color:inherit;border-radius:50%;width:32px;height:32px;font-size:14px;cursor:pointer}
+.pj-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;position:sticky;top:-14px;background:var(--sheet,#fff);z-index:3}
+.pj-tabs button{flex:0 0 auto;border:1px solid rgba(128,128,150,.35);background:transparent;color:inherit;border-radius:12px;padding:7px 12px;font-weight:800;font-size:12.5px;cursor:pointer}
+.pj-tabs button.on{background:linear-gradient(135deg,rgb(var(--mae-rgb,255,45,149)),rgb(var(--pai-rgb,47,155,255)));color:#fff;border-color:transparent}
+.pj-sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}
+.pj-sum div{border-radius:14px;padding:9px;border:1.5px solid;font-size:12px;font-weight:700}
+.pj-sum b{display:block;font-size:19px}
+.pj-sum .m{border-color:rgba(var(--mae-rgb,255,45,149),.8);background:rgba(var(--mae-rgb,255,45,149),.12)}.pj-sum .p{border-color:rgba(var(--pai-rgb,47,155,255),.8);background:rgba(var(--pai-rgb,47,155,255),.12)}
+.pj-bar{display:flex;height:9px;border-radius:9px;overflow:hidden;margin:4px 0 10px}.pj-bar i{display:block}
+.pj-hint{font-size:11px;opacity:.75;margin:0 0 8px}
+.pj-ms{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.pj-mes{border:1px solid rgba(128,128,150,.3);border-radius:14px;padding:8px}
+.pj-mes h3{margin:0 0 6px;font-size:13px;display:flex;justify-content:space-between}.pj-mes h3 span{font-size:11px;font-weight:600;opacity:.75}
+.pj-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.pj-w{font-size:9px;text-align:center;opacity:.6}
+.pj-d{position:relative;min-height:36px;border-radius:8px;padding:2px 3px;font-size:11px;border:1px solid transparent;cursor:pointer;overflow:hidden}
+.pj-d b{font-weight:800}.pj-d small{display:block;font-size:7px;line-height:1.1;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pj-d.m{background:rgba(var(--mae-rgb,255,45,149),.25);border-color:rgba(var(--mae-rgb,255,45,149),.8)}
+.pj-d.p{background:rgba(var(--pai-rgb,47,155,255),.25);border-color:rgba(var(--pai-rgb,47,155,255),.8)}
+.pj-d.sl{outline:2.5px solid var(--txt,#000);outline-offset:-2px}
+.pj-f{display:inline-block;width:6px;height:6px;border-radius:50%;background:#10b981;margin-left:3px;vertical-align:middle}
+.pj-d u{position:absolute;right:2px;top:1px;font-size:8px;text-decoration:none}
+.pj-ed{margin-top:12px;border:1.5px solid rgba(var(--pai-rgb,47,155,255),.8);border-radius:16px;padding:12px}
+.pj-ed h4{margin:0 0 8px;font-size:13px}.pj-ed label{display:block;font-size:10px;font-weight:800;opacity:.75;margin-top:8px}
+.pj-ed input{width:100%;box-sizing:border-box;border:1px solid rgba(128,128,150,.4);background:transparent;color:inherit;border-radius:10px;padding:8px;font-size:12px;margin-top:3px}
+.pj-r{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pj-b{border:0;border-radius:12px;padding:10px;font-weight:800;font-size:12px;color:#fff;cursor:pointer;margin-top:8px;width:100%}
+.pj-b.m{background:rgb(var(--mae-rgb,255,45,149))}.pj-b.p{background:rgb(var(--pai-rgb,47,155,255))}.pj-b.g{background:#64748b}
+@media print{#pjBtn,#pjMod{display:none !important}}`;
+  document.head.appendChild(st);
+  var btn=document.createElement('button');btn.id='pjBtn';btn.type='button';btn.title='Projeção 2027–2036';btn.textContent='🔮';document.body.appendChild(btn);
+  var mod=document.createElement('div');mod.id='pjMod';document.body.appendChild(mod);
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function ov(){return (typeof overrides!=='undefined')?overrides:{}}
+  function fer(y,m,d){return (window.feriados&&(window.feriados[y+'-'+m+'-'+d]||window.feriados[m+'-'+d]))||''}
+  function prop(y,m,d){var B=window.projecaoGuarda&&window.projecaoGuarda.build;if(!B)return null;if(!pc[y])pc[y]=B(y);return pc[y][y+'-'+m+'-'+d]||{resp:'mae',desc:'Mãe'}}
+  function dif(y,m,d){var o=ov()[y+'-'+m+'-'+d],q=prop(y,m,d);return !!(o&&q&&o.resp!==q.resp)}
+  function info(y,m,d){if(modo==='prop'){var q=prop(y,m,d);if(q)return q}return window.regraPadrao(d,m,y)||{resp:'mae'}}
+  function cont(y,m){var n=new Date(y,m+1,0).getDate(),a=0,b=0;for(var d=1;d<=n;d++)info(y,m,d).resp==='pai'?b++:a++;return[a,b]}
+  function iso(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0')}
+  function render(){
+    var ta=0,tb=0,h='',O=ov();
+    var nd=0;for(var m=0;m<12;m++){var c=cont(anoV,m);ta+=c[0];tb+=c[1];if(modo==='meu'){for(var d=1;d<=new Date(anoV,m+1,0).getDate();d++)if(dif(anoV,m,d))nd++}}
+    h+='<div class="pj-top"><h2>🔮 Projeção da guarda</h2><button class="pj-x" data-x="1">✕</button></div><div class="pj-tabs">';
+    for(var y=2027;y<=2036;y++)h+='<button data-y="'+y+'" class="'+(y===anoV?'on':'')+'">'+y+'</button>';
+    h+='</div><div class="pj-tabs" style="position:static"><button data-md="meu" class="'+(modo==='meu'?'on':'')+'">📅 Meu calendário</button><button data-md="prop" class="'+(modo==='prop'?'on':'')+'">🔮 Só a proposta</button></div>'+(modo==='meu'&&nd?'<p class="pj-hint">⚠ '+nd+' dia(s) em '+anoV+' que você marcou diferente da proposta.</p>':'')+'<div class="pj-sum"><div class="m">👩 Mãe no ano<b>'+ta+' dias</b></div><div class="p">👨 Pai no ano<b>'+tb+' dias</b></div></div><div class="pj-bar"><i style="width:'+ta/(ta+tb)*100+'%;background:rgb(var(--mae-rgb,255,45,149))"></i><i style="width:'+tb/(ta+tb)*100+'%;background:rgb(var(--pai-rgb,47,155,255))"></i></div><p class="pj-hint">'+(modo==='prop'?'Modo só para ver a proposta, sem as suas marcações.':'Toque num dia para alterar. ✎ = dia que você mudou, ⚠ = difere da proposta. Bolinha verde = feriado.')+' </p><div class="pj-ms">';
+    for(var m=0;m<12;m++){
+      var c=cont(anoV,m),pd=new Date(anoV,m,1).getDay(),n=new Date(anoV,m+1,0).getDate();
+      h+='<div class="pj-mes"><h3>'+MN[m]+'<span>👩 '+c[0]+' · 👨 '+c[1]+'</span></h3><div class="pj-g">'+'DSTQQSS'.split('').map(function(x){return '<div class="pj-w">'+x+'</div>'}).join('');
+      for(var i=0;i<pd;i++)h+='<div></div>';
+      for(var d=1;d<=n;d++){
+        var r=info(anoV,m,d),k=anoV+'-'+m+'-'+d,f=fer(anoV,m,d),lab=(r.desc&&r.desc!=='Mãe'&&r.desc!=='FDS Pai')?r.desc:f;
+        h+='<div class="pj-d '+(r.resp==='pai'?'p':'m')+(k===selK?' sl':'')+'" data-k="'+k+'"><b>'+d+'</b>'+(f?'<span class="pj-f"></span>':'')+(modo==='meu'&&O[k]?'<u>'+(dif(anoV,m,d)?'⚠':'✎')+'</u>':'')+(lab?'<small>'+esc(lab)+'</small>':'')+'</div>';
+      }
+      h+='</div></div>';
+    }
+    h+='</div>';
+    if(selK&&modo==='meu'){
+      var p=selK.split('-'),y=+p[0],m=+p[1],d=+p[2],r=info(y,m,d),i2=iso(y,m,d);
+      h+='<div class="pj-ed" id="pjEd"><h4>✏️ '+String(d).padStart(2,'0')+'/'+String(m+1).padStart(2,'0')+'/'+y+' — hoje com '+(r.resp==='pai'?'o Pai':'a Mãe')+(r.desc&&r.desc!=='Mãe'&&r.desc!=='FDS Pai'?' ('+esc(r.desc)+')':'')+'</h4>'
+       +'<div class="pj-r"><div><label>De</label><input type="date" id="pjA" value="'+i2+'"></div><div><label>Até (opcional)</label><input type="date" id="pjB" value="'+i2+'"></div></div>'
+       +'<label>Motivo (opcional)</label><input type="text" id="pjM" placeholder="Ex.: Viagem, Médico..." value="'+(O[selK]&&O[selK].desc&&['Mãe','Pai'].indexOf(O[selK].desc)<0?esc(O[selK].desc):'')+'">'
+       +'<div class="pj-r"><button class="pj-b m" data-s="mae">👩 Mãe</button><button class="pj-b p" data-s="pai">👨 Pai</button></div>'
+       +'<button class="pj-b g" data-s="auto">↺ Voltar ao automático (projeção)</button><button class="pj-b g" data-s="fechar">Fechar edição</button></div>';
+    }
+    var sc=mod.firstChild?mod.firstChild.scrollTop:0;
+    mod.innerHTML='<div class="pj-box">'+h+'</div>';mod.firstChild.scrollTop=sc;
+  }
+  function aplicar(resp){
+    var a=document.getElementById('pjA').value,b=document.getElementById('pjB').value||a,mt=document.getElementById('pjM').value.trim();
+    if(!a)return;var da=new Date(a+'T00:00:00'),db=new Date(b+'T00:00:00');if(da>db){var t=da;da=db;db=t}
+    var O=ov(),n=0;
+    for(var d=new Date(da);d<=db;d.setDate(d.getDate()+1)){
+      var k=d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate();
+      if(resp==='auto'){delete O[k]}
+      else{var old=O[k]||{};O[k]={resp:resp,desc:mt||(resp==='mae'?'Mãe':'Pai'),emenda:!!(old.emenda||old.grampinho)}}
+      n++;
+    }
+    if(typeof salvarNaNuvem==='function')salvarNaNuvem();
+    if(typeof renderizar==='function')renderizar();
+    if(typeof mostrarToast==='function')mostrarToast(resp==='auto'?'↺ Voltou ao automático':'✅ '+n+' dia(s) atualizado(s)');
+    render();
+  }
+  mod.addEventListener('click',function(e){
+    var t=e.target,x;
+    if(t===mod||t.closest('[data-x]')){mod.classList.remove('on');return}
+    if(x=t.closest('[data-y]')){anoV=+x.dataset.y;selK=null;render();return}
+    if(x=t.closest('[data-md]')){modo=x.dataset.md;selK=null;render();return}
+    if(x=t.closest('[data-s]')){var s=x.dataset.s;if(s==='fechar'){selK=null;render()}else aplicar(s);return}
+    if(x=t.closest('[data-k]')){if(modo==='prop')return;selK=x.dataset.k;render();var el=document.getElementById('pjEd');if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'})}
+  });
+  btn.addEventListener('click',function(){render();mod.classList.add('on')});
+  // o botão só aparece na aba Guarda
+  var site=document.getElementById('conteudo-site');
+  setInterval(function(){
+    var iv=document.getElementById('inicioView'),fora=document.documentElement.classList.contains('esc-on')||(iv&&iv.style.display==='block')||(site&&site.style.display==='none');
+    btn.style.display=fora?'none':'flex';
+  },400);
+})();
 </script>
 <!--PROJECAO-FIM-->
     </html>
-
