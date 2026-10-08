@@ -6161,30 +6161,96 @@ if(!window.projecaoGuarda){
 <!--IMPRESSAO-ANO-INICIO-->
 <script>
 (function(){
-  if(window.__atPrintAnoClean)return; window.__atPrintAnoClean=1;
+  if(window.__atPrintLista)return; window.__atPrintLista=1;
   var orig=window.gerarAnoCompletoPDF;
   if(typeof orig!=='function')return;
   var NM=window.nomesMeses||['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   function hoje(){var d=new Date();d.setHours(0,0,0,0);return d}
 
-  function resumoAno(y){
-    var h=hoje(),cy=h.getFullYear(),fim=new Date(y,11,31),ini=(y===cy)?h:new Date(y,0,1),a=0,b=0,n=0,ta=0,tb=0;
-    for(var d=new Date(y,0,1);d<=fim;d.setDate(d.getDate()+1)){
-      var r=window.regraPadrao(d.getDate(),d.getMonth(),y)||{},pai=r.resp==='pai';
-      if(pai)tb++;else ta++;
-      if(d>=ini){if(pai)b++;else a++;n++}
+  // Adiciona a opção de formato no modal de impressão
+  function injetarOpcaoLayout(){
+    var m=document.getElementById('modalImpressao');
+    if(!m || document.getElementById('tipoImpressaoLista')) return;
+    var container = m.querySelector('.space-y-2');
+    if(!container) return;
+    
+    var div = document.createElement('div');
+    div.innerHTML = '<label class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Formato de Impressão:</label>'+
+                    '<select id="tipoImpressaoLista" class="w-full text-xs p-2 mt-1 border rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100 focus:outline-none">'+
+                    '<option value="calendario">📅 Calendário Visual (com moldura)</option>'+
+                    '<option value="lista">📝 Lista de Convivência (texto por extenso)</option>'+
+                    '</select>';
+    container.appendChild(div);
+  }
+  
+  // Observa a abertura do modal para garantir a opção visível
+  new MutationObserver(injetarOpcaoLayout).observe(document.body, {childList:true, subtree:true});
+
+  // Função para gerar o texto em lista agrupado por blocos contínuos de dias
+  function gerarTextoLista(ai, mi, af, mf){
+    var html = '<div style="font-family:\'Plus Jakarta Sans\', sans-serif; padding: 15mm; color: #1f2937;">'+
+               '<h1 style="text-align:center; font-size:16pt; font-weight:800; margin-bottom:2mm;">Datas de Convivência — Sophia</h1>'+
+               '<div style="display:flex; justify-content:center; gap:10mm; font-size:9.5pt; font-weight:700; margin-bottom:8mm; color:#475569;">'+
+               '<span><span style="display:inline-block; width:3.5mm; height:3.5mm; border-radius:50%; background:#f43f5e; vertical-align:middle; margin-right:1.5mm;"></span> Mãe</span>'+
+               '<span><span style="display:inline-block; width:3.5mm; height:3.5mm; border-radius:50%; background:#0ea5e9; vertical-align:middle; margin-right:1.5mm;"></span> Pai</span>'+
+               '</div>';
+
+    for(var y=ai; y<=af; y++){
+      var s0 = (y===ai)?mi:0, e0 = (y===af)?mf:11;
+      for(var m=s0; m<=e0; m++){
+        var totalDias = new Date(y, m+1, 0).getDate();
+        var blocos = [], respAtual = null, inicioBloco = 1;
+
+        for(var d=1; d<=totalDias; d++){
+          var info = window.regraPadrao ? window.regraPadrao(d, m, y) : {resp:'mae'};
+          var r = info.resp || 'mae';
+          if(d===1){ respAtual = r; inicioBloco = 1; }
+          else if(r !== respAtual){
+            blocos.push({resp: respAtual, ini: inicioBloco, fim: d-1});
+            respAtual = r; inicioBloco = d;
+          }
+        }
+        blocos.push({resp: respAtual, ini: inicioBloco, fim: totalDias});
+
+        // Formata os blocos em texto descritivo
+        var partesPai = [], partesMae = [];
+        blocos.forEach(function(b){
+          var txt = b.ini===b.fim ? String(b.ini).padStart(2,'0') : String(b.ini).padStart(2,'0')+' a '+String(b.fim).padStart(2,'0');
+          if(b.resp==='pai') partesPai.push(txt);
+          else partesMae.push(txt);
+        });
+
+        var descPai = partesPai.length ? 'Pai de '+partesPai.join(', ') : '';
+        var descMae = partesMae.length ? 'Mãe de '+partesMae.join(', ') : '';
+        var resumoMes = descPai && descMae ? descPai+'; '+descMae : (descPai || descMae);
+
+        html += '<div style="margin-bottom:4mm; font-size:10.5pt; border-bottom:1px solid #e5e7eb; padding-bottom:2mm;">'+
+                '<b style="color:#111827;">'+NM[m]+' de '+y+':</b> <span style="color:#475569;">'+resumoMes+'</span>'+
+                '</div>';
+      }
     }
-    if(y===cy)return '<b>'+y+'</b> — faltam '+n+' dias: 👩 Mãe '+a+' · 👨 Pai '+b;
-    if(y>cy)return '<b>'+y+'</b> inteiro: 👩 Mãe '+ta+' dias · 👨 Pai '+tb+' dias';
+    html += '<script>window.onload=function(){window.print();}<\/script></div>';
+    return html;
+  }
+
+  // Resumo anual para o topo do calendário visual
+  function resumoAno(y){
+    var h=hoje(), cy=h.getFullYear(), fim=new Date(y,11,31), ini=(y===cy)?h:new Date(y,0,1), a=0, b=0, n=0, ta=0, tb=0;
+    for(var d=new Date(y,0,1); d<=fim; d.setDate(d.getDate()+1)){
+      var r=window.regraPadrao(d.getDate(),d.getMonth(),y)||{}, pai=r.resp==='pai';
+      if(pai) tb++; else ta++;
+      if(d>=ini){ if(pai) b++; else a++; n++; }
+    }
+    if(y===cy) return '<b>'+y+'</b> — faltam '+n+' dias: 👩 Mãe '+a+' · 👨 Pai '+b;
+    if(y>cy) return '<b>'+y+'</b> inteiro: 👩 Mãe '+ta+' dias · 👨 Pai '+tb+' dias';
     return '<b>'+y+'</b> (encerrado): 👩 Mãe '+ta+' dias · 👨 Pai '+tb+' dias';
   }
 
-  function tr(h,ai,mi,af,mf){
-    var doc=new DOMParser().parseFromString(h,'text/html'),M=[],cache={};
-    for(var y=ai;y<=af;y++){var s0=(y===ai)?mi:0,e0=(y===af)?mf:11;for(var m=s0;m<=e0;m++)M.push([y,m])}
-    var mc=/grid-template-columns:\s*repeat\((\d+),\s*1fr\)/.exec(h),cols=mc?+mc[1]:1;
+  function tr(h, ai, mi, af, mf){
+    var doc=new DOMParser().parseFromString(h,'text/html'), M=[], cache={};
+    for(var y=ai; y<=af; y++){var s0=(y===ai)?mi:0, e0=(y===af)?mf:11; for(var m=s0; m<=e0; m++) M.push([y,m]);}
+    var mc=/grid-template-columns:\s*repeat\((\d+),\s*1fr\)/.exec(h), cols=mc?+mc[1]:1;
 
-    // Remove o subtítulo de intervalo de meses indesejado gerado pelo app base
     doc.querySelectorAll('.titulo-impressao .mes').forEach(function(el){ el.style.display='none'; });
 
     var st=doc.createElement('style');
@@ -6202,43 +6268,70 @@ if(!window.projecaoGuarda){
     if(folhas.length){
       var p=0;
       folhas.forEach(function(f){
-        var g=f.querySelector('.folha-g'),secs=g?[].slice.call(g.children):[];
-        var k=secs.length||1,ms=M.slice(p,p+k);p+=k;
-        if(!g||!ms.length)return;
+        var g=f.querySelector('.folha-g'), secs=g?[].slice.call(g.children):[];
+        var k=secs.length||1, ms=M.slice(p, p+k); p+=k;
+        if(!g || !ms.length) return;
         
-        var ys=[]; ms.forEach(function(x){if(ys.indexOf(x[0])<0)ys.push(x[0])});
+        var ys=[]; ms.forEach(function(x){if(ys.indexOf(x[0])<0) ys.push(x[0]);});
         var hd=f.querySelector('.folha-h');
         if(hd) hd.innerHTML='Guarda Compartilhada — Sophia — '+ys.join(' / ');
+
+        // Legenda personalizada com bolinhas Rosa (Mãe) e Azul (Pai)
+        var foot=f.querySelector('.folha-l');
+        if(foot){
+          foot.innerHTML = '<span><span class="marcador" style="background:#f43f5e"></span> Mãe</span>'+
+                           '<span><span class="marcador" style="background:#0ea5e9"></span> Pai</span>'+
+                           '<span><span class="marcador marcador-verde"></span> Feriado</span>'+
+                           '<span><span class="marcador marcador-vermelho"></span> Emenda</span>';
+        }
 
         var grupos=[];
         ms.forEach(function(x,i){
           var u=grupos[grupos.length-1];
-          if(!u||u.y!==x[0]){u={y:x[0],s:[]};grupos.push(u)}
+          if(!u || u.y!==x[0]){ u={y:x[0], s:[]}; grupos.push(u); }
           u.s.push(secs[i]);
         });
         g.innerHTML='';
         grupos.forEach(function(u){
-          var t=doc.createElement('div');t.className='ano-impressao';t.innerHTML=R(u.y);g.appendChild(t);
-          var box=doc.createElement('div');box.className='ano-grupo';
+          var t=doc.createElement('div'); t.className='ano-impressao'; t.innerHTML=R(u.y); g.appendChild(t);
+          var box=doc.createElement('div'); box.className='ano-grupo';
           box.style.flex=Math.ceil(u.s.length/cols)+' 1 0';
-          var gr=doc.createElement('div');gr.className='ano-grid';
-          u.s.forEach(function(s){gr.appendChild(s)});
-          box.appendChild(gr);g.appendChild(box);
+          var gr=doc.createElement('div'); gr.className='ano-grid';
+          u.s.forEach(function(s){ gr.appendChild(s); });
+          box.appendChild(gr); g.appendChild(box);
         });
       });
     }else{
       doc.querySelectorAll('section.mes-pagina-impressao').forEach(function(s,i){
-        var mm=M[i];if(!mm)return;
+        var mm=M[i]; if(!mm) return;
         var h1=s.querySelector('.titulo-impressao h1');
         if(h1) h1.textContent='Guarda Compartilhada — Sophia — '+mm[0];
         var ref=s.querySelector('.titulo-impressao');
         if(ref) ref.insertAdjacentHTML('afterend','<div class="ano-impressao">'+R(mm[0])+'</div>');
+        
+        var leg=s.querySelector('.legenda-impressao');
+        if(leg){
+          leg.innerHTML = '<span class="item-legenda"><span class="marcador" style="background:#f43f5e"></span>Mãe</span>'+
+                          '<span class="item-legenda"><span class="marcador" style="background:#0ea5e9"></span>Pai</span>'+
+                          '<span class="item-legenda"><span class="marcador marcador-verde"></span>Feriado</span>'+
+                          '<span class="item-legenda"><span class="marcador marcador-vermelho"></span>Emenda</span>';
+        }
       });
     }
     return '<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
   }
 
   var novo=function(ai,mi,af,mf){
+    var selTipo = document.getElementById('tipoImpressaoLista');
+    if(selTipo && selTipo.value === 'lista'){
+      var htmlLista = gerarTextoLista(ai, mi, af, mf);
+      var B=window.Blob;
+      var blob = new Blob([htmlLista], {type:'text/html;charset=utf-8'});
+      var url = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      return;
+    }
+
     var hj=hoje();
     ai=(ai==null)?(typeof anoAtual==='number'?anoAtual:hj.getFullYear()):ai;
     mi=(mi==null)?(typeof mesAtual==='number'?mesAtual:hj.getMonth()):mi;
