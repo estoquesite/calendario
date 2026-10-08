@@ -5639,4 +5639,207 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--PROJECAO-FIM-->
+<script>
+(function(){
+  if(window.__atDC)return;window.__atDC=1;
+  var JULHO_INI=9;
+  function D(y,m,d){return new Date(y,m,d)}
+  function key(d){return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()}
+  function add(d,n){var x=new Date(d);x.setDate(x.getDate()+n);return x}
+  function R(r,desc){return {resp:r,desc:desc||(r==='mae'?'Mãe':'FDS Pai'),emenda:false}}
+  function nth(y,m,n,dow){var d=D(y,m,1);d.setDate(1+((dow-d.getDay()+7)%7)+(n-1)*7);return d}
+  function sexta(d){var w=d.getDay();if(w===5)return d;if(w===6)return add(d,-1);if(w===0)return add(d,-2);return add(d,5-w)}
+  function fds(M,sx,r,desc){for(var i=0;i<3;i++)M[key(add(sx,i))]=R(r,desc)}
+  function span(M,a,b,r,desc){for(var d=a;d<=b;d=add(d,1))M[key(d)]=R(r,desc)}
+  function pascoa(a){var A=a%19,b=Math.floor(a/100),c=a%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*A+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((A+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),dd=((h+l-7*m+114)%31)+1;return D(a,mo-1,dd)}
+  function feriadosAno(y){var F={},p=pascoa(y);function f(d,n){F[key(d)]=n}
+  f(D(y,0,1),'Confraternização');f(D(y,0,20),'São Sebastião');f(add(p,-48),'Carnaval');f(add(p,-47),'Carnaval');f(add(p,-46),'Cinzas');
+  f(add(p,-2),'Sexta Santa');f(p,'Páscoa');f(D(y,3,21),'Tiradentes');f(D(y,3,23),'São Jorge');f(D(y,4,1),'Trabalho');f(add(p,60),'Corpus Christi');
+  f(D(y,8,7),'Independência');f(D(y,9,12),'N. Sra. Aparecida');f(D(y,10,2),'Finados');f(D(y,10,15),'República');f(D(y,10,20),'Consciência Negra');f(D(y,11,25),'Natal');return F}
+  function build(y){
+    var B={},M={},par=(y%2===0),p=pascoa(y),imp=!par;
+    span(B,D(y,0,1),D(y,0,15),'mae','Férias Mãe');span(B,D(y,0,16),D(y,0,31),'pai','Férias Pai');
+    B[key(D(y,0,11))]=R('mae','Aniv. Mãe');
+    span(B,add(p,-51),add(p,-47),par?'mae':'pai','Carnaval');B[key(add(p,-46))]=R('mae','Mãe');
+    var j1=D(y,6,JULHO_INI),j2=add(nth(y,7,1,1),-1),len=Math.round((j2-j1)/864e5)+1,h1=Math.ceil(len/2);
+    for(var i=0;i<len;i++){var mae=(i<h1)===imp;B[key(add(j1,i))]=R(mae?'mae':'pai',mae?'Férias Mãe':'Férias Pai')}
+    span(B,D(y,11,1),D(y,11,15),par?'pai':'mae',par?'Férias Pai':'Férias Mãe');
+    span(B,D(y,11,16),D(y,11,31),par?'mae':'pai',par?'Férias Mãe':'Férias Pai');
+    fds(B,add(nth(y,4,2,0),-2),'mae','Dia das Mães');
+    fds(B,add(nth(y,7,2,0),-2),'pai','Dia dos Pais');
+    span(B,D(y,10,19),D(y,10,25),'pai','Aniv. Pai');
+    fds(B,sexta(D(y,5,6)),imp?'mae':'pai','Aniv. Sophia');
+    var dc=D(y,9,12),hd=par?'mae':'pai',wd=dc.getDay(),dcd='Dia das Crianças';
+    function em(d){B[key(d)]={resp:hd,desc:dcd,emenda:true}}
+    if(wd===1)span(B,add(dc,-2),dc,hd,dcd);
+    else if(wd===2){span(B,add(dc,-3),dc,hd,dcd);em(add(dc,-1))}
+    else if(wd===3)B[key(dc)]=R(hd,dcd);
+    else if(wd===4){span(B,dc,add(dc,3),hd,dcd);em(add(dc,1))}
+    else if(wd===5)span(B,dc,add(dc,2),hd,dcd);
+    else if(wd===6)span(B,dc,add(dc,1),hd,dcd);
+    else span(B,add(dc,-1),dc,hd,dcd);
+    var nr=par?'mae':'pai',n2=D(y,11,26);if(n2.getDay()===5||n2.getDay()===6)n2=add(n2,7-n2.getDay());
+    span(B,D(y,11,24),n2,nr,'Natal');B[key(D(y,11,31))]=R(nr,'Ano Novo');
+    for(var m=0;m<12;m++){
+      var W=[];for(var d=1;d<=31;d++){var x=D(y,m,d);if(x.getMonth()!==m)break;if(x.getDay()===5)W.push(x)}
+      var fx=W.map(function(w){var b=B[key(add(w,1))];return b?b.resp:null}),res=fx.slice(),i0=fx.findIndex(function(v){return v}),n=0;
+      if(i0>=0)for(var i=0;i<W.length;i++)if(!res[i])res[i]=(Math.abs(i-i0)%2===0)?fx[i0]:(fx[i0]==='pai'?'mae':'pai');
+      res.forEach(function(v){if(v==='pai')n++});
+      for(var i=W.length-1;i>=0&&n>2;i--)if(!fx[i]&&res[i]==='pai'){res[i]='mae';n--}
+      [1,3,0,2,4].forEach(function(i){if(n<2&&i<W.length&&!fx[i]&&res[i]!=='pai'&&res[i-1]!=='pai'&&res[i+1]!=='pai'){res[i]='pai';n++}});
+      [1,3,0,2,4].forEach(function(i){if(n<2&&i<W.length&&!fx[i]&&res[i]!=='pai'){res[i]='pai';n++}});
+      W.forEach(function(w,i){if(res[i]==='pai')fds(M,w,'pai','FDS Pai')});
+    }
+    var FH=feriadosAno(y);
+    for(var k2 in FH){var q=k2.split('-'),dt=D(+q[0],+q[1],+q[2]);
+      if(dt.getDay()===1&&!B[k2]){var sk=key(add(dt,-1)),dm=B[sk]||M[sk];if(dm&&dm.resp==='pai')M[k2]=R('pai','Feriado Pai')}}
+    for(var k in B)M[k]=B[k];
+    return M;
+  }
+  
+  window.projecaoGuarda=window.projecaoGuarda||{};
+  window.projecaoGuarda.build=build;
+  var prev=window.regraPadrao,cacheAT={};
+  window.regraPadrao=function(dia,mes,ano){
+    if(ano<2027||ano>2036)return prev(dia,mes,ano);
+    var k=ano+'-'+mes+'-'+dia;
+    if(typeof overrides!=='undefined'&&overrides[k])return overrides[k];
+    if(!cacheAT[ano])cacheAT[ano]=build(ano);
+    return cacheAT[ano][k]||R('mae','Mãe');
+  };
+  if(window.renderizar)window.renderizar();
+})();
+</script>
+<!--ATUALIZACAO-DC-FIM-->
+<!--ATUALIZACAO-2026: aba 2026 (só outubro a dezembro) na Projeção -->
+<script>
+(function(){
+  if(window.__at26)return;window.__at26=1;
+  var mod=document.getElementById('pjMod');if(!mod)return;
+  var on=false,MN=['Outubro','Novembro','Dezembro'];
+  function fer(y,m,d){return (window.feriados&&(window.feriados[y+'-'+m+'-'+d]||window.feriados[m+'-'+d]))||''}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function view(){
+    var h='',ta=0,tb=0;
+    [9,10,11].forEach(function(m,ix){
+      var n=new Date(2026,m+1,0).getDate(),pd=new Date(2026,m,1).getDay(),a=0,b=0,s='';
+      'DSTQQSS'.split('').forEach(function(x){s+='<div class="pj-w">'+x+'</div>'});
+      for(var i=0;i<pd;i++)s+='<div></div>';
+      for(var d=1;d<=n;d++){
+        var r=window.regraPadrao(d,m,2026)||{resp:'mae'},f=fer(2026,m,d);
+        r.resp==='pai'?b++:a++;
+        var lab=(r.desc&&r.desc!=='Mãe'&&r.desc!=='FDS Pai')?r.desc:f;
+        s+='<div class="pj-d '+(r.resp==='pai'?'p':'m')+'"><b>'+d+'</b>'+(f?'<span class="pj-f"></span>':'')+(lab?'<small>'+esc(lab)+'</small>':'')+'</div>';
+      }
+      ta+=a;tb+=b;
+      h+='<div class="pj-mes"><h3>'+MN[ix]+'<span>👩 '+a+' · 👨 '+b+'</span></h3><div class="pj-g">'+s+'</div></div>';
+    });
+    return {h:h,a:ta,b:tb};
+  }
+  function apply(){
+    var box=mod.firstChild;if(!box||!box.querySelector)return;
+    var tabs=box.querySelector('.pj-tabs');if(!tabs)return;
+    if(!tabs.querySelector('[data-y26]'))tabs.insertAdjacentHTML('afterbegin','<button data-y26="1">2026</button>');
+    tabs.querySelector('[data-y26]').classList.toggle('on',on);
+    if(!on)return;
+    tabs.querySelectorAll('[data-y]').forEach(function(b){b.classList.remove('on')});
+    var all=box.querySelectorAll('.pj-tabs');if(all[1])all[1].style.display='none';
+    box.querySelectorAll('.pj-hint,.pj-ed').forEach(function(e){e.remove()});
+    var v=view(),sum=box.querySelector('.pj-sum'),bar=box.querySelector('.pj-bar'),ms=box.querySelector('.pj-ms'),t=(v.a+v.b)||1;
+    if(sum)sum.innerHTML='<div class="m">👩 Mãe (out–dez)<b>'+v.a+' dias</b></div><div class="p">👨 Pai (out–dez)<b>'+v.b+' dias</b></div>';
+    if(bar)bar.innerHTML='<i style="width:'+v.a/t*100+'%;background:rgb(var(--mae-rgb,255,45,149))"></i><i style="width:'+v.b/t*100+'%;background:rgb(var(--pai-rgb,47,155,255))"></i>';
+    if(ms){ms.innerHTML=v.h;ms.insertAdjacentHTML('beforebegin','<p class="pj-hint">2026: só outubro, novembro e dezembro, somente consulta (já está pronto e não pode ser alterado aqui).</p>')}
+  }
+  new MutationObserver(apply).observe(mod,{childList:true});
+  mod.addEventListener('click',function(e){
+    var t=e.target;
+    if(t.closest('[data-y26]')){on=true;apply();return}
+    if(t===mod||t.closest('[data-x]')||t.closest('[data-y]'))on=false;
+  },true);
+  document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('#pjBtn'))on=false},true);
+})();
+</script>
+<!--ATUALIZACAO-2026-FIM-->
+<!--LAYOUT-IMPRESSAO-INICIO-->
+<script>
+(function(){
+  if(window.__pjLayout)return;window.__pjLayout=1;
+  var K='sx_layout_imp';
+  var OPC=[['1','1 mês por folha (1 coluna)'],['2','2 meses por folha (paisagem, 2 colunas)'],['4','4 meses por folha (2 × 2)'],['6','6 meses por folha (2 colunas × 3)'],['12','12 meses por folha (3 colunas × 4)']];
+  var CFG={2:{c:2,land:1,td:'22mm'},4:{c:2,td:'17mm'},6:{c:2,td:'9.5mm',dense:1},12:{c:3,td:'7mm',dense:1}};
+
+  function ui(){
+    var b=document.querySelector('#modalImpressao button[onclick="confirmarGerarPDF()"]');
+    if(!b||document.getElementById('selLayoutImp'))return;
+    b.parentElement.insertAdjacentHTML('beforebegin',
+      '<div><label class="text-[10px] font-semibold text-gray-600 dark:text-gray-300">Layout da folha:</label>'+
+      '<select id="selLayoutImp" class="w-full text-xs p-2 mt-1 border rounded-xl bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-800 dark:text-gray-100">'+
+      OPC.map(function(o){return '<option value="'+o[0]+'">'+o[1]+'</option>'}).join('')+'</select></div>');
+    var s=document.getElementById('selLayoutImp'),v='1';
+    try{v=localStorage.getItem(K)||'1'}catch(e){}
+    s.value=v;
+    s.onchange=function(){try{localStorage.setItem(K,s.value)}catch(e){}};
+  }
+  ui();
+
+  function tr(h,n){
+    var c=CFG[n];if(!c)return h;
+    var secs=h.match(/<section class="mes-pagina-impressao">[\s\S]*?<\/section>/g);
+    if(!secs||!secs.length)return h;
+    var i0=h.indexOf(secs[0]),i1=h.lastIndexOf('</section>')+10;
+    var head=h.slice(0,i0),tail=h.slice(i1);
+    var css='@page{size:A4 '+(c.land?'landscape':'portrait')+';margin:8mm 10mm}'+
+    'html,body{width:'+(c.land?'297mm':'210mm')+'}'+
+    '.folha{width:100%;height:'+(c.land?'194mm':'281mm')+';display:flex;flex-direction:column;page-break-after:always;break-after:page;overflow:hidden}'+
+    '.folha:last-child{page-break-after:auto;break-after:auto}'+
+    '.folha-h{text-align:center;font-size:13pt;font-weight:800;color:#111827;margin:0 0 3mm}'+
+    '.folha-g{display:grid;grid-template-columns:repeat('+c.c+',1fr);grid-auto-rows:1fr;gap:4mm;flex:1;min-height:0}'+
+    '.folha-l{display:flex;justify-content:center;gap:8mm;padding-top:2mm;font-size:8pt;font-weight:600;color:#64748b}'+
+    '.folha-l span{display:inline-flex;align-items:center;gap:1.5mm}'+
+    '.folha .mes-pagina-impressao{width:100%;height:auto !important;min-height:0 !important;display:block;page-break-after:auto !important;break-after:auto !important}'+
+    '.folha .titulo-impressao h1,.folha .legenda-impressao,.folha .regra-impressao{display:none}'+
+    '.folha .titulo-impressao{padding:0 0 1mm}'+
+    '.folha .titulo-impressao .mes{font-size:'+(c.dense?'10pt':'12pt')+';margin:0}'+
+    '.folha .cont-impressao{font-size:'+(c.dense?'6.5pt':'8.5pt')+';margin:0 0 1mm}'+
+    '.folha .cont-impressao span{margin:0 2mm}'+
+    '.folha table{border-spacing:'+(c.dense?'.8mm':'1.5mm')+'}'+
+    '.folha th{height:4mm;font-size:'+(c.dense?'6pt':'7.5pt')+';padding:0}'+
+    '.folha td{height:'+c.td+';padding:'+(c.dense?'.7mm':'1.5mm')+';border-radius:1.5mm}'+
+    '.folha .num-dia-impressao{font-size:'+(c.dense?'7.5pt':'10pt')+'}'+
+    '.folha .sigla-impressao{font-size:'+(c.dense?'5pt':'6pt')+';padding:.3mm 1mm}'+
+    '.folha .evento-impressao{margin-top:1mm;padding:.5mm 1mm;font-size:6pt}'+
+    '.folha .marcador{width:'+(c.dense?'1.6mm':'2mm')+';height:'+(c.dense?'1.6mm':'2mm')+'}'+
+    (c.dense?'.folha .sigla-impressao,.folha .evento-impressao{display:none}':'');
+    head=head.replace('</style>',css+'</style>');
+    var rot=function(s){var m=/<div class="mes">[^<]*?(\d{4})<\/div>/.exec(s);return m?m[0].replace(/<[^>]+>/g,''):''};
+    var out=head;
+    for(var i=0;i<secs.length;i+=n){
+      var g=secs.slice(i,i+n),a=rot(g[0]),b=rot(g[g.length-1]);
+      out+='<div class="folha"><div class="folha-h">Guarda Compartilhada — Sophia'+(n>1?'<br><span style="font-size:10pt;font-weight:600;color:#64748b">'+(a===b?a:a+' a '+b)+'</span>':'')+'</div>'+
+        '<div class="folha-g">'+g.join('')+'</div>'+
+        '<div class="folha-l"><span><span class="marcador marcador-verde"></span>Feriado</span><span><span class="marcador marcador-vermelho"></span>Emenda</span></div></div>';
+    }
+    return out+tail;
+  }
+
+  var prev=window.gerarAnoCompletoPDF;if(typeof prev!=='function')return;
+  var novo=function(){
+    ui();
+    var n=1;try{n=+(localStorage.getItem(K)||1)}catch(e){}
+    if(n===1)return prev.apply(this,arguments);
+    var B=window.Blob;
+    window.Blob=function(parts,opt){
+      if(opt&&/html/.test(opt.type||'')&&parts&&typeof parts[0]==='string'){try{parts=[tr(parts[0],n)]}catch(e){}}
+      return new B(parts,opt);
+    };
+    window.Blob.prototype=B.prototype;
+    try{return prev.apply(this,arguments)}finally{window.Blob=B}
+  };
+  window.gerarAnoCompletoPDF=novo;window.gerenarAnoCompletoPDF=novo;
+
+  var ab=window.abrirModalImpressao;
+  if(typeof ab==='function')window.abrirModalImpressao=function(){var r=ab.apply(this,arguments);ui();return r};
+})();
+</script>
+<!--LAYOUT-IMPRESSAO-FIM-->
     </html>
