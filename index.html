@@ -6116,8 +6116,6 @@ if(!window.projecaoGuarda){
     var y=(typeof anoAtual==='number')?anoAtual:hoje().getFullYear(),s=calc(y,padrao);
     ea.textContent=s.a+' dias';eb.textContent=s.b+' dias';
     var la=ea.previousElementSibling,lb=eb.previousElementSibling;
-    if(la)la.textContent=s.atual?'👩 Resta Mãe':'👩 Ano Mãe';
-    if(lb)lb.textContent=s.atual?'👔 Resta Pai':'👔 Ano Pai';
     var painel=ea.closest('.space-y-2');if(!painel)return;
     var info=document.getElementById('atFalta');
     if(!info){painel.insertAdjacentHTML('beforeend','<div id="atFalta" style="text-align:center;font-size:10.5px;font-weight:700;opacity:.85;padding-top:2px"></div>');info=document.getElementById('atFalta')}
