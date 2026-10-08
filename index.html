@@ -5436,6 +5436,10 @@ function build(y){
     [1,3,0,2,4].forEach(function(i){if(n<2&&i<W.length&&!fx[i]&&res[i]!=='pai'){res[i]='pai';n++}});
     W.forEach(function(w,i){if(res[i]==='pai')fds(M,w,'pai','FDS Pai')});
   }
+  // feriado prolongado: segunda-feira feriado acompanha quem está com o fim de semana (se for o pai, a prolongação é dele)
+  var FH=feriadosAno(y);
+  for(var k2 in FH){var q=k2.split('-'),dt=D(+q[0],+q[1],+q[2]);
+    if(dt.getDay()===1&&!B[k2]){var sk=key(add(dt,-1)),dm=B[sk]||M[sk];if(dm&&dm.resp==='pai')M[k2]=R('pai','Feriado Pai')}}
   for(var k in B)M[k]=B[k];
   return M;
 }
@@ -5596,6 +5600,33 @@ if(!window.projecaoGuarda){
   },300);
   window.addEventListener('pagehide',salvar);
   document.addEventListener('visibilitychange',function(){if(document.hidden)salvar()});
+})();
+
+// ===== IMPRESSÃO: acrescenta "👩 Mãe: N dias · 👨 Pai: N dias" em cada mês e risca os dias que já passaram. Nada mais muda. =====
+(function(){
+  if(window.__pjPrint)return;window.__pjPrint=1;
+  var orig=window.gerarAnoCompletoPDF;if(typeof orig!=='function')return;
+  function tr(h){
+    var hoje=new Date();hoje.setHours(0,0,0,0);var NM=window.nomesMeses||[];
+    h=h.replace('</style>','.cont-impressao{text-align:center;margin:0 0 3mm;font-size:10.5pt;font-weight:700;color:#334155}.cont-impressao span{margin:0 4mm}.riscado{text-decoration:line-through;text-decoration-thickness:.4mm}</style>');
+    return h.replace(/<section class="mes-pagina-impressao">[\s\S]*?<\/section>/g,function(sec){
+      var m=/<div class="mes">([^<\s]+)\s+(\d{4})<\/div>/.exec(sec),nm=(sec.match(/<td class="mae">/g)||[]).length,np=(sec.match(/<td class="pai">/g)||[]).length;
+      var mi=m?NM.indexOf(m[1]):-1,y=m?+m[2]:0;
+      sec=sec.replace(/<div class="mes">[^<]*<\/div>/,function(x){return x+'<div class="cont-impressao"><span>👩 Mãe: '+nm+(nm===1?' dia':' dias')+'</span><span>👨 Pai: '+np+(np===1?' dia':' dias')+'</span></div>'});
+      if(mi>=0)sec=sec.replace(/<span class="num-dia-impressao">(\d+)/g,function(x,d){return new Date(y,mi,+d)<hoje?'<span class="num-dia-impressao riscado">'+d:x});
+      return sec;
+    });
+  }
+  var novo=function(){
+    var B=window.Blob;
+    window.Blob=function(parts,opt){
+      if(opt&&/html/.test(opt.type||'')&&parts&&typeof parts[0]==='string'){try{parts=[tr(parts[0])]}catch(e){}}
+      return new B(parts,opt);
+    };
+    window.Blob.prototype=B.prototype;
+    try{return orig.apply(this,arguments)}finally{window.Blob=B}
+  };
+  window.gerarAnoCompletoPDF=novo;window.gerenarAnoCompletoPDF=novo;
 })();
 </script>
 <!--PROJECAO-FIM-->
