@@ -6605,9 +6605,9 @@ if(!window.projecaoGuarda){
     });
 </script>
 <!-- CORREÇÃO - FIM -->
-    <!-- GERAR EM WORD (COMPATÍVEL COM IMPRESSÃO LIMPA) - INICIO -->
+  <!-- GERAR WORD COMPLETO (CALENDÁRIO VISUAL + LISTA POR EXTENSO) - INICIO -->
 <script>
-    function gerarWordLista() {
+    function gerarWordCompleto() {
         if (typeof vibrar === 'function') vibrar(15);
         
         const ini = document.getElementById('printMesInicio') ? document.getElementById('printMesInicio').value : '';
@@ -6623,18 +6623,74 @@ if(!window.projecaoGuarda){
         mesIni -= 1;
         mesFim -= 1;
 
+        const nomesM = window.nomesMeses || ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
         let htmlWord = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">'+
             '<head><meta charset="utf-8"><title>Guarda Sophia</title><style>'+
-            'body { font-family: "Plus Jakarta Sans", Arial, sans-serif; color: #1f2937; line-height: 1.6; padding: 20px; }'+
-            'h1 { text-align: center; color: #111827; font-size: 18pt; margin-bottom: 5px; }'+
-            '.sub { text-align: center; color: #475569; font-size: 12pt; margin-bottom: 25px; }'+
-            '.mes-bloco { margin-bottom: 18px; font-size: 11pt; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }'+
-            '.mes-bloco b { color: #1e1b4b; }'+
+            'body { font-family: "Plus Jakarta Sans", Arial, sans-serif; color: #1f2937; line-height: 1.4; padding: 15px; }'+
+            'h1 { text-align: center; color: #111827; font-size: 16pt; margin-bottom: 2px; }'+
+            '.sub { text-align: center; color: #475569; font-size: 11pt; margin-bottom: 20px; }'+
+            'h2 { font-size: 13pt; color: #1e1b4b; border-bottom: 2px solid #cbd5e1; padding-bottom: 4px; margin-top: 25px; margin-bottom: 10px; }'+
+            'table.cal { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }'+
+            'table.cal th { background: #f1f5f9; border: 1px solid #cbd5e1; font-size: 8.5pt; padding: 5px; text-align: center; color: #475569; }'+
+            'table.cal td { width: 14.28%; height: 50px; vertical-align: top; border: 1px solid #cbd5e1; padding: 4px; font-size: 9pt; }'+
+            'td.mae { background-color: #fff1f2 !important; }'+
+            'td.pai { background-color: #f0f9ff !important; }'+
+            '.dia-num { font-weight: 800; font-size: 10pt; color: #111827; }'+
+            '.tag-resp { font-size: 7pt; font-weight: bold; float: right; padding: 1px 3px; border-radius: 3px; }'+
+            '.tag-mae { color: #be123c; background: #ffe4e6; }'+
+            '.tag-pai { color: #0369a1; background: #e0f2fe; }'+
+            '.desc-dia { font-size: 7pt; color: #475569; margin-top: 2px; overflow: hidden; }'+
+            '.lista-extenso { font-size: 10pt; margin-bottom: 8px; padding-left: 10px; border-left: 3px solid #6366f1; }'+
             '</style></head><body>'+
             '<h1>Guarda Compartilhada — Sophia</h1>'+
-            '<div class="sub">Calendário de Convivência por Extenso</div>';
+            '<div class="sub">Documento Oficial de Convivência</div>';
 
-        const nomesM = window.nomesMeses || ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        // 1. CALENDÁRIO VISUAL EM TABELAS POR MÊS
+        htmlWord += '<h2>📅 Calendário Visual</h2>';
+
+        for (let y = anoIni; y <= anoFim; y++) {
+            let s0 = (y === anoIni) ? mesIni : 0;
+            let e0 = (y === anoFim) ? mesFim : 11;
+
+            for (let m = s0; m <= e0; m++) {
+                htmlWord += `<h3 style="text-align:center; color:#334155; margin-top:15px; margin-bottom:5px;">${nomesM[m]} de ${y}</h3>`;
+                htmlWord += '<table class="cal"><tr><th>Dom</th><th>Seg</th><th>Ter</th><th>Qua</th><th>Qui</th><th>Sex</th><th>Sáb</th></tr><tr>';
+
+                let primeiroDia = new Date(y, m, 1).getDay();
+                let totalDias = new Date(y, m + 1, 0).getDate();
+                let colCount = 0;
+
+                for (let i = 0; i < primeiroDia; i++) {
+                    htmlWord += '<td style="background:#fafafa; border-color:#f1f5f9;"></td>';
+                    colCount++;
+                }
+
+                for (let d = 1; d <= totalDias; d++) {
+                    if (colCount % 7 === 0 && colCount !== 0) htmlWord += '</tr><tr>';
+                    
+                    let info = window.regraPadrao ? window.regraPadrao(d, m, y) : {resp: 'mae'};
+                    let r = info.resp || 'mae';
+                    let classeResp = r === 'mae' ? 'mae' : 'pai';
+                    let siglaResp = r === 'mae' ? '<span class="tag-resp tag-mae">MÃE</span>' : '<span class="tag-resp tag-pai">PAI</span>';
+                    let descExtra = (info.desc && !['Mãe', 'FDS Pai'].includes(info.desc)) ? `<div class="desc-dia">${info.desc}</div>` : '';
+
+                    htmlWord += `<td class="${classeResp}"><div style="display:flex; justify-content:space-between; align-items:center;"><span class="dia-num">${d}</span>${siglaResp}</div>${descExtra}</td>`;
+                    colCount++;
+                }
+
+                while (colCount % 7 !== 0) {
+                    htmlWord += '<td style="background:#fafafa; border-color:#f1f5f9;"></td>';
+                    colCount++;
+                }
+
+                htmlWord += '</tr></table>';
+            }
+        }
+
+        // 2. LISTA POR EXTENSO
+        htmlWord += '<br clear="all" style="page-break-before:always;" />';
+        htmlWord += '<h2>📝 Lista de Convivência por Extenso</h2>';
 
         for (let y = anoIni; y <= anoFim; y++) {
             let s0 = (y === anoIni) ? mesIni : 0;
@@ -6669,7 +6725,7 @@ if(!window.projecaoGuarda){
                 let descMae = partesMae.length ? 'Mãe: ' + partesMae.join(', ') : '';
                 let resumoMes = descPai && descMae ? descPai + ' | ' + descMae : (descPai || descMae);
 
-                htmlWord += `<div class="mes-bloco"><b>${nomesM[m]} de ${y}:</b> ${resumoMes}</div>`;
+                htmlWord += `<div class="lista-extenso"><b>${nomesM[m]} de ${y}:</b> ${resumoMes}</div>`;
             }
         }
 
@@ -6679,15 +6735,15 @@ if(!window.projecaoGuarda){
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Guarda_Sophia_${anoIni}_${anoFim}.doc`;
+        a.download = `Guarda_Sophia_Completo_${anoIni}_${anoFim}.doc`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
 
-        if (typeof mostrarToast === 'function') mostrarToast("📄 Arquivo Word gerado com sucesso!");
+        if (typeof mostrarToast === 'function') mostrarToast("📄 Documento Word completo gerado!");
     }
 
-    function injetarBotaoWord() {
+    function injetarBotaoWordCompleto() {
         const modal = document.getElementById('modalImpressao');
         if (!modal || document.getElementById('btnGerarWordModal')) return;
         
@@ -6698,15 +6754,15 @@ if(!window.projecaoGuarda){
         btn.id = 'btnGerarWordModal';
         btn.type = 'button';
         btn.className = 'w-full bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-800 hover:to-indigo-800 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-95 shadow-md flex items-center justify-center gap-1.5 mt-2';
-        btn.innerHTML = '<span>📝</span> Gerar Documento Word (.doc)';
-        btn.onclick = gerarWordLista;
+        btn.innerHTML = '<span>📝</span> Gerar Documento Word (Visual + Lista)';
+        btn.onclick = gerarWordCompleto;
         
         containerBotoes.appendChild(btn);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        setInterval(injetarBotaoWord, 500);
+        setInterval(injetarBotaoWordCompleto, 500);
     });
 </script>
-<!-- GERAR EM WORD - FIM -->
+<!-- GERAR WORD COMPLETO - FIM -->
 </html>
