@@ -5842,4 +5842,88 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--LAYOUT-IMPRESSAO-FIM-->
+    <!--LIMPEZA-2027-INICIO: botão na Projeção para as marcações antigas deixarem de esconder a regra -->
+<script>
+(function(){
+  if(window.__atLimpa)return;window.__atLimpa=1;
+  var mod=document.getElementById('pjMod');if(!mod)return;
+  var BK='sx_backup_marcacoes_2027';
+  function lista(){
+    var o=(typeof overrides!=='undefined')?overrides:{},r=[];
+    for(var k in o){
+      var y=+k.split('-')[0];if(y<2027)continue;
+      var v=o[k]||{};if(v.emenda||v.grampinho)continue;
+      if(['Mãe','Pai','FDS Pai',''].indexOf(v.desc||'')<0)continue;
+      r.push(k);
+    }
+    return r;
+  }
+  function ui(){
+    var box=mod.firstChild;if(!box||!box.querySelector||box.querySelector('#atLimpa'))return;
+    var top=box.querySelector('.pj-top');if(!top)return;
+    var n=lista().length,bk=null;try{bk=localStorage.getItem(BK)}catch(e){}
+    top.insertAdjacentHTML('afterend','<div id="atLimpa" style="margin:6px 0;display:flex;gap:6px;flex-wrap:wrap">'+
+      '<button class="pj-b g" data-limpa="1" style="margin:0;flex:1">🧹 Usar a projeção (limpar '+n+' marcação(ões) simples de 2027 em diante)</button>'+
+      (bk?'<button class="pj-b g" data-desfaz="1" style="margin:0;flex:1">↩ Desfazer a limpeza</button>':'')+'</div>');
+  }
+  function fim(){
+    if(typeof salvarNaNuvem==='function')salvarNaNuvem();
+    if(typeof renderizar==='function')renderizar();
+    var m=mod.querySelector('[data-md].on')||mod.querySelector('[data-md]');if(m)m.click();
+  }
+  new MutationObserver(ui).observe(mod,{childList:true});
+  mod.addEventListener('click',function(e){
+    var t=e.target;
+    if(t.closest('[data-limpa]')){
+      var ks=lista();
+      if(!ks.length){alert('Não há marcações simples de 2027 em diante para limpar.');return}
+      if(!confirm('Vou apagar '+ks.length+' dias de 2027 em diante marcados só como "Mãe" ou "Pai", sem motivo, para a projeção valer. Marcações com motivo ou emenda ficam. Faço uma cópia antes e dá para desfazer. Continuar?'))return;
+      var bk={};ks.forEach(function(k){bk[k]=overrides[k];delete overrides[k]});
+      try{localStorage.setItem(BK,JSON.stringify(bk))}catch(x){}
+      if(typeof mostrarToast==='function')mostrarToast('🧹 '+ks.length+' dias limpos. Projeção valendo.');
+      fim();
+    }else if(t.closest('[data-desfaz]')){
+      var b=null;try{b=JSON.parse(localStorage.getItem(BK))}catch(x){}
+      if(!b)return;
+      for(var k in b)overrides[k]=b[k];
+      try{localStorage.removeItem(BK)}catch(x){}
+      if(typeof mostrarToast==='function')mostrarToast('↩ Marcações restauradas.');
+      fim();
+    }
+  });
+})();
+</script>
+<!--LIMPEZA-2027-FIM-->
+<!--RISCAR-IMPRESSAO-INICIO: opção para riscar (ou não) os dias que já passaram na impressão -->
+<script>
+(function(){
+  if(window.__atRisca)return;window.__atRisca=1;
+  var K='sx_riscar_passados';
+  function ui(){
+    var b=document.querySelector('#modalImpressao button[onclick="confirmarGerarPDF()"]');
+    if(!b||document.getElementById('chkRiscar'))return;
+    var v='1';try{v=localStorage.getItem(K)||'1'}catch(e){}
+    b.parentElement.insertAdjacentHTML('beforebegin','<label class="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-200"><input type="checkbox" id="chkRiscar" '+(v==='1'?'checked':'')+'> Riscar os dias que já passaram</label>');
+    document.getElementById('chkRiscar').onchange=function(){try{localStorage.setItem(K,this.checked?'1':'0')}catch(e){}};
+  }
+  ui();
+  var prev=window.gerarAnoCompletoPDF;if(typeof prev!=='function')return;
+  var novo=function(){
+    ui();
+    var c=document.getElementById('chkRiscar');
+    if(!c||c.checked)return prev.apply(this,arguments);
+    var B=window.Blob;
+    window.Blob=function(parts,opt){
+      if(opt&&/html/.test(opt.type||'')&&parts&&typeof parts[0]==='string'){parts=[parts[0].replace(/num-dia-impressao riscado/g,'num-dia-impressao')]}
+      return new B(parts,opt);
+    };
+    window.Blob.prototype=B.prototype;
+    try{return prev.apply(this,arguments)}finally{window.Blob=B}
+  };
+  window.gerarAnoCompletoPDF=novo;window.gerenarAnoCompletoPDF=novo;
+  var ab=window.abrirModalImpressao;
+  if(typeof ab==='function')window.abrirModalImpressao=function(){var r=ab.apply(this,arguments);ui();return r};
+})();
+</script>
+<!--RISCAR-IMPRESSAO-FIM-->
     </html>
