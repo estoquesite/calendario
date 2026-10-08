@@ -5926,4 +5926,171 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--RISCAR-IMPRESSAO-FIM-->
+    <!--PROPOSTA-INICIO-->
+<script>
+(function(){
+  if(window.__atProp)return;window.__atProp=1;
+  var mod=document.getElementById('pjMod'),PG=window.projecaoGuarda;
+  if(!mod||!PG||typeof PG.build!=='function')return;
+  var KE='sx_proposta_edits',KB='sx_backup_adocao',raw=PG.build,rawC={},cur={},edits={},sel=null;
+  try{edits=JSON.parse(localStorage.getItem(KE))||{}}catch(e){edits={}}
+  function sv(){try{localStorage.setItem(KE,JSON.stringify(edits))}catch(e){}}
+  function ent(r,d){return {resp:r,desc:d||(r==='mae'?'Mãe':'Pai'),emenda:false}}
+  function yOf(k){return +k.split('-')[0]}
+  function get(y){
+    if(!cur[y]){
+      rawC[y]=raw(y);cur[y]={};
+      for(var k in rawC[y])cur[y][k]=rawC[y][k];
+      for(var k2 in edits)if(yOf(k2)===y)cur[y][k2]=edits[k2];
+    }
+    return cur[y];
+  }
+  PG.build=get;
+  function resetCache(){
+    for(var y in cur){
+      var o=cur[y],r=rawC[y];
+      for(var k in o)delete o[k];
+      for(var k1 in r)o[k1]=r[k1];
+      for(var k2 in edits)if(yOf(k2)===+y)o[k2]=edits[k2];
+    }
+  }
+  function toast(t){if(typeof mostrarToast==='function')mostrarToast(t)}
+  function rerender(){var m=mod.querySelector('[data-md].on')||mod.querySelector('[data-md]');if(m)m.click()}
+  function cloud(){
+    if(typeof salvarNaNuvem==='function')salvarNaNuvem();
+    if(typeof renderizar==='function')renderizar();
+  }
+  function modo(box){var b=box.querySelector('[data-md].on');return b?b.dataset.md:'meu'}
+  function ano(box){
+    if(box.querySelector('[data-y26].on'))return 2026;
+    var b=box.querySelector('[data-y].on');return b?+b.dataset.y:2027;
+  }
+  function estado(){
+    var box=mod.firstChild;if(!box||!box.querySelector)return null;
+    var y=ano(box);
+    return {box:box,y:y,prop:(modo(box)==='prop'&&y>=2027)};
+  }
+  function marcas(){
+    var s=estado();if(!s||!s.prop)return;
+    s.box.querySelectorAll('.pj-d[data-k]').forEach(function(el){
+      var k=el.dataset.k;
+      if(edits[k]){
+        el.style.outline='2px dashed var(--tx,#000)';el.style.outlineOffset='-2px';
+        if(!el.querySelector('.atm'))el.insertAdjacentHTML('beforeend','<u class="atm" style="position:absolute;right:2px;top:1px;font-size:8px;text-decoration:none">✎</u>');
+      }
+      if(k===sel){el.style.outline='3px solid var(--tx,#000)';el.style.outlineOffset='-2px'}
+    });
+  }
+  function editor(){
+    var s=estado();if(!s)return;
+    var old=s.box.querySelector('#atEd');if(old)old.remove();
+    if(!s.prop||!sel||yOf(sel)!==s.y)return;
+    var ms=s.box.querySelector('.pj-ms');if(!ms)return;
+    var p=sel.split('-'),iso=p[0]+'-'+String(+p[1]+1).padStart(2,'0')+'-'+String(+p[2]).padStart(2,'0');
+    var r=get(s.y)[sel]||ent('mae','Mãe');
+    ms.insertAdjacentHTML('afterend','<div class="pj-ed" id="atEd"><h4>✏️ Só na proposta — '+String(+p[2]).padStart(2,'0')+'/'+String(+p[1]+1).padStart(2,'0')+'/'+p[0]+' (agora com '+(r.resp==='pai'?'o Pai':'a Mãe')+')</h4>'+
+      '<div class="pj-r"><div><label>De</label><input type="date" id="atA" value="'+iso+'"></div><div><label>Até (opcional)</label><input type="date" id="atB" value="'+iso+'"></div></div>'+
+      '<div class="pj-r"><button class="pj-b m" data-ae="mae">👩 Mãe</button><button class="pj-b p" data-ae="pai">👨 Pai</button></div>'+
+      '<button class="pj-b g" data-ae="auto">↺ Tirar a minha mudança (voltar à proposta automática)</button>'+
+      '<button class="pj-b g" data-ae="fechar">Fechar</button></div>');
+  }
+  function ui(){
+    var s=estado();if(!s)return;
+    var sum=s.box.querySelector('.pj-sum');if(!sum)return;
+    var old=s.box.querySelector('#atProp');if(old)old.remove();
+    var n=Object.keys(edits).length,bk=null;try{bk=localStorage.getItem(KB)}catch(e){}
+    var h='<div id="atProp" style="margin:8px 0;border:1.5px dashed rgba(128,128,150,.6);border-radius:14px;padding:10px">'+
+      '<div class="pj-r"><button class="pj-b g" data-pimp="meu" style="margin:0">🖨️ Imprimir meu calendário'+(s.y===2026?' (out–dez)':'')+'</button>'+
+      (s.y>=2027?'<button class="pj-b g" data-pimp="prop" style="margin:0">🖨️ Imprimir a proposta</button>':'<span></span>')+'</div>';
+    if(s.y>=2027){
+      h+='<p class="pj-hint" style="margin:8px 0 0">'+(s.prop?'✏️ Toque num dia para mudar só na proposta (traço pontilhado = mudança sua). Seu calendário não muda até você adotar.':'Para mudar só na proposta, toque em "🔮 Só a proposta".')+' Mudanças na proposta: <b>'+n+'</b>.</p>';
+      if(s.prop)h+='<div class="pj-r"><button class="pj-b m" data-padota="1">✅ Adotar proposta</button><button class="pj-b g" data-pdesc="1">↩ Descartar mudanças</button></div>';
+    }
+    if(bk)h+='<button class="pj-b g" data-pundo="1">↩ Desfazer a última adoção</button>';
+    h+='</div>';
+    sum.insertAdjacentHTML('beforebegin',h);
+    marcas();editor();
+  }
+  new MutationObserver(ui).observe(mod,{childList:true});
+ 
+  function imprimir(tipo,y){
+    var fn=window.gerarAnoCompletoPDF;
+    if(typeof fn!=='function'){alert('Impressão indisponível.');return}
+    var m1=y===2026?9:0,og=window.regraPadrao,B=window.Blob;
+    if(tipo==='prop'){
+      window.regraPadrao=function(d,m,yy){return (yy>=2027&&yy<=2036)?(get(yy)[yy+'-'+m+'-'+d]||ent('mae','Mãe')):og(d,m,yy)};
+      window.Blob=function(parts,opt){
+        if(opt&&/html/.test(opt.type||'')&&parts&&typeof parts[0]==='string')parts=[parts[0].split('Guarda Compartilhada — Sophia').join('Guarda Compartilhada — Sophia (PROPOSTA)')];
+        return new B(parts,opt);
+      };
+      window.Blob.prototype=B.prototype;
+    }
+    try{fn(y,m1,y,11)}finally{window.regraPadrao=og;window.Blob=B}
+  }
+  function editar(resp){
+    if(resp==='fechar'){sel=null;ui();return}
+    var a=document.getElementById('atA').value,b=document.getElementById('atB').value||a;if(!a)return;
+    var da=new Date(a+'T00:00:00'),db=new Date(b+'T00:00:00');
+    if(da>db){var t=da;da=db;db=t}
+    var n=0;
+    for(var d=new Date(da);d<=db;d.setDate(d.getDate()+1)){
+      var y=d.getFullYear();if(y<2027||y>2036)continue;
+      var k=y+'-'+d.getMonth()+'-'+d.getDate(),o=get(y);
+      if(resp==='auto'){delete edits[k];if(rawC[y][k])o[k]=rawC[y][k];else delete o[k]}
+      else{edits[k]=ent(resp);o[k]=edits[k]}
+      n++;
+    }
+    sv();toast(resp==='auto'?'↺ Voltou à proposta automática':'✅ '+n+' dia(s) mudados só na proposta');
+    rerender();
+  }
+  function adotar(){
+    var df=0;
+    for(var y=2027;y<=2036;y++)for(var m=0;m<12;m++){
+      var nd=new Date(y,m+1,0).getDate();
+      for(var d=1;d<=nd;d++){
+        var a=window.regraPadrao(d,m,y)||{},p=get(y)[y+'-'+m+'-'+d]||ent('mae','Mãe');
+        if(a.resp!==p.resp)df++;
+      }
+    }
+    if(!confirm('Adotar a proposta como o seu calendário de 2027 a 2036?\n\n• '+df+' dia(s) vão mudar em relação ao calendário de hoje\n• suas marcações próprias de 2027 em diante serão trocadas pela proposta (inclusive emendas marcadas por você)\n• o calendário de 2026 não muda\n• faço uma cópia e dá para desfazer.'))return;
+    var bk={ov:{},ed:edits};
+    for(var k in overrides){var yy=yOf(k);if(yy>=2027&&yy<=2036){bk.ov[k]=overrides[k];delete overrides[k]}}
+    try{localStorage.setItem(KB,JSON.stringify(bk))}catch(e){}
+    for(var k2 in edits)overrides[k2]={resp:edits[k2].resp,desc:edits[k2].desc,emenda:false};
+    edits={};sv();resetCache();sel=null;cloud();
+    toast('✅ Proposta adotada. Agora ela é o seu calendário.');rerender();
+  }
+  function descartar(){
+    var n=Object.keys(edits).length;
+    if(!n){toast('Nenhuma mudança na proposta');return}
+    if(!confirm('Descartar as '+n+' mudança(s) feitas só na proposta? O seu calendário continua como está.'))return;
+    edits={};sv();resetCache();sel=null;toast('↩ Mudanças da proposta descartadas');rerender();
+  }
+  function desfazer(){
+    var bk=null;try{bk=JSON.parse(localStorage.getItem(KB))}catch(e){}
+    if(!bk)return;
+    if(!confirm('Voltar ao calendário e à proposta como estavam antes da última adoção?'))return;
+    for(var k in overrides){var yy=yOf(k);if(yy>=2027&&yy<=2036)delete overrides[k]}
+    for(var k2 in bk.ov)overrides[k2]=bk.ov[k2];
+    edits=bk.ed||{};sv();
+    try{localStorage.removeItem(KB)}catch(e){}
+    resetCache();cloud();toast('↩ Adoção desfeita');rerender();
+  }
+ 
+  mod.addEventListener('click',function(e){
+    var t=e.target,x;
+    if(t.closest('[data-y26]')){setTimeout(ui,0);return}
+    if(x=t.closest('[data-pimp]')){var s=estado();if(s)imprimir(x.dataset.pimp,s.y);return}
+    if(t.closest('[data-padota]')){adotar();return}
+    if(t.closest('[data-pdesc]')){descartar();return}
+    if(t.closest('[data-pundo]')){desfazer();return}
+    if(x=t.closest('[data-ae]')){editar(x.dataset.ae);return}
+    if(x=t.closest('.pj-d[data-k]')){
+      var st=estado();
+      if(st&&st.prop){e.stopPropagation();sel=x.dataset.k;ui();var ed=document.getElementById('atEd');if(ed)ed.scrollIntoView({behavior:'smooth',block:'nearest'})}
+    }
+  },true);
+})();
+</script>
+<!--PROPOSTA-FIM-->
     </html>
