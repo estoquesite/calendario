@@ -6093,4 +6093,71 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--PROPOSTA-FIM-->
+    <!--DIAS-RESTANTES-INICIO-->
+<script>
+(function(){
+  if(window.__atFalta)return;window.__atFalta=1;
+  function hoje(){var d=new Date();d.setHours(0,0,0,0);return d}
+  function calc(y,get){
+    var h=hoje(),cy=h.getFullYear(),ini=(y===cy)?h:new Date(y,0,1),fim=new Date(y,11,31),a=0,b=0,n=0,ta=0,tb=0;
+    for(var d=new Date(y,0,1);d<=fim;d.setDate(d.getDate()+1)){
+      var r=get(d)||{};
+      if(r.resp==='pai')tb++;else ta++;
+      if(d>=ini){if(r.resp==='pai')b++;else a++;n++}
+    }
+    return {a:a,b:b,n:n,ta:ta,tb:tb,atual:y===cy,futuro:y>cy};
+  }
+  function padrao(d){return window.regraPadrao(d.getDate(),d.getMonth(),d.getFullYear())}
+ 
+  // ---------- 1) painel de cima da tela principal ----------
+  function topo(){
+    var ea=document.getElementById('countMaeAno'),eb=document.getElementById('countPaiAno');
+    if(!ea||!eb)return;
+    var y=(typeof anoAtual==='number')?anoAtual:hoje().getFullYear(),s=calc(y,padrao);
+    ea.textContent=s.a+' dias';eb.textContent=s.b+' dias';
+    var la=ea.previousElementSibling,lb=eb.previousElementSibling;
+    if(la)la.textContent=s.atual?'👩 Resta Mãe':'👩 Ano Mãe';
+    if(lb)lb.textContent=s.atual?'👔 Resta Pai':'👔 Ano Pai';
+    var painel=ea.closest('.space-y-2');if(!painel)return;
+    var info=document.getElementById('atFalta');
+    if(!info){painel.insertAdjacentHTML('beforeend','<div id="atFalta" style="text-align:center;font-size:10.5px;font-weight:700;opacity:.85;padding-top:2px"></div>');info=document.getElementById('atFalta')}
+    info.innerHTML=(s.atual?'⏳ Faltam <b>'+s.n+'</b> dias para acabar '+y+' (contando hoje)':(s.futuro?'📅 '+y+' inteiro: <b>'+s.n+'</b> dias':'📁 '+y+' (ano encerrado): <b>'+s.n+'</b> dias'))+
+      '<br><span style="font-weight:600;opacity:.8">Ano inteiro: 👩 '+s.ta+' · 👨 '+s.tb+'</span>';
+  }
+  var orig=window.renderizar;
+  if(typeof orig==='function'){
+    window.renderizar=function(){var r=orig.apply(this,arguments);try{topo()}catch(e){}return r};
+  }
+  try{topo()}catch(e){}
+  setInterval(function(){try{topo()}catch(e){}},60000);
+ 
+  // ---------- 2) resumo de cima da Projeção ----------
+  var mod=document.getElementById('pjMod');if(!mod)return;
+  function estado(){
+    var box=mod.firstChild;if(!box||!box.querySelector)return null;
+    var y=2027,b=box.querySelector('[data-y].on');
+    if(box.querySelector('[data-y26].on'))y=2026;else if(b)y=+b.dataset.y;
+    var m=box.querySelector('[data-md].on');
+    return {box:box,y:y,prop:!!(m&&m.dataset.md==='prop'&&y>=2027)};
+  }
+  function upd(){
+    var s=estado();if(!s)return;
+    var sum=s.box.querySelector('.pj-sum'),bar=s.box.querySelector('.pj-bar');if(!sum||!bar)return;
+    var y=s.y;if(y<hoje().getFullYear())return;
+    var PB=window.projecaoGuarda&&window.projecaoGuarda.build;
+    var c=calc(y,function(d){
+      if(s.prop&&PB)return PB(d.getFullYear())[d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()]||{resp:'mae'};
+      return padrao(d);
+    });
+    var t=(c.a+c.b)||1;
+    sum.innerHTML='<div class="m">👩 Mãe '+(c.atual?'— resta em '+y:'em '+y)+'<b>'+c.a+' dias</b></div><div class="p">👨 Pai '+(c.atual?'— resta em '+y:'em '+y)+'<b>'+c.b+' dias</b></div>';
+    bar.innerHTML='<i style="width:'+c.a/t*100+'%;background:rgb(var(--mae-rgb,255,45,149))"></i><i style="width:'+c.b/t*100+'%;background:rgb(var(--pai-rgb,47,155,255))"></i>';
+    var old=s.box.querySelector('#atFalta2');if(old)old.remove();
+    bar.insertAdjacentHTML('afterend','<p id="atFalta2" class="pj-hint" style="font-weight:700">'+(c.atual?'⏳ Faltam '+c.n+' dias para acabar '+y+' (contando hoje)':'📅 '+y+' inteiro: '+c.n+' dias')+'</p>');
+  }
+  new MutationObserver(upd).observe(mod,{childList:true});
+  mod.addEventListener('click',function(e){if(e.target.closest('[data-y26]'))setTimeout(upd,0)},true);
+})();
+</script>
+<!--DIAS-RESTANTES-FIM-->
     </html>
