@@ -6161,12 +6161,12 @@ if(!window.projecaoGuarda){
 <!--IMPRESSAO-ANO-INICIO-->
 <script>
 (function(){
-  if(window.__atPrintAno3)return;window.__atPrintAno3=1;
-  var prev=window.gerarAnoCompletoPDF;
-  if(typeof prev!=='function')return;
+  if(window.__atPrintAnoClean)return; window.__atPrintAnoClean=1;
+  var orig=window.gerarAnoCompletoPDF;
+  if(typeof orig!=='function')return;
+  var NM=window.nomesMeses||['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   function hoje(){var d=new Date();d.setHours(0,0,0,0);return d}
 
-  // Resumo limpo: apenas o que falta no ano atual ou o total dos anos futuros
   function resumoAno(y){
     var h=hoje(),cy=h.getFullYear(),fim=new Date(y,11,31),ini=(y===cy)?h:new Date(y,0,1),a=0,b=0,n=0,ta=0,tb=0;
     for(var d=new Date(y,0,1);d<=fim;d.setDate(d.getDate()+1)){
@@ -6183,11 +6183,15 @@ if(!window.projecaoGuarda){
     var doc=new DOMParser().parseFromString(h,'text/html'),M=[],cache={};
     for(var y=ai;y<=af;y++){var s0=(y===ai)?mi:0,e0=(y===af)?mf:11;for(var m=s0;m<=e0;m++)M.push([y,m])}
     var mc=/grid-template-columns:\s*repeat\((\d+),\s*1fr\)/.exec(h),cols=mc?+mc[1]:1;
+
+    // Remove o subtítulo de intervalo de meses indesejado gerado pelo app base
+    doc.querySelectorAll('.titulo-impressao .mes').forEach(function(el){ el.style.display='none'; });
+
     var st=doc.createElement('style');
     st.textContent=
       '.ano-impressao{text-align:center;font-size:9pt;font-weight:600;color:#334155;margin:0 0 1.5mm}'+
       '.folha-g{display:flex !important;flex-direction:column !important;gap:0 !important}'+
-      '.ano-grupo{border:.3mm solid #94a3b8;border-radius:2mm;padding:2.5mm 3mm;display:flex;flex-direction:column;min-height:0;background:#fff}'+
+      '.ano-grupo{border:1px solid #94a3b8 !important;border-radius:3mm;padding:3mm;display:flex;flex-direction:column;min-height:0;background:#fff}'+
       '.ano-impressao+.ano-grupo{margin-top:0}'+
       '.ano-grupo+.ano-impressao{margin-top:4mm}'+
       '.ano-grid{display:grid;grid-template-columns:repeat('+cols+',1fr);grid-auto-rows:1fr;gap:4mm;flex:1;min-height:0}';
@@ -6195,4 +6199,61 @@ if(!window.projecaoGuarda){
     function R(y){return cache[y]||(cache[y]=resumoAno(y))}
 
     var folhas=doc.querySelectorAll('.folha');
-    </html>
+    if(folhas.length){
+      var p=0;
+      folhas.forEach(function(f){
+        var g=f.querySelector('.folha-g'),secs=g?[].slice.call(g.children):[];
+        var k=secs.length||1,ms=M.slice(p,p+k);p+=k;
+        if(!g||!ms.length)return;
+        
+        var ys=[]; ms.forEach(function(x){if(ys.indexOf(x[0])<0)ys.push(x[0])});
+        var hd=f.querySelector('.folha-h');
+        if(hd) hd.innerHTML='Guarda Compartilhada — Sophia — '+ys.join(' / ');
+
+        var grupos=[];
+        ms.forEach(function(x,i){
+          var u=grupos[grupos.length-1];
+          if(!u||u.y!==x[0]){u={y:x[0],s:[]};grupos.push(u)}
+          u.s.push(secs[i]);
+        });
+        g.innerHTML='';
+        grupos.forEach(function(u){
+          var t=doc.createElement('div');t.className='ano-impressao';t.innerHTML=R(u.y);g.appendChild(t);
+          var box=doc.createElement('div');box.className='ano-grupo';
+          box.style.flex=Math.ceil(u.s.length/cols)+' 1 0';
+          var gr=doc.createElement('div');gr.className='ano-grid';
+          u.s.forEach(function(s){gr.appendChild(s)});
+          box.appendChild(gr);g.appendChild(box);
+        });
+      });
+    }else{
+      doc.querySelectorAll('section.mes-pagina-impressao').forEach(function(s,i){
+        var mm=M[i];if(!mm)return;
+        var h1=s.querySelector('.titulo-impressao h1');
+        if(h1) h1.textContent='Guarda Compartilhada — Sophia — '+mm[0];
+        var ref=s.querySelector('.titulo-impressao');
+        if(ref) ref.insertAdjacentHTML('afterend','<div class="ano-impressao">'+R(mm[0])+'</div>');
+      });
+    }
+    return '<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
+  }
+
+  var novo=function(ai,mi,af,mf){
+    var hj=hoje();
+    ai=(ai==null)?(typeof anoAtual==='number'?anoAtual:hj.getFullYear()):ai;
+    mi=(mi==null)?(typeof mesAtual==='number'?mesAtual:hj.getMonth()):mi;
+    af=(af==null)?ai+1:af; mf=(mf==null)?11:mf;
+    var B=window.Blob;
+    window.Blob=function(parts,opt){
+      if(opt&&/html/.test(opt.type||'')&&parts&&typeof parts[0]==='string'){try{parts=[tr(parts[0],ai,mi,af,mf)]}catch(e){}}
+      return new B(parts,opt);
+    };
+    window.Blob.prototype=B.prototype;
+    try{return orig.call(this,ai,mi,af,mf)}finally{window.Blob=B}
+  };
+  window.gerarAnoCompletoPDF=novo;
+  window.gerenarAnoCompletoPDF=novo;
+})();
+</script>
+<!--IMPRESSAO-ANO-FIM-->
+</html>
