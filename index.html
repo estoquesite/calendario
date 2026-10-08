@@ -6730,4 +6730,211 @@ if(!window.projecaoGuarda){
     });
 </script>
 <!-- GERAR WORD COM LAYOUT EXATO - FIM -->
+    <!--PRINT-UI-INICIO: cole no FINAL do arquivo, depois do último bloco. Para remover, apague tudo entre PRINT-UI-INICIO e PRINT-UI-FIM.-->
+<style id="pm-css">
+#modalImpressao{align-items:flex-end !important;padding:0 !important}
+@media(min-width:640px){#modalImpressao{align-items:center !important;padding:16px !important}}
+.pm-box{width:100%;max-width:400px;max-height:90vh;overflow:auto;box-sizing:border-box;background:var(--sheet,#fff);color:var(--txt,#1e1b2e);border-radius:22px 22px 0 0;padding:8px 14px calc(14px + env(safe-area-inset-bottom,0px));border:1.5px solid rgba(var(--mae-rgb,255,45,149),.55);box-shadow:0 -6px 28px rgba(0,0,0,.28)}
+@media(min-width:640px){.pm-box{border-radius:22px}}
+.pm-grab{width:38px;height:4px;border-radius:9px;background:rgba(128,128,150,.45);margin:0 auto 8px}
+.pm-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.pm-t{font-size:15px;font-weight:900}.pm-s{font-size:10.5px;opacity:.65;font-weight:600}
+.pm-x{width:30px;height:30px;border-radius:50%;border:1px solid rgba(128,128,150,.4);background:transparent;color:inherit;font-size:13px;cursor:pointer;padding:0}
+.pm-lbl{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;opacity:.65;margin:10px 0 5px}
+.pm-two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pm-two label{display:flex;flex-direction:column;gap:3px;font-size:10px;font-weight:800;opacity:.9}
+.pm-box input[type=month]{width:100%;box-sizing:border-box;height:36px;font-size:13px;padding:0 8px;border-radius:10px;border:1px solid var(--softb,rgba(128,128,150,.35));background:var(--soft,rgba(128,128,150,.1));color:inherit}
+.pm-chips{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+.pm-chips button,.pm-seg button{border:1px solid var(--softb,rgba(128,128,150,.35));background:var(--soft,rgba(128,128,150,.1));color:inherit;border-radius:10px;padding:6px 10px;font-size:11.5px;font-weight:800;cursor:pointer}
+.pm-seg{display:flex;gap:6px}.pm-seg button{flex:1;padding:8px 4px}
+.pm-seg button.on{background:var(--btn,linear-gradient(135deg,#ff2d95,#2f9bff));color:#fff;border-color:transparent}
+.pm-hint{font-size:10.5px;opacity:.65;margin-top:5px;font-weight:600}
+.pm-sw{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;font-weight:700;cursor:pointer}
+.pm-sw input{position:absolute;opacity:0;pointer-events:none}
+.pm-sw i{width:38px;height:22px;border-radius:99px;background:rgba(128,128,150,.4);position:relative;transition:.2s;flex-shrink:0}
+.pm-sw i::after{content:"";position:absolute;left:2px;top:2px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.pm-sw input:checked+i{background:rgb(var(--mae-rgb,255,45,149))}
+.pm-sw input:checked+i::after{left:18px}
+.pm-go{width:100%;height:42px;margin-top:14px;border:0;border-radius:13px;font-size:14px;font-weight:900;color:#fff;cursor:pointer;background:var(--btn,linear-gradient(135deg,#ff2d95,#2f9bff));box-shadow:var(--btn-sh,none)}
+.pm-alt{height:36px;border-radius:11px;border:1px solid var(--softb,rgba(128,128,150,.4));background:var(--soft,rgba(128,128,150,.1));color:inherit;font-size:12px;font-weight:800;cursor:pointer;margin-top:8px}
+.pm-go:active,.pm-alt:active,.pm-chips button:active{transform:scale(.97)}
+</style>
+<script>
+(function(){
+  if(window.__pmUI)return;window.__pmUI=1;
+  var modal=document.getElementById('modalImpressao');if(!modal)return;
+  var KL='sx_layout_imp',KR='sx_riscar_passados',KF='sx_formato_imp';
+  function $(i){return document.getElementById(i)}
+  function g(k,d){try{return localStorage.getItem(k)||d}catch(e){return d}}
+  function sv(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+  function toast(t){if(typeof mostrarToast==='function')mostrarToast(t)}
+  function pad(n){return String(n).padStart(2,'0')}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  var HINT={1:'1 mês por folha · retrato',2:'2 meses por folha · paisagem, lado a lado',4:'4 meses por folha · 2 × 2',6:'6 meses por folha · 2 × 3',12:'12 meses por folha · 3 × 4'};
+
+  // ================= 1) VISUAL DO MODAL =================
+  modal.innerHTML='<div class="pm-box"><div class="pm-grab"></div>'+
+   '<div class="pm-head"><div><div class="pm-t">🖨️ Imprimir / Exportar</div><div class="pm-s">PDF, Word ou lista para copiar</div></div><button type="button" class="pm-x" onclick="fecharModalImpressao()">✕</button></div>'+
+   '<div class="pm-lbl">Período</div>'+
+   '<div class="pm-two"><label>De<input type="month" id="printMesInicio"></label><label>Até<input type="month" id="printMesFim"></label></div>'+
+   '<div class="pm-chips"><button type="button" onclick="definirPeriodoRapido(1)">Este mês</button><button type="button" onclick="definirPeriodoRapido(3)">3 meses</button><button type="button" onclick="definirPeriodoRapido(6)">6 meses</button><button type="button" onclick="definirPeriodoRapido(12)">12 meses</button></div>'+
+   '<div class="pm-lbl">Formato</div>'+
+   '<div class="pm-seg"><button type="button" data-fmt="calendario">📅 Calendário</button><button type="button" data-fmt="lista">📝 Lista</button></div>'+
+   '<select id="tipoImpressaoLista" hidden><option value="calendario">c</option><option value="lista">l</option></select>'+
+   '<div id="pmLay"><div class="pm-lbl">Meses por folha</div><div class="pm-seg"><button type="button" data-lay="1">1</button><button type="button" data-lay="2">2</button><button type="button" data-lay="4">4</button><button type="button" data-lay="6">6</button><button type="button" data-lay="12">12</button></div><div class="pm-hint" id="pmHint"></div></div>'+
+   '<select id="selLayoutImp" hidden><option>1</option><option>2</option><option>4</option><option>6</option><option>12</option></select>'+
+   '<label class="pm-sw"><span>Riscar dias que já passaram</span><input type="checkbox" id="chkRiscar"><i></i></label>'+
+   '<button type="button" class="pm-go" onclick="confirmarGerarPDF()">🖨️ Gerar PDF</button>'+
+   '<div class="pm-two"><button type="button" class="pm-alt" id="btnGerarWordLayout">📄 Word</button><button type="button" class="pm-alt" id="btnCopiarListaModal" onclick="copiarListaPorExtenso()">📋 Copiar lista</button></div>'+
+   '<div class="pm-hint">Se aparecer rodapé na impressão, desmarque "Cabeçalhos e rodapés" no diálogo do navegador.</div></div>';
+
+  function sync(){
+    var l=g(KL,'1'),f=g(KF,'calendario');
+    $('selLayoutImp').value=l;$('tipoImpressaoLista').value=f;$('chkRiscar').checked=(g(KR,'1')==='1');
+    modal.querySelectorAll('[data-lay]').forEach(function(b){b.classList.toggle('on',b.dataset.lay===l)});
+    modal.querySelectorAll('[data-fmt]').forEach(function(b){b.classList.toggle('on',b.dataset.fmt===f)});
+    $('pmHint').textContent=HINT[l]||'';$('pmLay').style.display=f==='lista'?'none':'';
+  }
+  modal.addEventListener('click',function(e){
+    var b=e.target.closest('[data-lay]');if(b){sv(KL,b.dataset.lay);sync();return}
+    b=e.target.closest('[data-fmt]');if(b){sv(KF,b.dataset.fmt);sync()}
+  });
+  $('chkRiscar').addEventListener('change',function(){sv(KR,this.checked?'1':'0')});
+  $('btnGerarWordLayout').addEventListener('click',function(){window.gerarWordComLayout()});
+  var ab=window.abrirModalImpressao;
+  if(typeof ab==='function')window.abrirModalImpressao=function(){var r=ab.apply(this,arguments);sync();return r};
+  sync();
+
+  // ================= 2) PDF SEM RODAPÉ (margem de página 0) =================
+  function semRodape(h){
+    var land=/size:\s*A4\s+landscape/i.test(h),H=land?'209mm':'296mm';
+    h=h.replace(/@page\s*\{[^}]*\}/g,'');
+    var css='@page{size:A4 '+(land?'landscape':'portrait')+';margin:0}html,body{margin:0 !important}'+
+      'body>.mes-pagina-impressao{box-sizing:border-box;height:'+H+' !important;min-height:'+H+' !important;padding:8mm 10mm !important;overflow:hidden}'+
+      '.folha{box-sizing:border-box;height:'+H+' !important;padding:8mm 10mm !important}';
+    if(/class="item-mes"/.test(h)){
+      css+='table.pg{width:100%;border-collapse:collapse}table.pg td{padding:0 15mm}.sp{height:10mm}';
+      h=h.replace('<body>','<body><table class="pg"><thead><tr><td><div class="sp"></div></td></tr></thead><tfoot><tr><td><div class="sp"></div></td></tr></tfoot><tbody><tr><td>');
+      var i=h.lastIndexOf('<script>');if(i>-1)h=h.slice(0,i)+'</td></tr></tbody></table>'+h.slice(i);
+    }
+    return h.replace('</head>','<style>'+css+'</style></head>');
+  }
+  var prevPDF=window.gerarAnoCompletoPDF;
+  if(typeof prevPDF==='function'){
+    var novoPDF=function(){
+      var B=window.Blob;
+      window.Blob=function(parts,opt){
+        if(opt&&/html/.test(opt.type||'')&&parts&&typeof parts[0]==='string'){try{parts=[semRodape(parts[0])]}catch(e){}}
+        return new B(parts,opt);
+      };
+      window.Blob.prototype=B.prototype;
+      try{return prevPDF.apply(this,arguments)}finally{window.Blob=B}
+    };
+    window.gerarAnoCompletoPDF=novoPDF;window.gerenarAnoCompletoPDF=novoPDF;
+  }
+
+  // ================= 3) WORD COM O MESMO LAYOUT DO PDF =================
+  var CF={
+    1:{c:1,land:0,td:96,nf:11,wf:9,tf:15,full:1,dn:0},
+    2:{c:2,land:1,td:60,nf:10,wf:8,tf:12,full:1,dn:0},
+    4:{c:2,land:0,td:46,nf:9,wf:7.5,tf:11,full:0,dn:0},
+    6:{c:2,land:0,td:27,nf:7.5,wf:6.5,tf:9.5,full:0,dn:1},
+    12:{c:3,land:0,td:19,nf:6.5,wf:6,tf:8,full:0,dn:1}
+  };
+  function info(d,m,y){return (window.regraPadrao&&window.regraPadrao(d,m,y))||{resp:'mae'}}
+  function fer(y,m,d){var F=window.feriados||{};return F[y+'-'+m+'-'+d]||F[m+'-'+d]||''}
+  function cont(y,m){var n=new Date(y,m+1,0).getDate(),a=0,b=0;for(var d=1;d<=n;d++)info(d,m,y).resp==='pai'?b++:a++;return[a,b]}
+  function resumoAno(y){
+    var h=new Date();h.setHours(0,0,0,0);var cy=h.getFullYear(),ini=(y===cy)?h:new Date(y,0,1),fim=new Date(y,11,31),a=0,b=0,n=0;
+    for(var d=new Date(y,0,1);d<=fim;d.setDate(d.getDate()+1)){if(d>=ini){info(d.getDate(),d.getMonth(),y).resp==='pai'?b++:a++;n++}}
+    if(y===cy)return y+' — faltam '+n+' dias: Mãe '+a+' · Pai '+b;
+    if(y>cy)return y+' inteiro: Mãe '+a+' dias · Pai '+b+' dias';
+    return y+' (encerrado): Mãe '+a+' dias · Pai '+b+' dias';
+  }
+  function mesTab(y,m,c,ris){
+    var hoje=new Date();hoje.setHours(0,0,0,0);
+    var pd=new Date(y,m,1).getDay(),nd=new Date(y,m+1,0).getDate(),col=0,RS='<tr style="height:'+c.td+'pt;mso-height-rule:exactly">';
+    var W=c.full?['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']:['D','S','T','Q','Q','S','S'];
+    var h='<table width="100%" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;table-layout:fixed"><tr>';
+    W.forEach(function(x){h+='<td align="center" style="width:14.28%;font-size:'+c.wf+'pt;font-weight:bold;color:#64748b;padding:1pt 0">'+x+'</td>'});
+    h+='</tr>'+RS;
+    function vz(){return '<td bgcolor="#fafafa" style="background:#fafafa;border:.5pt solid #f1f5f9">&nbsp;</td>'}
+    for(var i=0;i<pd;i++){h+=vz();col++}
+    for(var d=1;d<=nd;d++){
+      if(col%7===0&&col!==0)h+='</tr>'+RS;
+      var inf=info(d,m,y),pai=inf.resp==='pai',f=fer(y,m,d),em=!!(inf.emenda||inf.grampinho);
+      var bg=pai?'#f5faff':'#fff6f7',bd=pai?'#cfe8f8':'#fbcfe8',ds=(inf.desc&&['Mãe','FDS Pai'].indexOf(inf.desc)<0)?inf.desc:'';
+      var rs=(ris&&new Date(y,m,d)<hoje)?';text-decoration:line-through':'';
+      h+='<td valign="top" bgcolor="'+bg+'" style="vertical-align:top;padding:1.5pt 2.5pt;background:'+bg+';border:.75pt solid '+bd+'">'+
+        '<b style="font-size:'+c.nf+'pt;color:#111827'+rs+'">'+d+'</b>'+
+        (f?' <span style="color:#10b981;font-size:'+c.nf+'pt">●</span>':'')+(em?' <span style="color:#ef4444;font-size:'+c.nf+'pt">●</span>':'')+
+        (c.dn?'':' <span style="font-size:6pt;font-weight:bold;color:'+(pai?'#0369a1':'#be123c')+'">'+(pai?'PAI':'MÃE')+'</span>')+
+        ((!c.dn&&ds)?'<br><span style="font-size:6.5pt;color:#475569">'+esc(ds)+'</span>':'')+'</td>';
+      col++;
+    }
+    while(col%7!==0){h+=vz();col++}
+    return h+'</tr></table>';
+  }
+  function blocos(y,m){
+    var nd=new Date(y,m+1,0).getDate(),B=[],r=null,ini=1;
+    for(var d=1;d<=nd;d++){var x=info(d,m,y).resp||'mae';if(d===1){r=x}else if(x!==r){B.push([r,ini,d-1]);r=x;ini=d}}
+    B.push([r,ini,nd]);var P=[],Mm=[];
+    B.forEach(function(b){var t=b[1]===b[2]?pad(b[1]):pad(b[1])+' a '+pad(b[2]);(b[0]==='pai'?P:Mm).push(t)});
+    var a=P.length?'Pai de '+P.join(', '):'',c=Mm.length?'Mãe de '+Mm.join(', '):'';
+    return a&&c?a+'; '+c:(a||c);
+  }
+  function palavra(){
+    if(typeof vibrar==='function')vibrar(15);
+    var ini=$('printMesInicio').value,fim=$('printMesFim').value;
+    if(!ini||!fim){alert('Selecione o mês inicial e o mês final!');return}
+    var a=ini.split('-').map(Number),b=fim.split('-').map(Number),ai=a[0],mi=a[1]-1,af=b[0],mf=b[1]-1;
+    if(ai>af||(ai===af&&mi>mf)){alert('O mês inicial deve ser anterior ou igual ao mês final!');return}
+    if(typeof fecharModalImpressao==='function')fecharModalImpressao();
+    var n=+g(KL,'1'),fmt=g(KF,'calendario'),ris=g(KR,'1')==='1',c=CF[n]||CF[1];
+    var NM=window.nomesMeses||['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    var M=[];for(var y=ai;y<=af;y++){var s0=y===ai?mi:0,e0=y===af?mf:11;for(var m=s0;m<=e0;m++)M.push([y,m])}
+    var land=(fmt==='calendario'&&c.land);
+    var pg=land?'size:841.9pt 595.3pt;mso-page-orientation:landscape':'size:595.3pt 841.9pt;mso-page-orientation:portrait';
+    var h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Guarda Sophia</title>'+
+      '<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->'+
+      '<style>@page Section1{'+pg+';margin:22.7pt 28.35pt 22.7pt 28.35pt}div.Section1{page:Section1}body{font-family:Arial,sans-serif;color:#1f2937}p{margin:0}</style></head><body><div class="Section1">';
+    if(fmt==='lista'){
+      h+='<p style="text-align:center;font-size:15pt;font-weight:bold">Guarda Compartilhada — Sophia</p><p style="text-align:center;font-size:10.5pt;color:#475569;margin-bottom:10pt">Calendário de Convivência</p>';
+      M.forEach(function(x){h+='<p style="font-size:10.5pt;margin-bottom:7pt;border-bottom:.5pt solid #e2e8f0;padding-bottom:3pt"><b>'+NM[x[1]]+' de '+x[0]+':</b> '+blocos(x[0],x[1])+'</p>'});
+    }else{
+      for(var i=0,sh=0;i<M.length;i+=n,sh++){
+        var gr=M.slice(i,i+n),ys=[];gr.forEach(function(x){if(ys.indexOf(x[0])<0)ys.push(x[0])});
+        var r1=NM[gr[0][1]]+' '+gr[0][0],r2=NM[gr[gr.length-1][1]]+' '+gr[gr.length-1][0],lab=(r1===r2)?r1:r1+' a '+r2;
+        h+='<p style="text-align:center;font-size:'+(c.tf+(n===1?2:2))+'pt;font-weight:bold;color:#111827'+(sh?';page-break-before:always':'')+'">Guarda Compartilhada — Sophia</p>'+
+           '<p style="text-align:center;font-size:'+(c.dn?8:10)+'pt;font-weight:bold;color:#64748b">'+lab+'</p>';
+        ys.forEach(function(yy){h+='<p style="text-align:center;font-size:'+(c.dn?6.5:8.5)+'pt;color:#334155">'+resumoAno(yy)+'</p>'});
+        h+='<table width="100%" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;margin-top:3pt">';
+        for(var j=0;j<gr.length;j+=c.c){
+          h+='<tr>';
+          for(var k=0;k<c.c;k++){
+            var it=gr[j+k],cell='';
+            if(it){
+              var ct=cont(it[0],it[1]);
+              cell='<p style="text-align:center;font-size:'+c.tf+'pt;font-weight:bold;color:#111827">'+NM[it[1]]+' '+it[0]+'</p>'+
+                '<p style="text-align:center;font-size:'+(c.dn?6.5:8.5)+'pt;font-weight:bold;color:#334155;margin-bottom:2pt">Mãe: '+ct[0]+' · Pai: '+ct[1]+'</p>'+mesTab(it[0],it[1],c,ris);
+              if(n===1&&typeof regrasPorAnoMes!=='undefined'&&regrasPorAnoMes[it[0]+'-'+it[1]])cell+='<p style="text-align:center;font-size:8pt;color:#64748b;margin-top:5pt">Regra do mês: '+regrasPorAnoMes[it[0]+'-'+it[1]]+'</p>';
+            }
+            h+='<td valign="top" style="width:'+(100/c.c)+'%;padding:3pt 4pt;vertical-align:top">'+cell+'</td>';
+          }
+          h+='</tr>';
+        }
+        h+='</table><p style="text-align:center;font-size:'+(c.dn?7:8.5)+'pt;font-weight:bold;color:#64748b;margin-top:4pt"><span style="color:#be123c">■ Mãe</span> &nbsp; <span style="color:#0369a1">■ Pai</span> &nbsp; <span style="color:#10b981">●</span> Feriado &nbsp; <span style="color:#ef4444">●</span> Emenda</p>';
+      }
+    }
+    h+='</div></body></html>';
+    var blob=new Blob(['\ufeff'+h],{type:'application/msword'}),url=URL.createObjectURL(blob),an=document.createElement('a');
+    an.href=url;an.download='Guarda_Sophia_'+ai+'-'+pad(mi+1)+'_a_'+af+'-'+pad(mf+1)+'.doc';
+    document.body.appendChild(an);an.click();document.body.removeChild(an);
+    setTimeout(function(){URL.revokeObjectURL(url)},4000);
+    toast('📄 Word gerado no mesmo layout do PDF!');
+  }
+  window.gerarWordComLayout=palavra;
+})();
+</script>
+<!--PRINT-UI-FIM-->
 </html>
