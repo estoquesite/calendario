@@ -6474,4 +6474,135 @@ if(!window.projecaoGuarda){
     });
 </script>
 <!-- FIM DAS MELHORIAS -->
+    <!-- CORREÇÃO PARA REMOVER O URL DO BLOB, DATA E HORA NA IMPRESSÃO - INICIO -->
+<style>
+    @page {
+        margin: 5mm; /* Margem limpa para evitar que o navegador crie rodapés automáticos */
+    }
+    @media print {
+        /* Oculta qualquer URL, rodapé ou cabeçalho automático injetado pelo navegador */
+        @page {
+            margin-bottom: 0mm;
+            margin-top: 0mm;
+        }
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    }
+
+    .btn-copiar-lista {
+        background: linear-gradient(135deg, #059669, #0d9488);
+        color: white;
+        font-weight: 700;
+        border-radius: 12px;
+        padding: 9px 12px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.15s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        cursor: pointer;
+        border: none;
+        width: 100%;
+        margin-top: 8px;
+    }
+    .btn-copiar-lista:hover { filter: brightness(1.05); }
+    .btn-copiar-lista:active { transform: scale(0.97); }
+</style>
+<script>
+    function copiarListaPorExtenso() {
+        if (typeof vibrar === 'function') vibrar(15);
+        
+        const ini = document.getElementById('printMesInicio') ? document.getElementById('printMesInicio').value : '';
+        const fim = document.getElementById('printMesFim') ? document.getElementById('printMesFim').value : '';
+        
+        if (!ini || !fim) {
+            if (typeof mostrarToast === 'function') mostrarToast("⚠️ Defina o período primeiro!");
+            return;
+        }
+
+        let [anoIni, mesIni] = ini.split('-').map(Number);
+        let [anoFim, mesFim] = fim.split('-').map(Number);
+        mesIni -= 1;
+        mesFim -= 1;
+
+        let textoCopia = "📋 *Lista de Convivência - Guarda Sophia*\n\n";
+        const nomesM = window.nomesMeses || ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+        for (let y = anoIni; y <= anoFim; y++) {
+            let s0 = (y === anoIni) ? mesIni : 0;
+            let e0 = (y === anoFim) ? mesFim : 11;
+
+            for (let m = s0; m <= e0; m++) {
+                let totalDias = new Date(y, m + 1, 0).getDate();
+                let blocos = [], respAtual = null, inicioBloco = 1;
+
+                for (let d = 1; d <= totalDias; d++) {
+                    let info = window.regraPadrao ? window.regraPadrao(d, m, y) : {resp: 'mae'};
+                    let r = info.resp || 'mae';
+                    if (d === 1) {
+                        respAtual = r;
+                        inicioBloco = 1;
+                    } else if (r !== respAtual) {
+                        blocos.push({resp: respAtual, ini: inicioBloco, fim: d - 1});
+                        respAtual = r;
+                        inicioBloco = d;
+                    }
+                }
+                blocos.push({resp: respAtual, ini: inicioBloco, fim: totalDias});
+
+                let partesPai = [], partesMae = [];
+                blocos.forEach(function(b){
+                    let txt = b.ini === b.fim ? String(b.ini).padStart(2, '0') : String(b.ini).padStart(2, '0') + ' a ' + String(b.fim).padStart(2, '0');
+                    if (b.resp === 'pai') partesPai.push(txt);
+                    else partesMae.push(txt);
+                });
+
+                let descPai = partesPai.length ? 'Pai: ' + partesPai.join(', ') : '';
+                let descMae = partesMae.length ? 'Mãe: ' + partesMae.join(', ') : '';
+                let resumoMes = descPai && descMae ? descPai + ' | ' + descMae : (descPai || descMae);
+
+                textoCopia += `📅 *${nomesM[m]} de ${y}*:\n${resumoMes}\n\n`;
+            }
+        }
+
+        textoCopia += "_Gerado pelo App de Guarda Compartilhada_";
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(textoCopia).then(() => {
+                if (typeof mostrarToast === 'function') mostrarToast("📋 Lista copiada com sucesso!");
+                else alert("Lista copiada!");
+            }).catch(() => {
+                window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(textoCopia), "_blank");
+            });
+        } else {
+            window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(textoCopia), "_blank");
+        }
+    }
+
+    function injetarBotaoCopiarLista() {
+        const modal = document.getElementById('modalImpressao');
+        if (!modal || document.getElementById('btnCopiarListaModal')) return;
+        
+        const containerBotoes = modal.querySelector('.flex.gap-2.pt-2') || modal.querySelector('.space-y-3\\.5');
+        if (!containerBotoes) return;
+
+        const btn = document.createElement('button');
+        btn.id = 'btnCopiarListaModal';
+        btn.type = 'button';
+        btn.className = 'btn-copiar-lista';
+        btn.innerHTML = '<span>📋</span> Copiar Lista Inteira (WhatsApp)';
+        btn.onclick = copiarListaPorExtenso;
+        
+        containerBotoes.appendChild(btn);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        setInterval(injetarBotaoCopiarLista, 500);
+    });
+</script>
+<!-- CORREÇÃO - FIM -->
 </html>
