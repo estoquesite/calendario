@@ -5602,13 +5602,16 @@ if(!window.projecaoGuarda){
   document.addEventListener('visibilitychange',function(){if(document.hidden)salvar()});
 })();
 
-// ===== IMPRESSÃO: acrescenta "👩 Mãe: N dias · 👨 Pai: N dias" em cada mês e risca os dias que já passaram. Nada mais muda. =====
+// ===== IMPRESSÃO: acrescenta "👩 Mãe: N dias · 👨 Pai: N dias" em cada mês e risca os dias que já passaram, tira a bolinha azul "Hoje". Nada mais muda. =====
 (function(){
   if(window.__pjPrint)return;window.__pjPrint=1;
   var orig=window.gerarAnoCompletoPDF;if(typeof orig!=='function')return;
   function tr(h){
     var hoje=new Date();hoje.setHours(0,0,0,0);var NM=window.nomesMeses||[];
     h=h.replace('</style>','.cont-impressao{text-align:center;margin:0 0 3mm;font-size:10.5pt;font-weight:700;color:#334155}.cont-impressao span{margin:0 4mm}.riscado{text-decoration:line-through;text-decoration-thickness:.4mm}</style>');
+    // sem a bolinha azul "Hoje" na folha; legenda (feriado/emenda) um pouco maior
+    h=h.replace(/<span class="item-legenda"><span class="marcador marcador-azul"><\/span>Hoje<\/span>/g,'').replace(/<span class="marcador marcador-azul"><\/span>/g,'');
+    h=h.replace('</style>','.legenda-impressao{font-size:9.5pt !important;gap:10mm !important}.legenda-impressao .marcador{width:3.2mm !important;height:3.2mm !important}</style>');
     return h.replace(/<section class="mes-pagina-impressao">[\s\S]*?<\/section>/g,function(sec){
       var m=/<div class="mes">([^<\s]+)\s+(\d{4})<\/div>/.exec(sec),nm=(sec.match(/<td class="mae">/g)||[]).length,np=(sec.match(/<td class="pai">/g)||[]).length;
       var mi=m?NM.indexOf(m[1]):-1,y=m?+m[2]:0;
@@ -5630,4 +5633,4 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--PROJECAO-FIM-->
-    </html>
+</html>
