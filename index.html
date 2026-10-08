@@ -6167,7 +6167,6 @@ if(!window.projecaoGuarda){
   var NM=window.nomesMeses||['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   function hoje(){var d=new Date();d.setHours(0,0,0,0);return d}
 
-  // Adiciona a opção de formato no modal de impressão
   function injetarOpcaoLayout(){
     var m=document.getElementById('modalImpressao');
     if(!m || document.getElementById('tipoImpressaoLista')) return;
@@ -6182,18 +6181,28 @@ if(!window.projecaoGuarda){
                     '</select>';
     container.appendChild(div);
   }
-  
-  // Observa a abertura do modal para garantir a opção visível
   new MutationObserver(injetarOpcaoLayout).observe(document.body, {childList:true, subtree:true});
 
-  // Função para gerar o texto em lista agrupado por blocos contínuos de dias
   function gerarTextoLista(ai, mi, af, mf){
-    var html = '<div style="font-family:\'Plus Jakarta Sans\', sans-serif; padding: 15mm; color: #1f2937;">'+
-               '<h1 style="text-align:center; font-size:16pt; font-weight:800; margin-bottom:2mm;">Datas de Convivência — Sophia</h1>'+
-               '<div style="display:flex; justify-content:center; gap:10mm; font-size:9.5pt; font-weight:700; margin-bottom:8mm; color:#475569;">'+
-               '<span><span style="display:inline-block; width:3.5mm; height:3.5mm; border-radius:50%; background:#f43f5e; vertical-align:middle; margin-right:1.5mm;"></span> Mãe</span>'+
-               '<span><span style="display:inline-block; width:3.5mm; height:3.5mm; border-radius:50%; background:#0ea5e9; vertical-align:middle; margin-right:1.5mm;"></span> Pai</span>'+
-               '</div>';
+    var html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><style>'+
+               '@page { size: A4 portrait; margin: 10mm 15mm; }'+
+               'body { font-family: "Plus Jakarta Sans", sans-serif; color: #1f2937; margin: 0; padding: 0; background: #fff; }'+
+               '.cabecalho { text-align: center; margin-bottom: 6mm; }'+
+               '.cabecalho h1 { font-size: 15pt; font-weight: 800; margin: 0 0 2mm; color: #111827; }'+
+               '.sub-titulo { font-size: 10.5pt; font-weight: 700; color: #475569; margin-bottom: 2mm; }'+
+               '.legenda-topo { display: flex; justify-content: center; gap: 8mm; font-size: 9pt; font-weight: 700; color: #475569; margin-bottom: 6mm; }'+
+               '.legenda-item { display: inline-flex; align-items: center; gap: 2mm; }'+
+               '.item-mes { margin-bottom: 3.5mm; font-size: 10pt; border-bottom: 1px solid #f1f5f9; padding-bottom: 2mm; line-height: 1.4; }'+
+               '.item-mes b { color: #111827; }'+
+               '@media print { @page { margin: 10mm 15mm; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } }'+
+               '</style></head><body>'+
+               '<div class="cabecalho">'+
+               '<h1>Guarda Compartilhada — Sophia</h1>'+
+               '<div class="sub-titulo">👧 Calendário de Convivência</div>'+
+               '<div class="legenda-topo">'+
+               '<span class="legenda-item"><span style="font-size:12pt;">👩</span> <span style="color:#f43f5e; font-weight:800;">Mãe</span></span>'+
+               '<span class="legenda-item"><span style="font-size:12pt;">👨</span> <span style="color:#0ea5e9; font-weight:800;">Pai</span></span>'+
+               '</div></div>';
 
     for(var y=ai; y<=af; y++){
       var s0 = (y===ai)?mi:0, e0 = (y===af)?mf:11;
@@ -6212,7 +6221,6 @@ if(!window.projecaoGuarda){
         }
         blocos.push({resp: respAtual, ini: inicioBloco, fim: totalDias});
 
-        // Formata os blocos em texto descritivo
         var partesPai = [], partesMae = [];
         blocos.forEach(function(b){
           var txt = b.ini===b.fim ? String(b.ini).padStart(2,'0') : String(b.ini).padStart(2,'0')+' a '+String(b.fim).padStart(2,'0');
@@ -6224,37 +6232,36 @@ if(!window.projecaoGuarda){
         var descMae = partesMae.length ? 'Mãe de '+partesMae.join(', ') : '';
         var resumoMes = descPai && descMae ? descPai+'; '+descMae : (descPai || descMae);
 
-        html += '<div style="margin-bottom:4mm; font-size:10.5pt; border-bottom:1px solid #e5e7eb; padding-bottom:2mm;">'+
-                '<b style="color:#111827;">'+NM[m]+' de '+y+':</b> <span style="color:#475569;">'+resumoMes+'</span>'+
+        html += '<div class="item-mes">'+
+                '<b>'+NM[m]+' de '+y+':</b> <span style="color:#334155;">'+resumoMes+'</span>'+
                 '</div>';
       }
     }
-    html += '<script>window.onload=function(){window.print();}<\/script></div>';
+    html += '<script>window.onload=function(){setTimeout(function(){window.print();}, 150);}<\/script></body></html>';
     return html;
   }
 
-  // Resumo anual para o topo do calendário visual
   function resumoAno(y){
-    var h=hoje(), cy=h.getFullYear(), fim=new Date(y,11,31), ini=(y===cy)?h:new Date(y,0,1), a=0, b=0, n=0, ta=0, tb=0;
+    var h=hoje(), cy=h.getFullYear(), fim=new Date(y,11,31), ini=(y===cy)?h:new Date(y,0,1), a=0, b=0, n=0;
     for(var d=new Date(y,0,1); d<=fim; d.setDate(d.getDate()+1)){
       var r=window.regraPadrao(d.getDate(),d.getMonth(),y)||{}, pai=r.resp==='pai';
-      if(pai) tb++; else ta++;
       if(d>=ini){ if(pai) b++; else a++; n++; }
     }
     if(y===cy) return '<b>'+y+'</b> — faltam '+n+' dias: 👩 Mãe '+a+' · 👨 Pai '+b;
-    if(y>cy) return '<b>'+y+'</b> inteiro: 👩 Mãe '+ta+' dias · 👨 Pai '+tb+' dias';
-    return '<b>'+y+'</b> (encerrado): 👩 Mãe '+ta+' dias · 👨 Pai '+tb+' dias';
+    if(y>cy) return '<b>'+y+'</b> inteiro: 👩 Mãe '+a+' dias · 👨 Pai '+b+' dias';
+    return '<b>'+y+'</b> (encerrado): 👩 Mãe '+a+' dias · 👨 Pai '+b+' dias';
   }
 
   function tr(h, ai, mi, af, mf){
     var doc=new DOMParser().parseFromString(h,'text/html'), M=[], cache={};
-    for(var y=ai; y<=af; y++){var s0=(y===ai)?mi:0, e0=(y===af)?mf:11; for(var m=s0; m<=e0; m++) M.push([y,m]);}
+    for(var y=ai; y<=af; y++){var s0=(y===ai)?mi:0, e0=(y===af)?mf:11; for(var m=s0; m<=e0; m++) M.push([y,m]); }
     var mc=/grid-template-columns:\s*repeat\((\d+),\s*1fr\)/.exec(h), cols=mc?+mc[1]:1;
 
     doc.querySelectorAll('.titulo-impressao .mes').forEach(function(el){ el.style.display='none'; });
 
     var st=doc.createElement('style');
     st.textContent=
+      '@page { margin: 10mm 15mm; }'+
       '.ano-impressao{text-align:center;font-size:9pt;font-weight:600;color:#334155;margin:0 0 1.5mm}'+
       '.folha-g{display:flex !important;flex-direction:column !important;gap:0 !important}'+
       '.ano-grupo{border:1px solid #94a3b8 !important;border-radius:3mm;padding:3mm;display:flex;flex-direction:column;min-height:0;background:#fff}'+
@@ -6276,11 +6283,10 @@ if(!window.projecaoGuarda){
         var hd=f.querySelector('.folha-h');
         if(hd) hd.innerHTML='Guarda Compartilhada — Sophia — '+ys.join(' / ');
 
-        // Legenda personalizada com bolinhas Rosa (Mãe) e Azul (Pai)
         var foot=f.querySelector('.folha-l');
         if(foot){
-          foot.innerHTML = '<span><span class="marcador" style="background:#f43f5e"></span> Mãe</span>'+
-                           '<span><span class="marcador" style="background:#0ea5e9"></span> Pai</span>'+
+          foot.innerHTML = '<span><span style="font-size:10pt;">👩</span> <span style="color:#f43f5e; font-weight:800;">Mãe</span></span>'+
+                           '<span><span style="font-size:10pt;">👨</span> <span style="color:#0ea5e9; font-weight:800;">Pai</span></span>'+
                            '<span><span class="marcador marcador-verde"></span> Feriado</span>'+
                            '<span><span class="marcador marcador-vermelho"></span> Emenda</span>';
         }
@@ -6303,7 +6309,7 @@ if(!window.projecaoGuarda){
       });
     }else{
       doc.querySelectorAll('section.mes-pagina-impressao').forEach(function(s,i){
-        var mm=M[i]; if(!mm) return;
+        var mm=M[i];if(!mm) return;
         var h1=s.querySelector('.titulo-impressao h1');
         if(h1) h1.textContent='Guarda Compartilhada — Sophia — '+mm[0];
         var ref=s.querySelector('.titulo-impressao');
@@ -6311,8 +6317,8 @@ if(!window.projecaoGuarda){
         
         var leg=s.querySelector('.legenda-impressao');
         if(leg){
-          leg.innerHTML = '<span class="item-legenda"><span class="marcador" style="background:#f43f5e"></span>Mãe</span>'+
-                          '<span class="item-legenda"><span class="marcador" style="background:#0ea5e9"></span>Pai</span>'+
+          leg.innerHTML = '<span class="item-legenda"><span style="font-size:10pt;">👩</span> <span style="color:#f43f5e; font-weight:800;">Mãe</span></span>'+
+                          '<span class="item-legenda"><span style="font-size:10pt;">👨</span> <span style="color:#0ea5e9; font-weight:800;">Pai</span></span>'+
                           '<span class="item-legenda"><span class="marcador marcador-verde"></span>Feriado</span>'+
                           '<span class="item-legenda"><span class="marcador marcador-vermelho"></span>Emenda</span>';
         }
