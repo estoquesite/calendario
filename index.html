@@ -6780,95 +6780,269 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--MESES-NO-PDF-FIM-->
-    <!--PATCH-MODAIS-INICIO: cole este bloco inteiro no FINAL do arquivo, depois do último bloco. Para tirar, apague tudo entre PATCH-MODAIS-INICIO e PATCH-MODAIS-FIM. Não remove nenhum botão flutuante. -->
-<style id="patch-modais">
-/* 1) Os modais passam por cima dos botões flutuantes (🔮 🎨 ✨ Extras 🎤) */
-#modalImpressao,
-#customModal,
-#modalPeriodoRapido,
-#modalMotivos,
-#modalSeletorMesAno {
-  z-index: 120 !important;
-}
+    <!--
+  COMO USAR (2 trocas):
+  1) Apague o bloco que vai de  <!--PROPOSTA-INICIO-->  até  <!--PROPOSTA-FIM-->  e cole no mesmo lugar o BLOCO 1 abaixo.
+  2) Apague o bloco que vai de  <!--LIMPEZA-2027-INICIO ...-->  até  <!--LIMPEZA-2027-FIM-->  e cole no mesmo lugar o BLOCO 2 abaixo.
+  Importante: APAGUE os antigos. Se ficarem os dois, o antigo continua valendo.
+-->
 
-/* 2) Caixa do modal: um pouco mais larga, com rolagem própria se a tela for pequena */
-#modalImpressao > div,
-#customModal > div,
-#modalMotivos > div,
-#modalSeletorMesAno > div,
-#modalPeriodoRapido > div {
-  max-height: calc(100dvh - 32px);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-#modalImpressao > div,
-#customModal > div,
-#modalMotivos > div,
-#modalSeletorMesAno > div {
-  max-width: 24rem !important;
-}
+<!-- ================= BLOCO 1 ================= -->
+<!--PROPOSTA-INICIO-->
+<script>
+(function(){
+  if(window.__atProp)return;window.__atProp=1;
+  var mod=document.getElementById('pjMod'),PG=window.projecaoGuarda;
+  if(!mod||!PG||typeof PG.build!=='function')return;
+  var KE='sx_proposta_edits',KB='sx_backup_adocao',raw=PG.build,rawC={},cur={},edits={},sel=null;
+  try{edits=JSON.parse(localStorage.getItem(KE))||{}}catch(e){edits={}}
+  function sv(){try{localStorage.setItem(KE,JSON.stringify(edits))}catch(e){}}
+  function ent(r,d){return {resp:r,desc:d||(r==='mae'?'Mãe':'Pai'),emenda:false}}
+  function yOf(k){return +k.split('-')[0]}
+  function bkY(y){return KB+'_'+y}
+  function jb(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+  function legTem(y){var b=jb(KB);if(!b)return false;var f=function(o){for(var k in (o||{}))if(yOf(k)===y)return true;return false};return f(b.ov)||f(b.ed)}
+  function get(y){
+    if(!cur[y]){
+      rawC[y]=raw(y);cur[y]={};
+      for(var k in rawC[y])cur[y][k]=rawC[y][k];
+      for(var k2 in edits)if(yOf(k2)===y)cur[y][k2]=edits[k2];
+    }
+    return cur[y];
+  }
+  PG.build=get;
+  function resetCache(){
+    for(var y in cur){
+      var o=cur[y],r=rawC[y];
+      for(var k in o)delete o[k];
+      for(var k1 in r)o[k1]=r[k1];
+      for(var k2 in edits)if(yOf(k2)===+y)o[k2]=edits[k2];
+    }
+  }
+  function toast(t){if(typeof mostrarToast==='function')mostrarToast(t)}
+  function rerender(){var m=mod.querySelector('[data-md].on')||mod.querySelector('[data-md]');if(m)m.click()}
+  function cloud(){
+    if(typeof salvarNaNuvem==='function')salvarNaNuvem();
+    if(typeof renderizar==='function')renderizar();
+  }
+  function modo(box){var b=box.querySelector('[data-md].on');return b?b.dataset.md:'meu'}
+  function ano(box){
+    if(box.querySelector('[data-y26].on'))return 2026;
+    var b=box.querySelector('[data-y].on');return b?+b.dataset.y:2027;
+  }
+  function estado(){
+    var box=mod.firstChild;if(!box||!box.querySelector)return null;
+    var y=ano(box);
+    return {box:box,y:y,prop:(modo(box)==='prop'&&y>=2027)};
+  }
+  function marcas(){
+    var s=estado();if(!s||!s.prop)return;
+    s.box.querySelectorAll('.pj-d[data-k]').forEach(function(el){
+      var k=el.dataset.k;
+      if(edits[k]){
+        el.style.outline='2px dashed var(--tx,#000)';el.style.outlineOffset='-2px';
+        if(!el.querySelector('.atm'))el.insertAdjacentHTML('beforeend','<u class="atm" style="position:absolute;right:2px;top:1px;font-size:8px;text-decoration:none">✎</u>');
+      }
+      if(k===sel){el.style.outline='3px solid var(--tx,#000)';el.style.outlineOffset='-2px'}
+    });
+  }
+  function editor(){
+    var s=estado();if(!s)return;
+    var old=s.box.querySelector('#atEd');if(old)old.remove();
+    if(!s.prop||!sel||yOf(sel)!==s.y)return;
+    var ms=s.box.querySelector('.pj-ms');if(!ms)return;
+    var p=sel.split('-'),iso=p[0]+'-'+String(+p[1]+1).padStart(2,'0')+'-'+String(+p[2]).padStart(2,'0');
+    var r=get(s.y)[sel]||ent('mae','Mãe');
+    ms.insertAdjacentHTML('afterend','<div class="pj-ed" id="atEd"><h4>✏️ Só na proposta — '+String(+p[2]).padStart(2,'0')+'/'+String(+p[1]+1).padStart(2,'0')+'/'+p[0]+' (agora com '+(r.resp==='pai'?'o Pai':'a Mãe')+')</h4>'+
+      '<div class="pj-r"><div><label>De</label><input type="date" id="atA" value="'+iso+'"></div><div><label>Até (opcional)</label><input type="date" id="atB" value="'+iso+'"></div></div>'+
+      '<div class="pj-r"><button class="pj-b m" data-ae="mae">👩 Mãe</button><button class="pj-b p" data-ae="pai">👨 Pai</button></div>'+
+      '<button class="pj-b g" data-ae="auto">↺ Tirar a minha mudança (voltar à proposta automática)</button>'+
+      '<button class="pj-b g" data-ae="fechar">Fechar</button></div>');
+  }
+  function ui(){
+    var s=estado();if(!s)return;
+    var sum=s.box.querySelector('.pj-sum');if(!sum)return;
+    var old=s.box.querySelector('#atProp');if(old)old.remove();
+    var n=0;for(var kk in edits)if(yOf(kk)===s.y)n++;
+    var tem=s.y>=2027&&(!!jb(bkY(s.y))||legTem(s.y));
+    var h='<div id="atProp" style="margin:8px 0;border:1.5px dashed rgba(128,128,150,.6);border-radius:14px;padding:10px">'+
+      '<div class="pj-r"><button class="pj-b g" data-pimp="meu" style="margin:0">🖨️ Imprimir meu calendário'+(s.y===2026?' (out–dez)':'')+'</button>'+
+      (s.y>=2027?'<button class="pj-b g" data-pimp="prop" style="margin:0">🖨️ Imprimir a proposta</button>':'<span></span>')+'</div>';
+    if(s.y>=2027){
+      h+='<p class="pj-hint" style="margin:8px 0 0">'+(s.prop?'✏️ Toque num dia para mudar só na proposta (traço pontilhado = mudança sua). Seu calendário não muda até você adotar.':'Para mudar só na proposta, toque em "🔮 Só a proposta".')+' Mudanças na proposta de '+s.y+': <b>'+n+'</b>.</p>';
+      if(s.prop)h+='<div class="pj-r"><button class="pj-b m" data-padota="1">✅ Adotar proposta de '+s.y+'</button><button class="pj-b g" data-pdesc="1">↩ Descartar mudanças de '+s.y+'</button></div>'+
+        '<p class="pj-hint" style="margin:6px 0 0">Vale só para '+s.y+'. Os outros anos não são tocados.</p>';
+    }
+    if(tem)h+='<button class="pj-b g" data-pundo="1">↩ Desfazer a adoção de '+s.y+'</button>';
+    h+='</div>';
+    sum.insertAdjacentHTML('beforebegin',h);
+    marcas();editor();
+  }
+  new MutationObserver(ui).observe(mod,{childList:true});
 
-/* 3) Imprimir PDF: botões um embaixo do outro, mesmo tamanho, texto sem cortar */
-#modalImpressao .flex.gap-2.pt-2 {
-  flex-direction: column !important;
-  align-items: stretch !important;
-  gap: 8px !important;
-}
-#modalImpressao .flex.gap-2.pt-2 > button,
-#modalImpressao button[onclick="confirmarGerarPDF()"],
-#btnCopiarListaModal,
-#btnGerarWordLayout {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
-  width: 100% !important;
-  min-height: 46px !important;
-  margin: 0 !important;
-  padding: 10px 14px !important;
-  border: 0 !important;
-  border-radius: 14px !important;
-  font-size: 13px !important;
-  font-weight: 800 !important;
-  line-height: 1.2 !important;
-  text-align: center !important;
-  white-space: normal !important;
-  color: #fff !important;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, .15) !important;
-}
-/* o botão Gerar PDF mantém o degradê do tema; os outros dois ganham cor própria */
-#btnCopiarListaModal {
-  background: linear-gradient(135deg, #059669, #0d9488) !important;
-}
-#btnGerarWordLayout {
-  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
-}
-#modalImpressao .flex.gap-2.pt-2 > button:active,
-#btnCopiarListaModal:active,
-#btnGerarWordLayout:active {
-  transform: scale(.97);
-}
+  function imprimir(tipo,y){
+    var fn=window.gerarAnoCompletoPDF;
+    if(typeof fn!=='function'){alert('Impressão indisponível.');return}
+    var m1=y===2026?9:0,og=window.regraPadrao,B=window.Blob;
+    if(tipo==='prop'){
+      window.regraPadrao=function(d,m,yy){return (yy>=2027&&yy<=2036)?(get(yy)[yy+'-'+m+'-'+d]||ent('mae','Mãe')):og(d,m,yy)};
+      window.Blob=function(parts,opt){
+        if(opt&&/html/.test(opt.type||'')&&parts&&typeof parts[0]==='string')parts=[parts[0].split('Guarda Compartilhada — Sophia').join('Guarda Compartilhada — Sophia (PROPOSTA)')];
+        return new B(parts,opt);
+      };
+      window.Blob.prototype=B.prototype;
+    }
+    try{fn(y,m1,y,11)}finally{window.regraPadrao=og;window.Blob=B}
+  }
+  function editar(resp){
+    if(resp==='fechar'){sel=null;ui();return}
+    var a=document.getElementById('atA').value,b=document.getElementById('atB').value||a;if(!a)return;
+    var da=new Date(a+'T00:00:00'),db=new Date(b+'T00:00:00');
+    if(da>db){var t=da;da=db;db=t}
+    var n=0;
+    for(var d=new Date(da);d<=db;d.setDate(d.getDate()+1)){
+      var y=d.getFullYear();if(y<2027||y>2036)continue;
+      var k=y+'-'+d.getMonth()+'-'+d.getDate(),o=get(y);
+      if(resp==='auto'){delete edits[k];if(rawC[y][k])o[k]=rawC[y][k];else delete o[k]}
+      else{edits[k]=ent(resp);o[k]=edits[k]}
+      n++;
+    }
+    sv();toast(resp==='auto'?'↺ Voltou à proposta automática':'✅ '+n+' dia(s) mudados só na proposta');
+    rerender();
+  }
 
-/* 4) Atalhos "Só este mês / 12 meses" e campos com o mesmo acabamento */
-#modalImpressao .grid.grid-cols-2 > button {
-  min-height: 40px !important;
-  border-radius: 12px !important;
-  font-size: 12px !important;
-  font-weight: 800 !important;
-}
-#modalImpressao select,
-#modalImpressao input[type="month"] {
-  min-height: 42px !important;
-  border-radius: 14px !important;
-}
+  // ===== ADOTAR: SÓ O ANO QUE ESTÁ NA TELA =====
+  function adotar(y){
+    var df=0;
+    for(var m=0;m<12;m++){
+      var nd=new Date(y,m+1,0).getDate();
+      for(var d=1;d<=nd;d++){
+        var a=window.regraPadrao(d,m,y)||{},p=get(y)[y+'-'+m+'-'+d]||ent('mae','Mãe');
+        if(a.resp!==p.resp)df++;
+      }
+    }
+    if(!confirm('Adotar a proposta SÓ de '+y+' como o seu calendário?\n\n• '+df+' dia(s) de '+y+' vão mudar em relação ao calendário de hoje\n• as suas marcações de '+y+' serão trocadas pela proposta\n• os outros anos NÃO mudam\n• faço uma cópia de '+y+' e dá para desfazer.'))return;
+    var bk={ov:{},ed:{}};
+    for(var k in overrides)if(yOf(k)===y){bk.ov[k]=overrides[k];delete overrides[k]}
+    for(var k1 in edits)if(yOf(k1)===y)bk.ed[k1]=edits[k1];
+    try{localStorage.setItem(bkY(y),JSON.stringify(bk))}catch(e){}
+    for(var k2 in bk.ed){overrides[k2]={resp:edits[k2].resp,desc:edits[k2].desc,emenda:false};delete edits[k2]}
+    sv();resetCache();sel=null;cloud();
+    toast('✅ Proposta de '+y+' adotada. Os outros anos ficaram como estavam.');rerender();
+  }
+  function descartar(y){
+    var n=0;for(var k in edits)if(yOf(k)===y)n++;
+    if(!n){toast('Nenhuma mudança na proposta de '+y);return}
+    if(!confirm('Descartar as '+n+' mudança(s) feitas só na proposta de '+y+'? O seu calendário continua como está.'))return;
+    for(var k2 in edits)if(yOf(k2)===y)delete edits[k2];
+    sv();resetCache();sel=null;toast('↩ Mudanças da proposta de '+y+' descartadas');rerender();
+  }
+  function desfazer(y){
+    var bk=jb(bkY(y)),leg=false;
+    if(!bk){
+      var L=jb(KB);
+      if(L){bk={ov:{},ed:{}};
+        for(var a in (L.ov||{}))if(yOf(a)===y)bk.ov[a]=L.ov[a];
+        for(var b in (L.ed||{}))if(yOf(b)===y)bk.ed[b]=L.ed[b];
+        leg=true}
+    }
+    if(!bk)return;
+    if(!confirm('Voltar o calendário e a proposta de '+y+' como estavam antes da adoção? Só '+y+' será mexido.'))return;
+    for(var k in overrides)if(yOf(k)===y)delete overrides[k];
+    for(var k1 in bk.ov)overrides[k1]=bk.ov[k1];
+    for(var k2 in edits)if(yOf(k2)===y)delete edits[k2];
+    for(var k3 in bk.ed)edits[k3]=bk.ed[k3];
+    sv();
+    if(leg){
+      var L2=jb(KB);
+      if(L2){
+        for(var c in (L2.ov||{}))if(yOf(c)===y)delete L2.ov[c];
+        for(var d in (L2.ed||{}))if(yOf(d)===y)delete L2.ed[d];
+        try{localStorage.setItem(KB,JSON.stringify(L2))}catch(e){}
+      }
+    }else{try{localStorage.removeItem(bkY(y))}catch(e){}}
+    resetCache();cloud();toast('↩ Adoção de '+y+' desfeita');rerender();
+  }
 
-/* 5) Botões dos outros modais (editar dia, período rápido): altura confortável para o dedo */
-#customModal .flex.gap-2.pt-2 > button,
-#modalPeriodoRapido button.rounded-xl,
-#modalMotivos button.rounded-xl,
-#modalSeletorMesAno button.rounded-xl {
-  min-height: 42px;
-}
-</style>
-<!--PATCH-MODAIS-FIM-->
+  mod.addEventListener('click',function(e){
+    var t=e.target,x,s;
+    if(t.closest('[data-y26]')){setTimeout(ui,0);return}
+    if(x=t.closest('[data-pimp]')){s=estado();if(s)imprimir(x.dataset.pimp,s.y);return}
+    if(t.closest('[data-padota]')){s=estado();if(s&&s.y>=2027)adotar(s.y);return}
+    if(t.closest('[data-pdesc]')){s=estado();if(s&&s.y>=2027)descartar(s.y);return}
+    if(t.closest('[data-pundo]')){s=estado();if(s&&s.y>=2027)desfazer(s.y);return}
+    if(x=t.closest('[data-ae]')){editar(x.dataset.ae);return}
+    if(x=t.closest('.pj-d[data-k]')){
+      var st=estado();
+      if(st&&st.prop){e.stopPropagation();sel=x.dataset.k;ui();var ed=document.getElementById('atEd');if(ed)ed.scrollIntoView({behavior:'smooth',block:'nearest'})}
+    }
+  },true);
+})();
+</script>
+<!--PROPOSTA-FIM-->
+
+
+<!-- ================= BLOCO 2 ================= -->
+<!--LIMPEZA-2027-INICIO: botão "Usar a projeção" agora vale só para o ano que está na tela -->
+<script>
+(function(){
+  if(window.__atLimpa)return;window.__atLimpa=1;
+  var mod=document.getElementById('pjMod');if(!mod)return;
+  var BK='sx_backup_marcacoes_2027';
+  function yOf(k){return +k.split('-')[0]}
+  function jb(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}}
+  function anoSel(){var box=mod.firstChild;if(!box||!box.querySelector)return null;var b=box.querySelector('[data-y].on');return b?+b.dataset.y:null}
+  function lista(y){
+    var o=(typeof overrides!=='undefined')?overrides:{},r=[];
+    for(var k in o){
+      if(yOf(k)!==y)continue;
+      var v=o[k]||{};if(v.emenda||v.grampinho)continue;
+      if(['Mãe','Pai','FDS Pai',''].indexOf(v.desc||'')<0)continue;
+      r.push(k);
+    }
+    return r;
+  }
+  function legTem(y){var b=jb(BK);if(!b)return false;for(var k in b)if(yOf(k)===y)return true;return false}
+  function ui(){
+    var box=mod.firstChild;if(!box||!box.querySelector||box.querySelector('#atLimpa'))return;
+    var y=anoSel();if(!y||y<2027)return;
+    var top=box.querySelector('.pj-top');if(!top)return;
+    var n=lista(y).length,tem=!!jb(BK+'_'+y)||legTem(y);
+    if(!n&&!tem)return;
+    top.insertAdjacentHTML('afterend','<div id="atLimpa" style="margin:6px 0;display:flex;gap:6px;flex-wrap:wrap">'+
+      (n?'<button class="pj-b g" data-limpa="1" style="margin:0;flex:1">🧹 Usar a projeção em '+y+' (limpar '+n+' marcação(ões) simples)</button>':'')+
+      (tem?'<button class="pj-b g" data-desfaz="1" style="margin:0;flex:1">↩ Desfazer a limpeza de '+y+'</button>':'')+'</div>');
+  }
+  function fim(){
+    if(typeof salvarNaNuvem==='function')salvarNaNuvem();
+    if(typeof renderizar==='function')renderizar();
+    var m=mod.querySelector('[data-md].on')||mod.querySelector('[data-md]');if(m)m.click();
+  }
+  new MutationObserver(ui).observe(mod,{childList:true});
+  mod.addEventListener('click',function(e){
+    var t=e.target,y=anoSel();
+    if(t.closest('[data-limpa]')){
+      if(!y)return;
+      var ks=lista(y);
+      if(!ks.length){alert('Não há marcações simples em '+y+' para limpar.');return}
+      if(!confirm('Vou apagar '+ks.length+' dia(s) de '+y+' marcados só como "Mãe" ou "Pai", sem motivo, para a projeção valer em '+y+'. Marcações com motivo ou emenda ficam. Os outros anos NÃO mudam. Faço uma cópia antes e dá para desfazer. Continuar?'))return;
+      var bk={};ks.forEach(function(k){bk[k]=overrides[k];delete overrides[k]});
+      try{localStorage.setItem(BK+'_'+y,JSON.stringify(bk))}catch(x){}
+      if(typeof mostrarToast==='function')mostrarToast('🧹 '+ks.length+' dias de '+y+' limpos.');
+      fim();
+    }else if(t.closest('[data-desfaz]')){
+      if(!y)return;
+      var b=jb(BK+'_'+y),leg=false;
+      if(!b){var L=jb(BK);if(L){b={};for(var k in L)if(yOf(k)===y)b[k]=L[k];leg=true}}
+      if(!b||!Object.keys(b).length)return;
+      for(var k2 in b)overrides[k2]=b[k2];
+      if(leg){var L2=jb(BK);if(L2){for(var k3 in L2)if(yOf(k3)===y)delete L2[k3];try{localStorage.setItem(BK,JSON.stringify(L2))}catch(x){}}}
+      else{try{localStorage.removeItem(BK+'_'+y)}catch(x){}}
+      if(typeof mostrarToast==='function')mostrarToast('↩ Marcações de '+y+' restauradas.');
+      fim();
+    }
+  });
+})();
+</script>
+<!--LIMPEZA-2027-FIM-->
 </html>
