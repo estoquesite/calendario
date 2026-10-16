@@ -7037,4 +7037,45 @@ if(!window.projecaoGuarda){
 })();
 </script>
 <!--LIMPEZA-2027-FIM-->
+    <!--IMPRESSAO-CORES-VIVAS-INICIO-->
+<script>
+(function(){
+  if(window.__atCoresVivas) return; window.__atCoresVivas = 1;
+  var prev = window.gerarAnoCompletoPDF;
+  if(typeof prev !== 'function') return;
+
+  var CSS = '<style id="cores-vivas">' +
+    '.calendario-impressao td.mae{background:#ffb8d4 !important;border:1.5px solid #ec4899 !important}' +
+    '.calendario-impressao td.pai{background:#a8d2ff !important;border:1.5px solid #2563eb !important}' +
+    '.calendario-impressao td.vazio{background:#f3f4f6 !important;border:1px solid #e5e7eb !important}' +
+    '.calendario-impressao td.mae .num-dia-impressao,.calendario-impressao td.pai .num-dia-impressao{color:#0f172a !important}' +
+    '.sigla-m-impressao{background:#e11d74 !important;color:#ffffff !important}' +
+    '.sigla-p-impressao{background:#1d4ed8 !important;color:#ffffff !important}' +
+    '.calendario-impressao td .evento-impressao{background:#ffffff !important;border:1px solid #475569 !important;color:#0f172a !important;font-weight:700 !important}' +
+    '.calendario-impressao th{background:#e2e8f0 !important;color:#334155 !important}' +
+    '.marcador-verde{background:#059669 !important}.marcador-vermelho{background:#dc2626 !important}' +
+    '.cont-impressao span:first-child{color:#be185d !important}.cont-impressao span:last-child{color:#1d4ed8 !important}' +
+    '</style>';
+
+  function tr(h){
+    if(h.indexOf('calendario-impressao') < 0) return h;
+    return h.indexOf('</head>') > -1 ? h.replace('</head>', CSS + '</head>') : CSS + h;
+  }
+
+  var novo = function(){
+    var B = window.Blob;
+    window.Blob = function(parts, opt){
+      if(opt && /html/.test(opt.type||'') && parts && typeof parts[0] === 'string'){
+        try{ parts = [tr(parts[0])]; }catch(e){}
+      }
+      return new B(parts, opt);
+    };
+    window.Blob.prototype = B.prototype;
+    try{ return prev.apply(this, arguments); } finally { window.Blob = B; }
+  };
+  window.gerarAnoCompletoPDF = novo;
+  window.gerenarAnoCompletoPDF = novo;
+})();
+</script>
+<!--IMPRESSAO-CORES-VIVAS-FIM-->
 </html>
